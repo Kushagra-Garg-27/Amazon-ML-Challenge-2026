@@ -1,0 +1,52 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Unit test / coverage / cache
+.coverage
+.pytest_cache/
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDE and OS files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Project-specific: Raw datasets (large TSVs)
+dataset/
+*.tsv
+!code/business_entity_resolution/tests/fixtures/**/*.tsv
+
+# Project-specific: Temporary directories and output submissions
+.tmp/
+output/
+*.tmp
+
+# Project-specific: Large binary artifacts, parquet files, and logs
+*.parquet
+*.log
+work/**/*.parquet
+work/**/*.log
+work/final_eval_features/
+work/final_eval_candidates/
+work/final_eval_tmp/
+work/negative_samples/
+work/feature_pilot_candidates/
+work/feature_pilot_v1_final/
+work/scores_mining_fit/
