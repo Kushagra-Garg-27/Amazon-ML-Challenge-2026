@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "feature_spec_sha256": "51f1a33eab22780fee39e29f69117faf7c8c6eb47658499c6f53f564c5245582",
+  "candidate_policy_sha256": "46fd324b3d4db7dbdf5fa4b8ce528f681335ce16f759fb93a39ba5b98a040fea",
+  "selection_sha256": "e187781772da6ea24f91509eb5657cb2320603d2a5f2d69ba69eaf753ac721b4",
+  "files": [
+    {
+      "path": "work/feature_pilot_candidates/model_calibration_india.parquet",
+      "rows": 118849,
+      "bytes": 1073571,
+      "sha256": "aeea0cf9867382343fcc4b99a0017a7608a615abd19372ed21a9a38703ac9f1e"
+    },
+    {
+      "path": "work/feature_pilot_candidates/model_calibration_us.parquet",
+      "rows": 196710,
+      "bytes": 1721821,
+      "sha256": "1d6f44924acd9460a40a9392ab03b5497fc1b25bfefeb8d01a7efce09b0dd962"
+    },
+    {
+      "path": "work/feature_pilot_candidates/model_train_india.parquet",
+      "rows": 300238,
+      "bytes": 2712436,
+      "sha256": "83e790ba09f1f2776906fb1a0e93ee548fde71170499340cdd7e918ab0e924a0"
+    },
+    {
+      "path": "work/feature_pilot_candidates/model_train_us.parquet",
+      "rows": 482503,
+      "bytes": 4197690,
+      "sha256": "36d8bc4611103b406d451278e7d002226a85665337353721490d7d48833ffe4c"
+    },
+    {
+      "path": "work/feature_pilot_v1_final/model_calibration_india.parquet",
+      "rows": 118849,
+      "bytes": 4442481,
+      "sha256": "28a30f8055b288ba7614719a401e875ef0d6d9e4873d163db13dc342e33c38b8"
+    },
+    {
+      "path": "work/feature_pilot_v1_final/model_calibration_us.parquet",
+      "rows": 196710,
+      "bytes": 6157528,
+      "sha256": "2e40d30e5b97dc1c17fc8d36572e1657c7c7060c808a012291b7ac62575a5567"
+    },
+    {
+      "path": "work/feature_pilot_v1_final/model_train_india.parquet",
+      "rows": 300238,
+      "bytes": 11277844,
+      "sha256": "fb2e5934ed58e4c8c596145f6f7340ee6459c3bb35b136d5232c28bca6dd0a9b"
+    },
+    {
+      "path": "work/feature_pilot_v1_final/model_train_us.parquet",
+      "rows": 482503,
+      "bytes": 15078636,
+      "sha256": "ce5775d7012ed45c8d313c74a7035a9ade2c388fa0143d3d31403c08eab137b7"
+    },
+    {
+      "path": "work/feature_pilot_labels.parquet",
+      "rows": 1098300,
+      "bytes": 6729174,
+      "sha256": "a98acf624a826730412ab2ca2e9cab536aaee7e2af0c0c5ba3ef4bccf810ce43"
+    }
+  ],
+  "totals": {
+    "s1": 7000,
+    "input_rows": 1098300,
+    "feature_rows": 1098300,
+    "added": 0,
+    "removed": 0,
+    "duplicates": 0,
+    "null_cells": 0,
+    "nan_inf_cells": 0,
+    "positives": 21186,
+    "negatives": 1077114,
+    "equal": true,
+    "feature_bytes": 36956489,
+    "bytes_per_candidate": 33.648810889556586
+  },
+  "by_split": {
+    "model_calibration": {
+      "s1": 2000,
+      "candidates": 315559,
+      "positives": 6114,
+      "negatives": 309445
+    },
+    "model_train": {
+      "s1": 5000,
+      "candidates": 782741,
+      "positives": 15072,
+      "negatives": 767669
+    }
+  },
+  "coverage": {
+    "heavy_rows": 109629,
+    "s2_rows": 555286,
+    "s3_rows": 543014,
+    "address_missing_rows": 20420
+  },
+  "resources": {
+    "candidate_generation_peak_rss": 852738048,
+    "feature_peak_rss": 556519424,
+    "audit_peak_rss": 957935616,
+    "group_seconds": {
+      "exact": 21.521953799616313,
+      "token": 7.04983590061056,
+      "fuzzy": 21.638467600036165
+    },
+    "peak_temp_bytes": 0
+  },
+  "projections": {
+    "model_train": {
+      "s1": 1765608,
+      "candidates": 276765017,
+      "feature_gb": 9.312813704176914,
+      "feature_hours": 7.803217235563614
+    },
+    "model_calibration": {
+      "s1": 110341,
+      "candidates": 17296324,
+      "feature_gb": 0.5820007481460125,
+      "feature_hours": 0.4876590913664441
+    },
+    "model_final_eval": {
+      "s1": 110341,
+      "candidates": 17296324,
+      "feature_gb": 0.5820007481460125,
+      "feature_hours": 0.4876590913664441
+    },
+    "test": {
+      "s1": 1732544,
+      "candidates": 271582123,
+      "feature_gb": 9.138415495562711,
+      "feature_hours": 7.657088777447952
+    }
+  }
+}

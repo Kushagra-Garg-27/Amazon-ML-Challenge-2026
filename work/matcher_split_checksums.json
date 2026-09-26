@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "seed": "matcher_split_v1_20260926",
+  "assignment": "md5(entity_id || seed), entity_id; exact 80/5/5 quotas after preserved candidate_dev",
+  "counts": {
+    "model_train": 1765608,
+    "model_calibration": 110341,
+    "model_final_eval": 110341,
+    "candidate_dev": 220531
+  },
+  "s1_overlap": 0,
+  "labelled_target_overlap": 0,
+  "splits": {
+    "candidate_dev": {
+      "s1": 220531,
+      "gt_links": 763919,
+      "singletons": 12277,
+      "mean_links": 3.463998258748203,
+      "country": {
+        "india": 87862,
+        "us": 132669
+      },
+      "match_count_distribution": {
+        "0": 12277,
+        "1": 11932,
+        "2": 37164,
+        "3": 53144,
+        "4": 48592,
+        "5": 32189,
+        "6": 16513,
+        "7": 6439,
+        "8": 1830,
+        "9": 391,
+        "10": 56,
+        "11": 4
+      },
+      "entity_id_sha256": "85f683d4a2f7e72dc2c7dd1b17f021fd735711bc8e14cc38d4c687ab04ada7c4"
+    },
+    "model_train": {
+      "s1": 1765608,
+      "gt_links": 6110289,
+      "singletons": 98558,
+      "mean_links": 3.460727975858741,
+      "country": {
+        "india": 706984,
+        "us": 1058624
+      },
+      "match_count_distribution": {
+        "0": 98558,
+        "1": 95285,
+        "2": 300529,
+        "3": 424972,
+        "4": 386971,
+        "5": 257665,
+        "6": 131673,
+        "7": 51165,
+        "8": 14964,
+        "9": 3376,
+        "10": 418,
+        "11": 32
+      },
+      "entity_id_sha256": "d7eed12878b7cd5281173ba6e216495138f5f27777a95b5e8d0e27e7cb79ea88"
+    },
+    "model_calibration": {
+      "s1": 110341,
+      "gt_links": 382301,
+      "singletons": 6080,
+      "mean_links": 3.464722995078892,
+      "country": {
+        "india": 43945,
+        "us": 66396
+      },
+      "match_count_distribution": {
+        "0": 6080,
+        "1": 5920,
+        "2": 18912,
+        "3": 26466,
+        "4": 24230,
+        "5": 16002,
+        "6": 8385,
+        "7": 3143,
+        "8": 946,
+        "9": 220,
+        "10": 37
+      },
+      "entity_id_sha256": "2b96a53193f6dbb68c7b0de0424c310f95d097f67b770944fcb84d2b736d89ca"
+    },
+    "model_final_eval": {
+      "s1": 110341,
+      "entity_id_sha256": "256c997695fe214bb055f2f74faa097c929db22ebcf7ff8bb37707cab382aaac",
+      "firewall": "membership and ID checksum only; no label aggregates persisted"
+    }
+  }
+}

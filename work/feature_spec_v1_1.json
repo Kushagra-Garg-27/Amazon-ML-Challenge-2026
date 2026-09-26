@@ -1,0 +1,448 @@
+{
+  "schema_version": "1.1",
+  "feature_spec_version": "feature_spec_v1.1",
+  "identity_columns": [
+    "source1_entity_id",
+    "target_entity_id"
+  ],
+  "label_column": null,
+  "country_open_set": true,
+  "features": [
+    {
+      "name": "provenance",
+      "type": "uint8",
+      "group": "provenance",
+      "default": 0,
+      "computation": "Frozen candidate provenance bitmask."
+    },
+    {
+      "name": "retrieved_name_token",
+      "type": "bool",
+      "group": "provenance",
+      "default": false,
+      "computation": "provenance & 4 != 0"
+    },
+    {
+      "name": "retrieved_address_token",
+      "type": "bool",
+      "group": "provenance",
+      "default": false,
+      "computation": "provenance & 8 != 0"
+    },
+    {
+      "name": "retrieval_pass_count",
+      "type": "uint8",
+      "group": "provenance",
+      "default": 0,
+      "computation": "Population count of bits 1,2,4,8."
+    },
+    {
+      "name": "name_token_rank",
+      "type": "uint16",
+      "group": "provenance",
+      "default": 0,
+      "computation": "Frozen per-source name-token rank; zero when absent."
+    },
+    {
+      "name": "address_token_rank",
+      "type": "uint16",
+      "group": "provenance",
+      "default": 0,
+      "computation": "Frozen per-source address-token rank; zero when absent."
+    },
+    {
+      "name": "source_balanced_rank",
+      "type": "uint16",
+      "group": "provenance",
+      "default": 0,
+      "computation": "Minimum non-zero frozen token rank."
+    },
+    {
+      "name": "heavy_sorted_block",
+      "type": "bool",
+      "group": "provenance",
+      "default": false,
+      "computation": "Exact sorted-name target block has at least 120 rows."
+    },
+    {
+      "name": "target_is_s2",
+      "type": "bool",
+      "group": "provenance",
+      "default": false,
+      "computation": "Target namespace is S2."
+    },
+    {
+      "name": "exact_name_norm",
+      "type": "bool",
+      "group": "exact",
+      "default": false,
+      "computation": "Equal non-empty normalized name."
+    },
+    {
+      "name": "exact_name_sorted",
+      "type": "bool",
+      "group": "exact",
+      "default": false,
+      "computation": "Equal non-empty sorted-token name."
+    },
+    {
+      "name": "exact_address_norm",
+      "type": "bool",
+      "group": "exact",
+      "default": false,
+      "computation": "Equal non-empty normalized address."
+    },
+    {
+      "name": "exact_name_nosuffix",
+      "type": "bool",
+      "group": "exact",
+      "default": false,
+      "computation": "Equal non-empty suffix-stripped name."
+    },
+    {
+      "name": "exact_numeric_set",
+      "type": "bool",
+      "group": "exact",
+      "default": false,
+      "computation": "Equal non-empty address numeric-token sets."
+    },
+    {
+      "name": "exact_postal_token",
+      "type": "bool",
+      "group": "exact",
+      "default": false,
+      "computation": "Equal non-empty first 5-6 digit token."
+    },
+    {
+      "name": "country_agreement",
+      "type": "bool",
+      "group": "exact",
+      "default": false,
+      "computation": "Equal non-empty open-set normalized country."
+    },
+    {
+      "name": "s1_name_missing",
+      "type": "bool",
+      "group": "missing_length",
+      "default": true,
+      "computation": "S1 normalized name empty."
+    },
+    {
+      "name": "target_name_missing",
+      "type": "bool",
+      "group": "missing_length",
+      "default": true,
+      "computation": "Target normalized name empty."
+    },
+    {
+      "name": "s1_address_missing",
+      "type": "bool",
+      "group": "missing_length",
+      "default": true,
+      "computation": "S1 normalized address empty."
+    },
+    {
+      "name": "target_address_missing",
+      "type": "bool",
+      "group": "missing_length",
+      "default": true,
+      "computation": "Target normalized address empty."
+    },
+    {
+      "name": "s1_name_chars",
+      "type": "uint16",
+      "group": "missing_length",
+      "default": 0,
+      "computation": "Normalized name character count."
+    },
+    {
+      "name": "target_name_chars",
+      "type": "uint16",
+      "group": "missing_length",
+      "default": 0,
+      "computation": "Normalized name character count."
+    },
+    {
+      "name": "s1_address_chars",
+      "type": "uint16",
+      "group": "missing_length",
+      "default": 0,
+      "computation": "Normalized address character count."
+    },
+    {
+      "name": "target_address_chars",
+      "type": "uint16",
+      "group": "missing_length",
+      "default": 0,
+      "computation": "Normalized address character count."
+    },
+    {
+      "name": "s1_name_tokens",
+      "type": "uint16",
+      "group": "missing_length",
+      "default": 0,
+      "computation": "Distinct suffix-stripped name tokens."
+    },
+    {
+      "name": "target_name_tokens",
+      "type": "uint16",
+      "group": "missing_length",
+      "default": 0,
+      "computation": "Distinct suffix-stripped name tokens."
+    },
+    {
+      "name": "s1_address_tokens",
+      "type": "uint16",
+      "group": "missing_length",
+      "default": 0,
+      "computation": "Distinct address tokens."
+    },
+    {
+      "name": "target_address_tokens",
+      "type": "uint16",
+      "group": "missing_length",
+      "default": 0,
+      "computation": "Distinct address tokens."
+    },
+    {
+      "name": "name_char_abs_diff",
+      "type": "uint16",
+      "group": "missing_length",
+      "default": 0,
+      "computation": "Absolute normalized-name length difference."
+    },
+    {
+      "name": "address_char_abs_diff",
+      "type": "uint16",
+      "group": "missing_length",
+      "default": 0,
+      "computation": "Absolute normalized-address length difference."
+    },
+    {
+      "name": "name_char_relative_diff",
+      "type": "float32",
+      "group": "missing_length",
+      "default": 0.0,
+      "computation": "Absolute difference divided by maximum length."
+    },
+    {
+      "name": "address_char_relative_diff",
+      "type": "float32",
+      "group": "missing_length",
+      "default": 0.0,
+      "computation": "Absolute difference divided by maximum length."
+    },
+    {
+      "name": "name_token_intersection",
+      "type": "uint16",
+      "group": "token",
+      "default": 0,
+      "computation": "Distinct name-token intersection size."
+    },
+    {
+      "name": "name_token_union",
+      "type": "uint16",
+      "group": "token",
+      "default": 0,
+      "computation": "Distinct name-token union size."
+    },
+    {
+      "name": "name_jaccard",
+      "type": "float32",
+      "group": "token",
+      "default": 0.0,
+      "computation": "Name intersection / union."
+    },
+    {
+      "name": "name_containment_s1",
+      "type": "float32",
+      "group": "token",
+      "default": 0.0,
+      "computation": "Name intersection / S1 token count."
+    },
+    {
+      "name": "name_containment_target",
+      "type": "float32",
+      "group": "token",
+      "default": 0.0,
+      "computation": "Name intersection / target token count."
+    },
+    {
+      "name": "address_token_intersection",
+      "type": "uint16",
+      "group": "token",
+      "default": 0,
+      "computation": "Distinct address-token intersection size."
+    },
+    {
+      "name": "address_token_union",
+      "type": "uint16",
+      "group": "token",
+      "default": 0,
+      "computation": "Distinct address-token union size."
+    },
+    {
+      "name": "address_jaccard",
+      "type": "float32",
+      "group": "token",
+      "default": 0.0,
+      "computation": "Address intersection / union."
+    },
+    {
+      "name": "address_containment_s1",
+      "type": "float32",
+      "group": "token",
+      "default": 0.0,
+      "computation": "Address intersection / S1 token count."
+    },
+    {
+      "name": "address_containment_target",
+      "type": "float32",
+      "group": "token",
+      "default": 0.0,
+      "computation": "Address intersection / target token count."
+    },
+    {
+      "name": "name_shared_idf",
+      "type": "float32",
+      "group": "token",
+      "default": 0.0,
+      "computation": "Sum 1/target-DF for shared eligible name tokens."
+    },
+    {
+      "name": "address_shared_idf",
+      "type": "float32",
+      "group": "token",
+      "default": 0.0,
+      "computation": "Sum 1/target-DF for shared eligible address tokens."
+    },
+    {
+      "name": "shared_address_numbers",
+      "type": "uint16",
+      "group": "numeric",
+      "default": 0,
+      "computation": "Count of shared distinct digit sequences."
+    },
+    {
+      "name": "conflicting_address_numbers",
+      "type": "bool",
+      "group": "numeric",
+      "default": false,
+      "computation": "Both have non-empty address numeric-token sets and the sets are unequal."
+    },
+    {
+      "name": "conflicting_postal_tokens",
+      "type": "bool",
+      "group": "numeric",
+      "default": false,
+      "computation": "Both have non-empty postal tokens that differ."
+    },
+    {
+      "name": "digit_sequence_equal",
+      "type": "bool",
+      "group": "numeric",
+      "default": false,
+      "computation": "Ordered digit-sequence lists are equal and non-empty."
+    },
+    {
+      "name": "house_number_equal",
+      "type": "bool",
+      "group": "numeric",
+      "default": false,
+      "computation": "First address number is equal and non-empty."
+    },
+    {
+      "name": "name_ratio",
+      "type": "float32",
+      "group": "fuzzy",
+      "default": 0.0,
+      "computation": "RapidFuzz ratio / 100."
+    },
+    {
+      "name": "name_partial_ratio",
+      "type": "float32",
+      "group": "fuzzy",
+      "default": 0.0,
+      "computation": "RapidFuzz partial_ratio / 100."
+    },
+    {
+      "name": "name_token_sort_ratio",
+      "type": "float32",
+      "group": "fuzzy",
+      "default": 0.0,
+      "computation": "RapidFuzz token_sort_ratio / 100."
+    },
+    {
+      "name": "name_token_set_ratio",
+      "type": "float32",
+      "group": "fuzzy",
+      "default": 0.0,
+      "computation": "RapidFuzz token_set_ratio / 100."
+    },
+    {
+      "name": "address_ratio",
+      "type": "float32",
+      "group": "fuzzy",
+      "default": 0.0,
+      "computation": "RapidFuzz ratio / 100; zero if either address empty."
+    },
+    {
+      "name": "address_partial_ratio",
+      "type": "float32",
+      "group": "fuzzy",
+      "default": 0.0,
+      "computation": "RapidFuzz partial_ratio / 100; zero if missing."
+    },
+    {
+      "name": "address_token_sort_ratio",
+      "type": "float32",
+      "group": "fuzzy",
+      "default": 0.0,
+      "computation": "RapidFuzz token_sort_ratio / 100; zero if missing."
+    },
+    {
+      "name": "address_token_set_ratio",
+      "type": "float32",
+      "group": "fuzzy",
+      "default": 0.0,
+      "computation": "RapidFuzz token_set_ratio / 100; zero if missing."
+    },
+    {
+      "name": "s1_script_class",
+      "type": "uint8",
+      "group": "script",
+      "default": 0,
+      "computation": "0 empty, 1 Latin, 2 Devanagari, 3 mixed, 4 other."
+    },
+    {
+      "name": "target_script_class",
+      "type": "uint8",
+      "group": "script",
+      "default": 0,
+      "computation": "0 empty, 1 Latin, 2 Devanagari, 3 mixed, 4 other."
+    },
+    {
+      "name": "same_script_class",
+      "type": "bool",
+      "group": "script",
+      "default": false,
+      "computation": "Equal non-zero script class."
+    },
+    {
+      "name": "script_conflict",
+      "type": "bool",
+      "group": "script",
+      "default": false,
+      "computation": "Different non-zero script classes."
+    }
+  ],
+  "compatible_numeric_artifact_version": "feature_spec_v1",
+  "physical_artifact_columns": "feature_spec_v1 (65 columns, unchanged)",
+  "removed_redundant_model_inputs": [
+    "retrieved_sorted_name",
+    "retrieved_exact_address",
+    "shared_postal_tokens",
+    "target_is_s3"
+  ],
+  "correction": "The conflicting_address_numbers description now matches the frozen implementation. Four redundant model inputs are omitted from the v1.1 model matrix. Physical feature artifacts and their 65 columns are unchanged."
+}

@@ -1,0 +1,36 @@
+{
+  "feature_spec_version": "feature_spec_v1",
+  "feature_count": 65,
+  "parts": [
+    {
+      "input": "work/feature_pilot_candidates/model_calibration_india.parquet",
+      "output": "work/feature_pilot/model_calibration_india.parquet",
+      "rows": 118849,
+      "bytes": 4446219,
+      "wall_seconds": 15.154706001281738
+    },
+    {
+      "input": "work/feature_pilot_candidates/model_calibration_us.parquet",
+      "output": "work/feature_pilot/model_calibration_us.parquet",
+      "rows": 196710,
+      "bytes": 6158458,
+      "wall_seconds": 18.918399810791016
+    },
+    {
+      "input": "work/feature_pilot_candidates/model_train_india.parquet",
+      "output": "work/feature_pilot/model_train_india.parquet",
+      "rows": 300238,
+      "bytes": 11287139,
+      "wall_seconds": 39.72639489173889
+    },
+    {
+      "input": "work/feature_pilot_candidates/model_train_us.parquet",
+      "output": "work/feature_pilot/model_train_us.parquet",
+      "rows": 482503,
+      "bytes": 15080949,
+      "wall_seconds": 39.46307730674744
+    }
+  ],
+  "rows": 1098300,
+  "bytes": 36972765
+}

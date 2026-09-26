@@ -1,0 +1,12 @@
+{
+  "input_rows": 1098300,
+  "feature_rows": 1098300,
+  "added": 0,
+  "removed": 0,
+  "duplicates": 0,
+  "null_cells": 0,
+  "nan_inf_cells": 0,
+  "positives": 21186,
+  "negatives": 1077114,
+  "equal": true
+}
