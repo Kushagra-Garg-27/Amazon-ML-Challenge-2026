@@ -1,0 +1,107 @@
+{
+  "current_hybrid_tier_a": {
+    "rows": 113367,
+    "positives": 15072,
+    "negatives": 98295,
+    "s1": 4997,
+    "negative_s2": 49192,
+    "negative_s3": 49103,
+    "negative_address_missing": 331,
+    "bytes": 3813702,
+    "sha256": "c4cd0f2934852be96838c043665514ce26017026bd6ad842504a9dd024953a95",
+    "path": "work/model_development_negative_samples/current_hybrid_tier_a.parquet"
+  },
+  "mixed_tier_a": {
+    "rows": 100953,
+    "positives": 15072,
+    "negatives": 85881,
+    "s1": 4997,
+    "negative_s2": 42975,
+    "negative_s3": 42906,
+    "negative_address_missing": 753,
+    "bytes": 3548314,
+    "sha256": "226f4d5f32cd3fd6494e6f936d0ea7d50143c7544269ac43386a7d66f75b0206",
+    "path": "work/model_development_negative_samples/mixed_tier_a.parquet"
+  },
+  "current_hybrid_tier_b": {
+    "rows": 453429,
+    "positives": 60539,
+    "negatives": 392890,
+    "s1": 19979,
+    "negative_s2": 196544,
+    "negative_s3": 196346,
+    "negative_address_missing": 1370,
+    "bytes": 15392977,
+    "sha256": "a2e3b7b25fd30d14c7bb44f3a473a866046def583dc0da604396af700c43f8ce",
+    "path": "work/model_development_negative_samples/current_hybrid_tier_b.parquet"
+  },
+  "mixed_tier_b": {
+    "rows": 403808,
+    "positives": 60539,
+    "negatives": 343269,
+    "s1": 19979,
+    "negative_s2": 171697,
+    "negative_s3": 171572,
+    "negative_address_missing": 3014,
+    "bytes": 14275395,
+    "sha256": "f5c5db23b35e55f0c9fb466affee205b7faa6b504f2ba1cfc28ba01be0ace3df",
+    "path": "work/model_development_negative_samples/mixed_tier_b.parquet"
+  },
+  "current_hybrid_tier_c": {
+    "rows": 1134027,
+    "positives": 151102,
+    "negatives": 982925,
+    "s1": 49944,
+    "negative_s2": 491575,
+    "negative_s3": 491350,
+    "negative_address_missing": 3464,
+    "bytes": 38286898,
+    "sha256": "131b017b390df241194a57b7a19120ffe72338c0fbbb2e99f49f52d19ca1aac6",
+    "path": "work/model_development_negative_samples/current_hybrid_tier_c.parquet"
+  },
+  "mixed_tier_c": {
+    "rows": 1010217,
+    "positives": 151102,
+    "negatives": 859115,
+    "s1": 49944,
+    "negative_s2": 429606,
+    "negative_s3": 429509,
+    "negative_address_missing": 7499,
+    "bytes": 35456385,
+    "sha256": "fc432e1231b14673149350bfcc5c77a25192da773f2f06a118e227094fb98ba4",
+    "path": "work/model_development_negative_samples/mixed_tier_c.parquet"
+  },
+  "mined_tier_a": {
+    "rows": 130004,
+    "positives": 15072,
+    "negatives": 114932,
+    "s1": 4997,
+    "negative_s2": 57489,
+    "negative_s3": 57443,
+    "path": "work/model_development_negative_samples/mined_tier_a.parquet",
+    "bytes": 4626418,
+    "sha256": "bbbc3cd7199f7b23e1f3c9e1e07a0fab62d8ae3dddcf6cd0bf2c1a55c9e5e095"
+  },
+  "mined_tier_b": {
+    "rows": 519936,
+    "positives": 60539,
+    "negatives": 459397,
+    "s1": 19979,
+    "negative_s2": 229798,
+    "negative_s3": 229599,
+    "path": "work/model_development_negative_samples/mined_tier_b.parquet",
+    "bytes": 18344651,
+    "sha256": "a1d6b60028744aa211612268e9b6374c1244893bd9f7e3d591dc829affa21aa2"
+  },
+  "mined_tier_c": {
+    "rows": 1300551,
+    "positives": 151102,
+    "negatives": 1149449,
+    "s1": 49944,
+    "negative_s2": 574826,
+    "negative_s3": 574623,
+    "path": "work/model_development_negative_samples/mined_tier_c.parquet",
+    "bytes": 45543111,
+    "sha256": "d0f17876576146d2c6f3f018813c951afb49fdb402ff23d0bee088164c189333"
+  }
+}

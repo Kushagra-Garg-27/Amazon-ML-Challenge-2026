@@ -1,0 +1,38 @@
+{
+  "rows": 1568117,
+  "seconds": 3.6371757984161377,
+  "parts": [
+    {
+      "input": "work/model_development_features/baseline_dev_base_india.parquet",
+      "output": "work/scores_frozen_model_baseline_dev/baseline_dev_base_india.parquet",
+      "rows": 118849,
+      "bytes": 1474641,
+      "sha256": "69da3e933b37f7f9eeac48d971dbd9a2a626d14a926220c9e39d386ddd038ac7",
+      "seconds": 0.27951908111572266
+    },
+    {
+      "input": "work/model_development_features/baseline_dev_base_us.parquet",
+      "output": "work/scores_frozen_model_baseline_dev/baseline_dev_base_us.parquet",
+      "rows": 196710,
+      "bytes": 2302681,
+      "sha256": "810332fa6174e3b6944241937ac0437a348beac20962e46035e336cce3b2c8a1",
+      "seconds": 0.43990445137023926
+    },
+    {
+      "input": "work/model_development_features/baseline_dev_extra_india.parquet",
+      "output": "work/scores_frozen_model_baseline_dev/baseline_dev_extra_india.parquet",
+      "rows": 480740,
+      "bytes": 5854115,
+      "sha256": "a809cf0383ada968e527e6afee60e9e60719c0157880bc5ca9ebc8f3590ca5b0",
+      "seconds": 1.1625497341156006
+    },
+    {
+      "input": "work/model_development_features/baseline_dev_extra_us.parquet",
+      "output": "work/scores_frozen_model_baseline_dev/baseline_dev_extra_us.parquet",
+      "rows": 771818,
+      "bytes": 9039156,
+      "sha256": "0cb2615921a6f258be7334c8f1e3e1061a5d294a9a252085f57289fdd4ecd457",
+      "seconds": 1.752197027206421
+    }
+  ]
+}

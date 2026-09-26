@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "release_gate_config_sha256": "17165a4c083e73c747d5b57ca9e758959b0a8609d7306d738ad7ecb97326c6e9",
+  "policy_sha256": "46fd324b3d4db7dbdf5fa4b8ce528f681335ce16f759fb93a39ba5b98a040fea",
+  "selection": {
+    "path": "work/final_eval_selection.parquet",
+    "bytes": 604019,
+    "sha256": "4a2f2b7bbe359e49e7042f8388a67169c62a0f0d56fcadb3955a7cd115fcd3f8"
+  },
+  "parts": [
+    {
+      "path": "work/final_eval_candidates/model_final_eval_00_india.parquet",
+      "bytes": 7572344,
+      "sha256": "a22f684a2dbefb6612a059b06852317be5e13d67e679fe0b4109fa244c162eed",
+      "rows": 839918
+    },
+    {
+      "path": "work/final_eval_candidates/model_final_eval_00_us.parquet",
+      "bytes": 11251754,
+      "sha256": "97c38aafd213c79eafbf0c9a199052ea715cf14bd2bcf16c4b4da367af559b29",
+      "rows": 1293994
+    },
+    {
+      "path": "work/final_eval_candidates/model_final_eval_01_india.parquet",
+      "bytes": 7568172,
+      "sha256": "2e9254277f45a7db1c3055af1fc9b3349b2997239570bbabfcf024adb062aa1c",
+      "rows": 838887
+    },
+    {
+      "path": "work/final_eval_candidates/model_final_eval_01_us.parquet",
+      "bytes": 11321542,
+      "sha256": "5d58caecbc91ecfdbc8e3774712036e23f4d1f45462701f61f1d0411f7d1eb6d",
+      "rows": 1302661
+    },
+    {
+      "path": "work/final_eval_candidates/model_final_eval_02_india.parquet",
+      "bytes": 7707273,
+      "sha256": "18fa107008ce2915c10a21facc4426e058755ddec2f701e73ffa0ebcae0ece15",
+      "rows": 852588
+    },
+    {
+      "path": "work/final_eval_candidates/model_final_eval_02_us.parquet",
+      "bytes": 11523970,
+      "sha256": "9ca1300b4179f5bdb4620f36faabf42bbef0f0bdd3ae4652b487e79355e9dabe",
+      "rows": 1320576
+    },
+    {
+      "path": "work/final_eval_candidates/model_final_eval_03_india.parquet",
+      "bytes": 7722015,
+      "sha256": "0181dd4543bfa9cc8007981de054215b9d360310eb998f92063bc4e6faf9a81f",
+      "rows": 855774
+    },
+    {
+      "path": "work/final_eval_candidates/model_final_eval_03_us.parquet",
+      "bytes": 11614804,
+      "sha256": "e1639e999a7dca3a02417ad229663f1f38b9891d903ca7f779329c2f68879955",
+      "rows": 1332851
+    },
+    {
+      "path": "work/final_eval_candidates/model_final_eval_04_india.parquet",
+      "bytes": 7652393,
+      "sha256": "fc540bdedd3917e4289267aef60646fc9b4b122b44ab96e12b02971e072c745e",
+      "rows": 845690
+    },
+    {
+      "path": "work/final_eval_candidates/model_final_eval_04_us.parquet",
+      "bytes": 11378292,
+      "sha256": "18a1fbef3d6333a6fdb317c4408a555bd0251f27f2dde7d67a1e3353cbfae4c3",
+      "rows": 1310252
+    },
+    {
+      "path": "work/final_eval_candidates/model_final_eval_05_india.parquet",
+      "bytes": 7904101,
+      "sha256": "c3f8f52905c62baf3e7707c7bd7930aaa0450084c3aa421525ba808bb55f9bf0",
+      "rows": 874426
+    },
+    {
+      "path": "work/final_eval_candidates/model_final_eval_05_us.parquet",
+      "bytes": 11531830,
+      "sha256": "8048b1f2b2e81122a49b03323fbd903cc2f60275c70b5dcfe0e5aaaa8948752a",
+      "rows": 1325134
+    },
+    {
+      "path": "work/final_eval_candidates/model_final_eval_06_india.parquet",
+      "bytes": 7688353,
+      "sha256": "d32ed7fd647f0b463e9102cfc76cfc09eefed5c16adb5767c62ca93cc9daec87",
+      "rows": 852404
+    },
+    {
+      "path": "work/final_eval_candidates/model_final_eval_06_us.parquet",
+      "bytes": 11377914,
+      "sha256": "c29421129cf0bf8617740e2bb53dd4375c73f98253f4c8ff6c957ff6d5a91eae",
+      "rows": 1305410
+    },
+    {
+      "path": "work/final_eval_candidates/model_final_eval_07_india.parquet",
+      "bytes": 7625641,
+      "sha256": "b1b3d287beff3fcbcf9b533edf4ca0c459a9ffdb0b078560d4c9915f7aa63d34",
+      "rows": 844833
+    },
+    {
+      "path": "work/final_eval_candidates/model_final_eval_07_us.parquet",
+      "bytes": 11279752,
+      "sha256": "98e57a739438554e2155ac86f87156a11d0654e54051d73b124e71ee5bb5009d",
+      "rows": 1300386
+    }
+  ],
+  "audit": {
+    "rows": 17295784,
+    "unique_identities": 17295784,
+    "duplicates": 0,
+    "invalid_targets": 0,
+    "outside_split": 0,
+    "distribution": {
+      "mean": 156.74847971289003,
+      "median": 180.0,
+      "p90": 200.0,
+      "p95": 201.0,
+      "p99": 212.0,
+      "max": 293,
+      "zero_s1": 108
+    },
+    "source_counts": {
+      "S2": 8728137,
+      "S3": 8567647
+    },
+    "country_candidate_counts": {
+      "india": 6804520,
+      "us": 10491264
+    },
+    "provenance_counts": {
+      "1": 2012794,
+      "10": 16238,
+      "11": 4501,
+      "12": 79728,
+      "13": 75279,
+      "14": 5890,
+      "15": 5917,
+      "2": 3071,
+      "3": 893,
+      "4": 5602880,
+      "5": 208063,
+      "6": 1092,
+      "7": 983,
+      "8": 9223140,
+      "9": 55315
+    }
+  },
+  "resource": {
+    "wall_seconds": 1086.9553117752075,
+    "bytes": 152720150,
+    "failed_retried_partitions": [],
+    "exit_code": 0,
+    "peak_process_rss_bytes": 1037881344,
+    "peak_temp_bytes": 346816512
+  }
+}

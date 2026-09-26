@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "seed": "model_development_v1_20260926",
+  "assignment": {
+    "model_tune_hash_bytes": [
+      "00",
+      "01",
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07"
+    ],
+    "model_threshold_hash_bytes": [
+      "08",
+      "09",
+      "0a",
+      "0b",
+      "0c",
+      "0d",
+      "0e",
+      "0f"
+    ],
+    "model_fit": "all remaining hash bytes plus every prior pilot model_train S1"
+  },
+  "top_level_split_sha256": "a883ce97990d77e4971d4e57bb1d06b7eb999eb47c7e4bb4c4cbdf7c4b303804",
+  "counts": {
+    "model_fit": 1655792,
+    "model_threshold": 55091,
+    "model_tune": 54725
+  },
+  "s1_overlap": 0,
+  "target_id_overlap": 0,
+  "prior_pilot_not_fit": 0,
+  "splits": {
+    "model_fit": {
+      "s1": 1655792,
+      "entity_id_sha256": "0677a4f86631f315a9a9e44d6d94e7e4d24f382f9f522d4db283b6b4fca9c659"
+    },
+    "model_tune": {
+      "s1": 54725,
+      "entity_id_sha256": "cda2f771e68a4647d37caa4bee6f20340bd1e35af5953fc0b0b296fa98654fae"
+    },
+    "model_threshold": {
+      "s1": 55091,
+      "entity_id_sha256": "318b2c77c328e11dd69f4f8b87210e434f1fd6aaded5c6354a845845c4c35a2e"
+    }
+  },
+  "model_threshold_firewall": "membership/count/checksum only until model configuration, features, sampling, and training size are frozen"
+}

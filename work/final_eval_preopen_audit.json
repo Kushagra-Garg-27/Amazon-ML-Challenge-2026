@@ -1,0 +1,323 @@
+{
+  "schema_version": 1,
+  "time_utc": "2026-09-26T13:19:05.296499+00:00",
+  "checks": {
+    "frozen": true,
+    "final_s1_count": true,
+    "prior_s1_overlap": true,
+    "target_disjoint_prior_split_audit": true,
+    "no_python_duckdb_jobs": true
+  },
+  "pass": true,
+  "frozen": {
+    "candidate_policy": {
+      "path": "work/final_candidate_policy.json",
+      "expected": "46fd324b3d4db7dbdf5fa4b8ce528f681335ce16f759fb93a39ba5b98a040fea",
+      "actual": "46fd324b3d4db7dbdf5fa4b8ce528f681335ce16f759fb93a39ba5b98a040fea",
+      "pass": true
+    },
+    "normalization": {
+      "path": "code/business_entity_resolution/src/er/normalize.py",
+      "expected": "b3508b600e05e6008ceb7872d7b48e715df935ee7c4bb586d1cd7d5ec02ccedd",
+      "actual": "b3508b600e05e6008ceb7872d7b48e715df935ee7c4bb586d1cd7d5ec02ccedd",
+      "pass": true
+    },
+    "feature_spec": {
+      "path": "work/feature_spec_v1_1.json",
+      "expected": "37982fd6377aa2e36fe1c5dec0484a35c02ba4bcc4e3b67b3a337b33597f6e1f",
+      "actual": "37982fd6377aa2e36fe1c5dec0484a35c02ba4bcc4e3b67b3a337b33597f6e1f",
+      "pass": true
+    },
+    "model": {
+      "path": "work/final_matcher_model.txt",
+      "expected": "76ff78a7cc97e40174b6d631a6eaa062c786f0480c6693fd6387e90be6761d21",
+      "actual": "76ff78a7cc97e40174b6d631a6eaa062c786f0480c6693fd6387e90be6761d21",
+      "pass": true
+    },
+    "matcher_policy": {
+      "path": "work/final_matcher_policy.json",
+      "expected": "ced4ee4133110f5f55c184c3d4020b5087ecac5398bdf9ebfd03f76b3662aba3",
+      "actual": "ced4ee4133110f5f55c184c3d4020b5087ecac5398bdf9ebfd03f76b3662aba3",
+      "pass": true
+    },
+    "matcher_split": {
+      "path": "work/matcher_split_manifest.parquet",
+      "expected": "a883ce97990d77e4971d4e57bb1d06b7eb999eb47c7e4bb4c4cbdf7c4b303804",
+      "actual": "a883ce97990d77e4971d4e57bb1d06b7eb999eb47c7e4bb4c4cbdf7c4b303804",
+      "pass": true
+    },
+    "matcher_manifest": {
+      "path": "work/final_matcher_manifest.json",
+      "expected": "a52fb33a8a6f2964ade4a0946b25b3cbdb780ba54604c4da5a0a13e8983e206a",
+      "actual": "a52fb33a8a6f2964ade4a0946b25b3cbdb780ba54604c4da5a0a13e8983e206a",
+      "pass": true
+    },
+    "feature_order": {
+      "pass": true,
+      "count": 61
+    },
+    "lightgbm": {
+      "expected": "4.7.0",
+      "actual": "4.7.0",
+      "pass": true
+    },
+    "seed_and_batch": {
+      "values": {
+        "development_split": "model_development_v1_20260926",
+        "sample": "model_development_samples_v1_20260926",
+        "lightgbm": 42,
+        "batch_candidates": 200000
+      },
+      "pass": true
+    },
+    "final_eval_split": {
+      "s1": 110341,
+      "id_sha256": "256c997695fe214bb055f2f74faa097c929db22ebcf7ff8bb37707cab382aaac"
+    }
+  },
+  "examined_artifacts": [
+    {
+      "path": "work/model_development_candidates/baseline_dev_base_india.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_candidates/baseline_dev_base_us.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_candidates/baseline_dev_extra_india.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_candidates/baseline_dev_extra_us.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_candidates/model_fit_base_india.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_candidates/model_fit_base_us.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_candidates/model_fit_extra_india.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_candidates/model_fit_extra_us.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_candidates/model_tune_a_us.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_candidates/model_tune_b_us.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_candidates/model_tune_india.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_features/baseline_dev_base_india.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_features/baseline_dev_base_us.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_features/baseline_dev_extra_india.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_features/baseline_dev_extra_us.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_features/model_fit_base_india.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_features/model_fit_base_us.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_features/model_fit_extra_india.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_features/model_fit_extra_us.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_features/model_tune_a_us.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_features/model_tune_b_us.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_features/model_tune_india.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_negative_samples/current_hybrid_tier_a.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_negative_samples/current_hybrid_tier_b.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_negative_samples/current_hybrid_tier_c.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_negative_samples/mined_tier_a.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_negative_samples/mined_tier_b.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_negative_samples/mined_tier_c.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_negative_samples/mixed_tier_a.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_negative_samples/mixed_tier_b.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_negative_samples/mixed_tier_c.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_threshold_candidates/model_threshold_a_india.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_threshold_candidates/model_threshold_a_us.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_threshold_candidates/model_threshold_b_india.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_threshold_candidates/model_threshold_b_us.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_threshold_features/model_threshold_a_india.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_threshold_features/model_threshold_a_us.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_threshold_features/model_threshold_b_india.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_threshold_features/model_threshold_b_us.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_threshold_scores/model_threshold_a_india.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_threshold_scores/model_threshold_a_us.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_threshold_scores/model_threshold_b_india.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_threshold_scores/model_threshold_b_us.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/scores_mining_fit/model_fit_base_india.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/scores_mining_fit/model_fit_base_us.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/scores_mining_fit/model_fit_extra_india.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/scores_mining_fit/model_fit_extra_us.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_samples.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_labels.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_development_generation_selection.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_threshold_selection.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/model_tune_validation_sample.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/feature_pilot_s1.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/feature_pilot_labels.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/final_candidate_provenance.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/scores_frozen_model_tune/model_tune_a_us.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/scores_frozen_model_tune/model_tune_b_us.parquet",
+      "s1_overlap_rows": 0
+    },
+    {
+      "path": "work/scores_frozen_model_tune/model_tune_india.parquet",
+      "s1_overlap_rows": 0
+    }
+  ],
+  "prior_label_audit_target_overlap": 0,
+  "prior_split_caveat": "Split report documents temporary aggregate GT counts during split creation; no final-eval model artifacts or selection used them.",
+  "running_jobs": [],
+  "free_ram_bytes": 3841331200,
+  "free_disk_bytes": 228878204928,
+  "baseline_tests": {
+    "command": ".venv\\Scripts\\python.exe -m unittest discover -s code/business_entity_resolution/tests -v",
+    "tests": 114,
+    "failures": 0,
+    "exit_code": 0
+  }
+}

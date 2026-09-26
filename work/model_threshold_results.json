@@ -1,0 +1,244 @@
+{
+  "pre_threshold_freeze_sha256": "5d7b8de21e40f477c969b3ad2e7675760f5a68ef79833e79d2fec670f2b59c3b",
+  "model_sha256": "76ff78a7cc97e40174b6d631a6eaa062c786f0480c6693fd6387e90be6761d21",
+  "label_info": {
+    "rows": 8621016,
+    "positives": 167511,
+    "s1": 55020,
+    "bytes": 52816966,
+    "sha256": "4f0330ca1505e745b400cd92da13e02549d8dd2a3c31eb4167bf83309d821e05"
+  },
+  "tune_scoring": {
+    "rows": 8580279,
+    "seconds": 23.24281930923462,
+    "parts": [
+      {
+        "input": "work/model_development_features/model_tune_a_us.parquet",
+        "output": "work/scores_frozen_model_tune/model_tune_a_us.parquet",
+        "rows": 2584303,
+        "bytes": 30222913,
+        "sha256": "43b6d87e52bc2341ecd8a0b062d35f6596eaf5b3e1782cffebf0797d0f3a059c",
+        "seconds": 7.52232813835144
+      },
+      {
+        "input": "work/model_development_features/model_tune_b_us.parquet",
+        "output": "work/scores_frozen_model_tune/model_tune_b_us.parquet",
+        "rows": 2635717,
+        "bytes": 30843649,
+        "sha256": "3b65affd082123ad7145036ce8b49ab1576663b3f7a1d89918ce6464b9f5db8b",
+        "seconds": 6.752540826797485
+      },
+      {
+        "input": "work/model_development_features/model_tune_india.parquet",
+        "output": "work/scores_frozen_model_tune/model_tune_india.parquet",
+        "rows": 3360259,
+        "bytes": 40437283,
+        "sha256": "b86b1d136fd7257894cc626116356a0a044bd25fb6c064851cd00f1c87977fc1",
+        "seconds": 8.961935043334961
+      }
+    ]
+  },
+  "threshold_scoring": {
+    "rows": 8621016,
+    "seconds": 21.462211847305298,
+    "parts": [
+      {
+        "input": "work/model_threshold_features/model_threshold_a_india.parquet",
+        "output": "work/model_threshold_scores/model_threshold_a_india.parquet",
+        "rows": 1693224,
+        "bytes": 20427898,
+        "sha256": "d7c7d46fdd10c0ba42c770cbe3c9eff04ee3eda388b9fef1d88ff8edbf14b87a",
+        "seconds": 4.3987205028533936
+      },
+      {
+        "input": "work/model_threshold_features/model_threshold_a_us.parquet",
+        "output": "work/model_threshold_scores/model_threshold_a_us.parquet",
+        "rows": 2620893,
+        "bytes": 30667448,
+        "sha256": "d766ffe5d074fd706059a11e139adfe8b862ace497286b5ec62dd336764fc6f9",
+        "seconds": 6.778002738952637
+      },
+      {
+        "input": "work/model_threshold_features/model_threshold_b_india.parquet",
+        "output": "work/model_threshold_scores/model_threshold_b_india.parquet",
+        "rows": 1694060,
+        "bytes": 20435442,
+        "sha256": "2893b35fa7c506b217fdc58e086fd245cb43cd02c88881824c1884c8585e3ddc",
+        "seconds": 3.9449820518493652
+      },
+      {
+        "input": "work/model_threshold_features/model_threshold_b_us.parquet",
+        "output": "work/model_threshold_scores/model_threshold_b_us.parquet",
+        "rows": 2612839,
+        "bytes": 30547358,
+        "sha256": "b2f67d590e2b2531844465c14f8ffdc5667d3a2b5755d004ce69634ed9c61a18",
+        "seconds": 6.3344807624816895
+      }
+    ]
+  },
+  "source_threshold_analysis": {
+    "s2": {
+      "threshold": 0.7,
+      "pair_f0_5": 0.934951716048176,
+      "precision": 0.9789110790901868,
+      "recall": 0.7925834659921059
+    },
+    "s3": {
+      "threshold": 0.7,
+      "pair_f0_5": 0.9333488330415028,
+      "precision": 0.9789547215342604,
+      "recall": 0.786743015790387
+    },
+    "absolute_gap": 0.0,
+    "eligible": false
+  },
+  "candidate_oracle": {
+    "threshold": 0.5,
+    "macro_f0_5": 0.9496635237984642,
+    "recovered_truth_macro_f0_5": 1.0,
+    "pair_precision": 1.0,
+    "pair_recall": 0.8790828750157438,
+    "recovered_pair_recall": 1.0,
+    "avg_predicted": 3.040623695340437,
+    "empty_prediction_rate": 0.07525730155560799,
+    "singleton_accuracy": 1.0,
+    "india_macro_f0_5": 0.9451954401156173,
+    "us_macro_f0_5": 0.9526661129181824,
+    "s2_precision": 1.0,
+    "s2_recall": 0.8814903924309914,
+    "s3_precision": 1.0,
+    "s3_recall": 0.8768225801528271,
+    "address_missing_recall": 0.7319477434679335,
+    "address_present_recall": 0.8858849625546307,
+    "script_conflict_recall": 0.6532659636789689,
+    "script_same_or_empty_recall": 0.8965154667149059,
+    "prediction_count_distribution": {
+      "0": 4146,
+      "1": 5596,
+      "2": 11558,
+      "3": 13017,
+      "4": 10265,
+      "5": 6194,
+      "6": 2914,
+      "7": 1044,
+      "8": 299,
+      "9": 48,
+      "10": 8,
+      "11": 2
+    }
+  },
+  "policies": {
+    "global": {
+      "best": {
+        "threshold": 0.61,
+        "macro_f0_5": 0.8965041407044979,
+        "recovered_truth_macro_f0_5": 0.944677620576696,
+        "pair_precision": 0.9711587221095335,
+        "pair_recall": 0.8040324950669634,
+        "recovered_pair_recall": 0.914626502140158,
+        "avg_predicted": 2.863625637581456,
+        "empty_prediction_rate": 0.07957742643989037,
+        "singleton_accuracy": 0.8923076923076924,
+        "india_macro_f0_5": 0.8780175534359721,
+        "us_macro_f0_5": 0.9089272799590943,
+        "s2_precision": 0.9714159038155595,
+        "s2_recall": 0.8073392506854808,
+        "s3_precision": 0.970915459950169,
+        "s3_recall": 0.8009279514860451,
+        "address_missing_recall": 0.2749406175771972,
+        "address_present_recall": 0.8284925219071881,
+        "script_conflict_recall": 0.5165495020503807,
+        "script_same_or_empty_recall": 0.8262255788712012,
+        "prediction_count_distribution": {
+          "0": 4384,
+          "1": 7180,
+          "2": 12302,
+          "3": 12735,
+          "4": 9511,
+          "5": 5534,
+          "6": 2370,
+          "7": 821,
+          "8": 209,
+          "9": 35,
+          "10": 8,
+          "11": 1,
+          "12": 1
+        }
+      }
+    },
+    "global_reject_numeric_conflict": {
+      "best": {
+        "threshold": 0.54,
+        "macro_f0_5": 0.7816077504236721,
+        "recovered_truth_macro_f0_5": 0.8259120435212756,
+        "pair_precision": 0.9723164433558659,
+        "pair_recall": 0.6333231873714261,
+        "recovered_pair_recall": 0.7204362698569049,
+        "avg_predicted": 2.2529451271532555,
+        "empty_prediction_rate": 0.16470929915957233,
+        "singleton_accuracy": 0.926923076923077,
+        "india_macro_f0_5": 0.767502698061242,
+        "us_macro_f0_5": 0.7910864620510032,
+        "s2_precision": 0.9709397941710042,
+        "s2_recall": 0.6206392040836233,
+        "s3_precision": 0.9735630066322771,
+        "s3_recall": 0.6452315300007122,
+        "address_missing_recall": 0.3185273159144893,
+        "address_present_recall": 0.6478762655656337,
+        "script_conflict_recall": 0.4544522554188635,
+        "script_same_or_empty_recall": 0.6471316479739508,
+        "prediction_count_distribution": {
+          "0": 9074,
+          "1": 11348,
+          "2": 12377,
+          "3": 10007,
+          "4": 6490,
+          "5": 3618,
+          "6": 1502,
+          "7": 511,
+          "8": 130,
+          "9": 27,
+          "10": 6,
+          "12": 1
+        }
+      }
+    }
+  },
+  "selected": "global",
+  "selected_result": {
+    "threshold": 0.61,
+    "macro_f0_5": 0.8965041407044979,
+    "recovered_truth_macro_f0_5": 0.944677620576696,
+    "pair_precision": 0.9711587221095335,
+    "pair_recall": 0.8040324950669634,
+    "recovered_pair_recall": 0.914626502140158,
+    "avg_predicted": 2.863625637581456,
+    "empty_prediction_rate": 0.07957742643989037,
+    "singleton_accuracy": 0.8923076923076924,
+    "india_macro_f0_5": 0.8780175534359721,
+    "us_macro_f0_5": 0.9089272799590943,
+    "s2_precision": 0.9714159038155595,
+    "s2_recall": 0.8073392506854808,
+    "s3_precision": 0.970915459950169,
+    "s3_recall": 0.8009279514860451,
+    "address_missing_recall": 0.2749406175771972,
+    "address_present_recall": 0.8284925219071881,
+    "script_conflict_recall": 0.5165495020503807,
+    "script_same_or_empty_recall": 0.8262255788712012,
+    "prediction_count_distribution": {
+      "0": 4384,
+      "1": 7180,
+      "2": 12302,
+      "3": 12735,
+      "4": 9511,
+      "5": 5534,
+      "6": 2370,
+      "7": 821,
+      "8": 209,
+      "9": 35,
+      "10": 8,
+      "11": 1,
+      "12": 1
+    }
+  }
+}

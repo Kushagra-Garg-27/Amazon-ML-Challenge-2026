@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "status": "development_freeze_not_final_evaluation",
+  "created_utc": "2026-09-26T12:51:42.078301+00:00",
+  "artifacts": [
+    {
+      "path": "work/final_matcher_model.txt",
+      "bytes": 645272,
+      "sha256": "76ff78a7cc97e40174b6d631a6eaa062c786f0480c6693fd6387e90be6761d21"
+    },
+    {
+      "path": "work/final_matcher_policy.json",
+      "bytes": 5086,
+      "sha256": "ced4ee4133110f5f55c184c3d4020b5087ecac5398bdf9ebfd03f76b3662aba3"
+    },
+    {
+      "path": "work/feature_spec_v1_1.json",
+      "bytes": 12444,
+      "sha256": "37982fd6377aa2e36fe1c5dec0484a35c02ba4bcc4e3b67b3a337b33597f6e1f"
+    },
+    {
+      "path": "work/model_development_split_manifest.parquet",
+      "bytes": 9956744,
+      "sha256": "e597017d0246b01b869b9416f07294a68516d5ecc58fb775a212e36529fcfd56"
+    },
+    {
+      "path": "work/model_development_negative_samples/mined_tier_b.parquet",
+      "bytes": 18344651,
+      "sha256": "a1d6b60028744aa211612268e9b6374c1244893bd9f7e3d591dc829affa21aa2"
+    },
+    {
+      "path": "work/final_matcher_threshold_curve.parquet",
+      "bytes": 15830,
+      "sha256": "25e18d8dd90b3da5f21cacc57d3c03a09b469f8be4d2ea5d6a399241c9759f76"
+    },
+    {
+      "path": "work/matcher_reproducibility.json",
+      "bytes": 1013,
+      "sha256": "18b76318189b9eb48f6a38301bf5cedb94b2f62b0b0202946ec4f43113b0cd6a"
+    }
+  ],
+  "model_final_eval_accessed": false,
+  "grouped_stress_evaluated": false,
+  "test_inference_run": false
+}

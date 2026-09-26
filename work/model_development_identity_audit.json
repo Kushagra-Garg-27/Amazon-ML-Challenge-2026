@@ -1,0 +1,22 @@
+{
+  "candidate_rows": 17981677,
+  "feature_rows": 17981677,
+  "added": 0,
+  "removed": 0,
+  "candidate_duplicates": 0,
+  "feature_duplicates": 0,
+  "by_role": {
+    "baseline_dev": {
+      "s1": 9988,
+      "rows": 1568117
+    },
+    "model_fit": {
+      "s1": 49944,
+      "rows": 7833281
+    },
+    "model_tune": {
+      "s1": 54661,
+      "rows": 8580279
+    }
+  }
+}

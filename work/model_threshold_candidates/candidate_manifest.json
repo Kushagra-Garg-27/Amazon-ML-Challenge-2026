@@ -1,0 +1,39 @@
+{
+  "policy_id": "evidence_source_50_50_heavy100_v1",
+  "pilot_seed": "feature_pilot_v1_20260926",
+  "groups": [
+    {
+      "split": "model_threshold_a",
+      "country": "india",
+      "s1": 11096,
+      "candidates": 1693224,
+      "bytes": 15274497,
+      "wall_seconds": 88.99364852905273
+    },
+    {
+      "split": "model_threshold_a",
+      "country": "us",
+      "s1": 16511,
+      "candidates": 2620893,
+      "bytes": 22823413,
+      "wall_seconds": 129.7954716682434
+    },
+    {
+      "split": "model_threshold_b",
+      "country": "india",
+      "s1": 11046,
+      "candidates": 1694060,
+      "bytes": 15304222,
+      "wall_seconds": 85.13441896438599
+    },
+    {
+      "split": "model_threshold_b",
+      "country": "us",
+      "s1": 16438,
+      "candidates": 2612839,
+      "bytes": 22760772,
+      "wall_seconds": 117.39383149147034
+    }
+  ],
+  "candidates": 8621016
+}

@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "signed_by": "frozen-final-eval-v1",
+  "created_utc": "2026-09-26T13:19:05.299786+00:00",
+  "preopen_audit_sha256": "51d8a866a7f2316550eda6f0d97962c7bad4c223be7c70d7eaf588af1ce4a0f5",
+  "model_sha256": "76ff78a7cc97e40174b6d631a6eaa062c786f0480c6693fd6387e90be6761d21",
+  "matcher_policy_sha256": "ced4ee4133110f5f55c184c3d4020b5087ecac5398bdf9ebfd03f76b3662aba3",
+  "criteria": {
+    "all_integrity_invariants": true,
+    "minimum_macro_f0_5": 0.88,
+    "maximum_macro_drop_vs_threshold": 0.02,
+    "minimum_pair_precision": 0.95,
+    "maximum_country_macro_drop": 0.04,
+    "prediction_subset_of_candidates": true,
+    "duplicate_predictions": 0,
+    "prediction_records_per_s1": 1
+  },
+  "threshold_reference": {
+    "macro_f0_5": 0.8965041407044979,
+    "india_macro_f0_5": 0.8780175534359721,
+    "us_macro_f0_5": 0.9089272799590943,
+    "singleton_accuracy": 0.8923076923076924
+  },
+  "fixed_slices": [
+    "india",
+    "us",
+    "S2",
+    "S3",
+    "both_addresses_present",
+    "either_address_missing",
+    "script_relation",
+    "candidate_provenance",
+    "candidate_rank_bands",
+    "true_match_count_bands"
+  ],
+  "bootstrap": {
+    "seed": 20260926,
+    "replicates": 1000,
+    "unit": "S1",
+    "interval": "percentile_95"
+  },
+  "unseen_key": {
+    "name": "final S1 sorted-name key absent from model_fit S1 sorted-name keys",
+    "strict": "name and exact-address keys both absent"
+  }
+}

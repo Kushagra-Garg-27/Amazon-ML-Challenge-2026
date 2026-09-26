@@ -1,0 +1,26 @@
+{
+  "partition": "model_fit_base_india",
+  "rows": 300238,
+  "original_feature_sha256": "fb2e5934ed58e4c8c596145f6f7340ee6459c3bb35b136d5232c28bca6dd0a9b",
+  "regenerated_feature_sha256": "fb2e5934ed58e4c8c596145f6f7340ee6459c3bb35b136d5232c28bca6dd0a9b",
+  "feature_checksum_equal": true,
+  "model_sha256": "76ff78a7cc97e40174b6d631a6eaa062c786f0480c6693fd6387e90be6761d21",
+  "max_absolute_score_difference": 0.0,
+  "identical_threshold_decisions": true,
+  "identical_prediction_sets": true,
+  "predictions_subset_of_candidates": true,
+  "predicted_pairs": 5606,
+  "materialization": {
+    "input": "work/model_development_candidates/model_fit_base_india.parquet",
+    "output": "work/matcher_reproducibility/model_fit_base_india.parquet",
+    "rows": 300238,
+    "bytes": 11277844,
+    "wall_seconds": 31.09176015853882,
+    "group_seconds": {
+      "exact": 6.399439101001917,
+      "token": 2.0962101996537967,
+      "fuzzy": 7.292858199161856
+    },
+    "peak_temp_bytes": 0
+  }
+}

@@ -1,0 +1,2344 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<title>Amazon ML Challenge 2026 — Master Architecture</title><style>
+  @page { size: A4; margin: 16mm 14mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Segoe UI", Arial, sans-serif; font-size: 10.2pt; line-height: 1.45; color: #1a1a1a; max-width: 100%; }
+  h1 { font-size: 21pt; border-bottom: 3px solid #232f3e; padding-bottom: 6px; color: #232f3e; }
+  h2 { font-size: 15pt; margin-top: 22px; border-bottom: 1px solid #d5d9dd; padding-bottom: 3px; color: #232f3e; page-break-after: avoid; }
+  h3 { font-size: 12pt; color: #37475a; page-break-after: avoid; }
+  h1, h2, h3 { break-inside: avoid; }
+  p, li { orphans: 3; widows: 3; }
+  code { font-family: "Cascadia Code", Consolas, monospace; font-size: 8.8pt; background: #f2f3f5; padding: 1px 4px; border-radius: 3px; }
+  pre.code { background: #f7f8fa; border: 1px solid #dfe2e6; border-left: 4px solid #ff9900; border-radius: 4px; padding: 8px 10px; overflow-x: auto; break-inside: avoid; }
+  pre.code code { background: none; padding: 0; font-size: 8.4pt; }
+  figure.diagram { margin: 12px 0; break-inside: avoid; }
+  figure.diagram figcaption { font-size: 8pt; color: #6a737d; font-style: italic; margin-bottom: 3px; }
+  pre.mermaid-src { background: #eef3f8; border: 1px solid #c7d4e0; border-left: 4px solid #146eb4; border-radius: 4px; padding: 8px 10px; font-family: "Cascadia Code", Consolas, monospace; font-size: 7.9pt; line-height: 1.35; white-space: pre-wrap; word-break: break-word; }
+  table { border-collapse: collapse; width: 100%; font-size: 8.6pt; margin: 10px 0; break-inside: avoid; }
+  th, td { border: 1px solid #cfd4da; padding: 4px 7px; text-align: left; vertical-align: top; }
+  th { background: #232f3e; color: #fff; font-weight: 600; }
+  tr:nth-child(even) td { background: #f6f7f9; }
+  blockquote { border-left: 4px solid #ff9900; margin: 10px 0; padding: 4px 12px; background: #fffaf0; color: #444; }
+  a { color: #146eb4; text-decoration: none; }
+  hr { border: none; border-top: 1px solid #d5d9dd; margin: 18px 0; }
+  strong { color: #111; }
+</style></head>
+<body><h1>Master Technical Architecture &amp; Implementation Blueprint</h1>
+<h2>Amazon ML Challenge 2026 — Business Entity Resolution</h2>
+<blockquote>
+<p><strong>Canonical editable source.</strong> Generated 2026-09-26. Single source of truth for implementation.
+Derived strictly from (a) the official problem statement (<code>ProblemStatement.txt</code> / <code>CHALLENGE.md</code>),
+(b) the current repository state, and (c) the <strong>frozen</strong> candidate-generation design
+(<code>evidence_source_50_50_heavy100_v1</code>). No organizer requirement, dataset fact, benchmark number, or
+repository component is invented; every figure is traceable to a cited artifact. Where the repository
+conflicts with the brief, the discrepancy is reported (see §11, §32), not silently resolved.</p>
+</blockquote>
+<h3>Labeling legend</h3>
+<p>Every architectural element is tagged:</p>
+<ul>
+<li><strong>[ORG]</strong> <em>Organizer Requirement</em> — mandated by the problem statement / validator.</li>
+<li><strong>[PDD]</strong> <em>Project Design Decision</em> — a deliberate choice by this project.</li>
+<li><strong>[ENG]</strong> <em>Engineering Constraint</em> — forced by environment (RAM, OS, licenses).</li>
+<li><strong>[EXP]</strong> <em>Experimental Decision</em> — chosen because a logged experiment supports it.</li>
+<li><strong>[FUT]</strong> <em>Future/Optional Enhancement</em> — planned/optional; not yet built.</li>
+</ul>
+<h3>Build-status legend</h3>
+<ul>
+<li><strong>✅ Existing</strong> — code + artifact present and verified. <strong>🟡 In progress</strong> — scaffold/contract only,
+computation not implemented. <strong>⬜ Planned</strong> — described in plan docs only; no code yet.</li>
+</ul>
+<hr>
+<h2>Table of Contents</h2>
+<ol>
+<li>Executive Summary</li>
+<li>Challenge Overview</li>
+<li>Official Requirements</li>
+<li>Requirement-to-Architecture Traceability</li>
+<li>Problem Definition</li>
+<li>System Goals and Non-Goals</li>
+<li>Data Architecture</li>
+<li>Data Schemas</li>
+<li>Normalization Architecture</li>
+<li>Candidate Generation Architecture</li>
+<li>Frozen Candidate Policy v1</li>
+<li>Candidate Oracle and Quality Ceiling</li>
+<li>Matcher Split Architecture</li>
+<li>Feature Architecture</li>
+<li>Negative Sampling Architecture</li>
+<li>Matcher Architecture</li>
+<li>Entity-Level Decision Architecture</li>
+<li>Evaluation Architecture</li>
+<li>Resource and Scalability Architecture</li>
+<li>Reproducibility Architecture</li>
+<li>Experiment Tracking</li>
+<li>Repository Architecture</li>
+<li>Technology Stack</li>
+<li>End-to-End Implementation Plan</li>
+<li>Final Production Pipeline</li>
+<li>Submission Architecture</li>
+<li>Failure Modes and Safeguards</li>
+<li>Security / Data Governance Constraints</li>
+<li>Architecture Decision Records</li>
+<li>Requirement Traceability Matrix</li>
+<li>Current Project Status</li>
+<li>Future Extensions</li>
+<li>Final Architecture Summary</li>
+</ol>
+<hr>
+<h2>1. Executive Summary</h2>
+<p>This project resolves business entities across <strong>three noisy sources</strong>. <strong>Source 1 (S1) is the
+deduplicated reference [ORG]</strong> — for every S1 entity the system must return all matching S2 and/or S3
+records (zero, one, or many). Two graded TSVs are produced: <code>output/matching_results.tsv</code> (final
+matches — the leaderboard file) and <code>output/candidate_pairs.tsv</code> (the <em>exact</em> candidate set fed to the
+matcher, the last blocking stage). <strong>Both count toward ranking; every matched ID must also appear in
+candidates; smaller per-S1 candidate sets rank higher. [ORG]</strong> The optimization target is <strong>F₀.₅
+computed per S1 then macro-averaged</strong> — precision-heavy (a false merge costs ≈2× a miss); a correctly
+predicted singleton scores exactly <strong>1.0</strong>. <strong>[ORG]</strong></p>
+<p>The architecture is a disciplined <strong>retrieve-then-score</strong> pipeline with a hard internal boundary: a
+<strong>frozen, label-free candidate generation</strong> stage (an immutable upstream contract) feeds a
+<strong>pairwise tabular matcher</strong> and an <strong>S1-level decision policy</strong> that assembles per-entity match sets.
+Candidate generation is deliberately separated from candidate scoring, which is separated from
+entity-level decision-making — three distinct concerns with three distinct evaluation layers.</p>
+<p><strong>Built &amp; verified today (✅):</strong> deterministic <strong>normalization</strong> (<code>normalize.py</code>, frozen SHA
+<code>b3508b60…</code>); <strong>evaluator</strong> (<code>evaluate.py</code>, frozen SHA <code>e99d7f0a…</code>) implementing macro-F₀.₅ exactly
+(spec example reproduces <strong>0.714</strong>); the <strong>candidate-development split</strong> (seed 42, val 220,531) and the
+<strong>matcher split v1</strong> leakage firewall (<code>model_train</code> 1,765,608 / <code>model_calibration</code> 110,341 /
+<code>model_final_eval</code> 110,341 / <code>candidate_dev</code> 220,531; cross-split S1 overlap <strong>0</strong>, labelled-target
+overlap <strong>0</strong>); the <strong>FROZEN candidate policy</strong> <code>evidence_source_50_50_heavy100_v1</code> — <strong>34,568,979</strong>
+candidates over 16 hash partitions, pair recall <strong>0.878084</strong> (recovered <strong>670,785 / 763,919</strong> dev GT
+links), candidates/S1 mean <strong>156.75</strong> / p99 <strong>213</strong> / max <strong>292</strong>, reproduced with <strong>0 added / 0
+removed / 0 duplicate</strong> identities (freeze gate <strong>passed</strong>, manifest checksum <code>221fef24…9465b067</code>);
+the <strong>candidate oracle ceiling</strong> of <strong>macro-F₀.₅ ≈ 0.9486</strong>; and a <strong>65-feature contract</strong>.</p>
+<p><strong>Pilot executed, full-scale pending (🟡):</strong> a <strong>pilot/smoke end-to-end has run</strong> — a 65-feature matrix
+computed on <strong>1,098,300 pilot candidates</strong> (audit 0/0/0), three checksummed negative-sampling policies
+(<code>hybrid_source_balanced</code> selected), and <strong>Deterministic / Logistic / LightGBM-smoke matchers fit and
+thresholded</strong> (pilot macro-F₀.₅ 0.628979 / 0.781286 / 0.851852 — <strong>pilot/calibration numbers, not
+leaderboard, not L4</strong>). Full-scale feature materialization over the model-development splits is
+<strong>actively running</strong> (<code>model_development_features/</code>). This corrects an earlier &quot;scaffold/no <code>.fit</code>&quot;
+draft — see the discrepancy log (§36).</p>
+<p><strong>Planned only (⬜):</strong> full-scale GBM bake-off + hyperparameter search, calibration &amp; threshold tuning on
+the full split, singleton &amp; multi-match decision policy, France zero-shot probes, <strong>test inference</strong>, and
+the two output TSVs (<code>output/</code> is currently <strong>empty</strong>). <code>model_final_eval</code> remains <strong>firewalled and
+untouched</strong> — <strong>no end-to-end L4 score exists</strong> and none is claimed.</p>
+<p><strong>Governance [ORG]:</strong> strictly <strong>no external business-identity lookup, enrichment, geocoding,
+registry, or APIs</strong> (disqualifying); the frozen policy asserts <code>label_use = all false</code>; the final
+model must be <strong>MIT/Apache-2.0, ≤8B params</strong> — satisfied by a tabular GBM, <strong>not</strong> an LLM.</p>
+<hr>
+<h2>2. Challenge Overview</h2>
+<p>The Amazon ML Challenge 2026 Business Entity Resolution task provides three record sources describing
+businesses, plus a ground-truth mapping on the training partition. <strong>[ORG]</strong> The sources are noisy and
+heterogeneous: the <em>same</em> real-world business may appear with transliterated names (Devanagari↔Latin
+in India), accented forms (France), legal-suffix variants (Pvt/Private, Ltd/Limited, Corp/Corporation,
+Sarl/SCI), <code>&amp;</code>↔<code>and</code> substitutions, word-order swaps, typos, leading junk (<code>--</code>, <code>&lt;&lt;</code>), or
+domains-as-names. Roughly 3% of S2/S3 addresses are empty. <strong>[ORG]</strong></p>
+<p><strong>S1 is authoritative and deduplicated [ORG].</strong> The deliverable is, for every S1 entity, the set of
+S2/S3 records that denote the same business. This is fundamentally <strong>one-to-many</strong> entity resolution,
+not record deduplication and not 1:1 linkage: on training data an S1 entity has on average <strong>3.46</strong>
+matches (max <strong>11</strong>), <strong>80.5%</strong> match both an S2 and an S3, and <strong>76.8%</strong> match multiple records within
+a single source. <strong>5.6%</strong> of S1 are true <strong>singletons</strong> (no match at all).</p>
+<p><strong>Two outputs, both graded [ORG].</strong> Unusually, the <em>candidate set itself</em> is a scored deliverable:
+<code>candidate_pairs.tsv</code> must be the exact final blocking output handed to the matcher, and tighter
+per-S1 candidate sets rank higher. This couples the blocking and matching stages: the system cannot
+&quot;over-retrieve then hope the matcher cleans up&quot; without paying a candidate-size penalty.</p>
+<p><strong>Open-set countries [ORG].</strong> Training covers only <strong>US</strong> and <strong>India</strong>; the <strong>test set adds France</strong>
+(~15% of test S1, zero training rows). The architecture must therefore be country-agnostic and
+generalize zero-shot to an unseen country.</p>
+<p><strong>Strict fair-play [ORG].</strong> Learning must come only from the provided data. Any external
+business-identity lookup, enrichment, commercial ER API, government/business registry, geocoding API,
+or internet-based entity enrichment is <strong>disqualifying</strong>. Deterministic local normalization
+(stdlib <code>unicodedata</code>) is permitted; looking up a real business is not.</p>
+<p><strong>Model &amp; resource envelope [ORG/ENG].</strong> The final model must be MIT/Apache-2.0 licensed and ≤8B
+parameters; an LLM is explicitly <em>not</em> the default. The working environment is memory-bound
+(~0.8 GB planning budget of free RAM), mandating out-of-core execution at the scale of millions of
+records and hundreds of millions of candidate pairs (§19).</p>
+<hr>
+<h2>3. Official Requirements</h2>
+<p>Enumerated verbatim-in-intent from <code>ProblemStatement.txt</code> / <code>CHALLENGE.md</code> / <code>validate_submission.py</code>.
+All rows are <strong>[ORG]</strong>.</p>
+<p><strong>Task &amp; matching semantics</strong></p>
+<ul>
+<li>O1. Three sources (S1/S2/S3); <strong>S1 is the deduplicated reference</strong>.</li>
+<li>O2. For each S1 entity, output all matching S2/S3 records — <strong>zero, one, or many</strong>.</li>
+<li>O3. Matches may span both S2 and S3 simultaneously (one-to-many, cross-source).</li>
+<li>O4. <strong>Singletons</strong> exist: an S1 entity may legitimately match nothing.</li>
+</ul>
+<p><strong>Data &amp; schema</strong></p>
+<ul>
+<li>O5. Records have <code>entity_id</code>, <code>business_name</code>, <code>business_address</code>, <code>country</code>; TSV format.</li>
+<li>O6. ID conventions: <code>S1-*</code>, <code>S2-*</code>, <code>S3-*</code> prefixes; S2/S3 namespaces disjoint.</li>
+<li>O7. Ground truth (train only): <code>source1_entity_id</code>, <code>matched_entity_ids</code> (comma-joined; empty = singleton).</li>
+<li>O8. Data is noisy (transliteration, accents, suffixes, typos, junk, domains-as-names, ~3% empty addresses).</li>
+<li>O9. <strong>Open-set country</strong>: test adds France (0 training rows).</li>
+</ul>
+<p><strong>Outputs &amp; validation</strong></p>
+<ul>
+<li>O10. <code>matching_results.tsv</code> — headers exactly <code>source1_entity_id⇥matched_entity_ids</code>; one row per test S1; empty field = singleton.</li>
+<li>O11. <code>candidate_pairs.tsv</code> — headers exactly <code>source1_entity_id⇥candidate_entity_ids</code>; the <strong>exact final candidate set</strong> fed to the matcher.</li>
+<li>O12. <code>candidate_pairs.tsv</code> <strong>counts toward ranking</strong>; <strong>smaller per-S1 candidate sets rank higher</strong>.</li>
+<li>O13. <strong>Every matched ID must appear in <code>candidate_pairs.tsv</code></strong> (matches ⊆ candidates).</li>
+<li>O14. Real TABs; <strong>IDs and S1 keys are NOT stripped</strong> → no stray spaces, no spaces after commas.</li>
+<li>O15. Lists contain only S2-/S3- IDs; no self-matches to S1-; no duplicate IDs in a list; no duplicate S1 rows; every test S1 present; no IDs absent from the test set.</li>
+<li>O16. Validation gate: <code>validate_submission.py --matching … --candidate … --test-dir …</code> must print <code>PASS</code>.</li>
+</ul>
+<p><strong>Metric</strong></p>
+<ul>
+<li>O17. <code>F₀.₅ = (1.25·P·R)/(0.25·P + R)</code>, <strong>per S1 then macro-averaged</strong>.</li>
+<li>O18. Empty truth + empty prediction = <strong>1.0</strong>; any prediction on a true singleton = <strong>0.0</strong>; β=0.5 ⇒ precision ≈2× recall.</li>
+<li>O19. Candidate recall is a diagnostic, <strong>not</strong> the final leaderboard score.</li>
+</ul>
+<p><strong>Model, resources, fair-play</strong></p>
+<ul>
+<li>O20. Final model <strong>MIT/Apache-2.0, ≤8B params</strong>; LLM not the default.</li>
+<li>O21. Solution must <strong>scale</strong> to millions of records / hundreds of millions of pairs.</li>
+<li>O22. <strong>No external identity lookup / enrichment / registry / geocoding / commercial ER APIs</strong> (disqualifying).</li>
+<li>O23. Reproducible from <code>code/</code> alone; pinned versions; fixed seeds.</li>
+</ul>
+<hr>
+<h2>4. Requirement-to-Architecture Traceability</h2>
+<p>Every explicit organizer requirement (§3) maps to an architectural consequence, an implementation
+component, and a verification mechanism. Status is in §30/§31.</p>
+<table>
+<thead>
+<tr>
+<th>Organizer Requirement</th>
+<th>Architectural Consequence</th>
+<th>Implementation Component</th>
+<th>Verification</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>O1 S1 = reference</td>
+<td>Pipeline keyed on S1; one output row per S1</td>
+<td><code>split.py</code>, submission assembler</td>
+<td><code>integrity_report.md</code>: 1 GT row/S1</td>
+</tr>
+<tr>
+<td>O2/O3 zero..many, cross-source</td>
+<td>Per-candidate keep/drop; <strong>no top-1</strong></td>
+<td>matcher + S1 decision policy (§16–17)</td>
+<td>oracle all/some/none recovered counts</td>
+</tr>
+<tr>
+<td>O4 singletons</td>
+<td>Empty-prediction path; conservative τ</td>
+<td>decision policy (§17)</td>
+<td>evaluator empty/empty=1.0</td>
+</tr>
+<tr>
+<td>O5–O7 schema/IDs/GT</td>
+<td>Typed columnar store; id namespaces</td>
+<td><code>io.py</code>, <code>normalize.py</code></td>
+<td><code>integrity_check.py</code> (uniqueness, disjoint)</td>
+</tr>
+<tr>
+<td>O8 noise</td>
+<td>Multi-key deterministic normalization</td>
+<td><code>normalize.py</code> (frozen)</td>
+<td>unit tests; baseline recall lift 0.47→0.88</td>
+</tr>
+<tr>
+<td>O9 open-set country</td>
+<td>country used only as <em>agreement</em>; LOCO probes</td>
+<td>feature spec; §25</td>
+<td><code>country_open_set:true</code>; France path (⬜)</td>
+</tr>
+<tr>
+<td>O10/O11 two TSVs</td>
+<td>Assembler emits both; candidate TSV = frozen artifact</td>
+<td>submission (⬜) + <code>final_candidate_policy_parts</code></td>
+<td><code>validate_submission.py</code> → PASS</td>
+</tr>
+<tr>
+<td>O12 smaller sets rank higher</td>
+<td>source 50/50 + heavy-100 cap</td>
+<td>frozen policy v1 (§11)</td>
+<td>p99 755→213, max 1537→292</td>
+</tr>
+<tr>
+<td>O13 matches ⊆ candidates</td>
+<td>Decision policy only <em>filters</em> candidates</td>
+<td>§17 invariant</td>
+<td>validator subset check</td>
+</tr>
+<tr>
+<td>O14/O15 format rules</td>
+<td>Exact-format writer; no strip</td>
+<td>assembler; validator</td>
+<td>validator FAIL on malformed</td>
+</tr>
+<tr>
+<td>O16 PASS gate</td>
+<td><code>validate_submission.py</code> is release gate</td>
+<td><code>utils/validate_submission.py</code> (✅)</td>
+<td>manual gate run</td>
+</tr>
+<tr>
+<td>O17/O18 macro-F₀.₅</td>
+<td>Per-S1 P/R/F₀.₅ → macro</td>
+<td><code>evaluate.py</code> (frozen ✅)</td>
+<td>spec example → 0.714</td>
+</tr>
+<tr>
+<td>O19 recall ≠ score</td>
+<td>4 distinct eval layers</td>
+<td>oracle (§12), §18</td>
+<td>recall 0.878 vs oracle 0.9486 kept separate</td>
+</tr>
+<tr>
+<td>O20 ≤8B, no LLM</td>
+<td>Tabular GBM plan</td>
+<td><code>matcher/</code> (⬜)</td>
+<td>model card at selection</td>
+</tr>
+<tr>
+<td>O21 scale</td>
+<td>Out-of-core, 16 hash partitions, DuckDB spill</td>
+<td><code>materialize.py</code> (✅)</td>
+<td>RSS ≈648.5 MiB reproduction, spill 0</td>
+</tr>
+<tr>
+<td>O22 fair-play</td>
+<td><code>label_use=false</code>; stdlib-only normalize</td>
+<td>frozen policy; <code>normalize.py</code></td>
+<td>policy manifest assertions</td>
+</tr>
+<tr>
+<td>O23 reproducible</td>
+<td>SHA-256 manifests, seeds, pinned reqs</td>
+<td>manifests, <code>requirements.txt</code></td>
+<td>freeze gate 0/0/0 identity diff</td>
+</tr>
+</tbody></table>
+<p><strong>Diagram D1 — Overall system architecture</strong> (responsibilities annotated; full set in
+<code>work/amazon_ml_challenge_architecture_diagrams.md</code>):</p>
+<figure class="diagram"><figcaption>Diagram source 1 (Mermaid — render via mermaid-cli for graphics)</figcaption><pre class="mermaid-src">flowchart TD
+  DS["Challenge datasets&lt;br/&gt;S1 / S2 / S3 (+GT train only) [ORG]"] --&gt; IV["Data ingestion + validation&lt;br/&gt;typed columnar store, integrity checks"]
+  IV --&gt; NR["Normalization + representations&lt;br/&gt;frozen normalize.py ✅"]
+  NR --&gt; CG["Frozen candidate generation v1&lt;br/&gt;4 label-free passes ✅"]
+  CG --&gt; CA["Candidate artifacts&lt;br/&gt;16 hash partitions, checksummed ✅"]
+  CA --&gt; FE["Pair feature extraction&lt;br/&gt;65-d pilot done, full-scale 🟡"]
+  FE --&gt; CM["Candidate matcher&lt;br/&gt;tabular GBM (smoke fit) 🟡"]
+  CM --&gt; DP["S1-level decision policy&lt;br/&gt;threshold + singleton + multi-match ⬜"]
+  DP --&gt; MR[["matching_results.tsv"]]
+  CA --&gt; CP[["candidate_pairs.tsv (exact set)"]]
+  MR --&gt; VAL["Official validator&lt;br/&gt;validate_submission.py ✅"]
+  CP --&gt; VAL</pre></figure><hr>
+<h2>5. Problem Definition</h2>
+<p><strong>Formal statement [ORG].</strong> Given three record sets — S1 (deduplicated reference), S2, and S3 — each
+record carrying <code>entity_id</code>, <code>business_name</code>, <code>business_address</code>, <code>country</code>, produce for every S1
+entity <em>e</em> the set <code>M(e) ⊆ (S2 ∪ S3)</code> of records denoting the same real-world business. <code>M(e)</code> may be
+empty (singleton), a single record, or many records spanning both S2 and S3. This is <strong>one-to-many,
+cross-source entity resolution</strong> — not deduplication (S1 is already deduplicated) and not 1:1 linkage
+(mean <strong>3.46</strong> matches/S1, max <strong>11</strong>; <code>candidate_refinement_report.md</code>, <code>integrity_report.md</code>).</p>
+<p><strong>Objective [ORG].</strong> Maximize <code>macro-F₀.₅ = mean over S1 of F₀.₅(e)</code>, where per entity
+<code>F₀.₅(e) = (1.25·P(e)·R(e)) / (0.25·P(e) + R(e))</code>, <code>P(e)=|pred∩truth|/|pred|</code>, <code>R(e)=|pred∩truth|/|truth|</code>.
+Edge cases fixed by spec: <strong>empty truth ∧ empty pred = 1.0</strong>; <strong>any non-empty pred on empty truth = 0.0</strong>;
+β=0.5 ⇒ a false merge costs ≈<strong>2×</strong> a miss. The spec worked example evaluates to <strong>0.714</strong>
+(reproduced by frozen <code>evaluate.py</code>, §18).</p>
+<p><strong>Why the metric shapes the whole design [PDD].</strong> Because precision dominates and a true singleton is
+worth a full 1.0 only when left empty, the system is engineered to be <strong>conservative at the decision
+boundary</strong> (§17) and to treat the singleton path as first-class, not an afterthought. Because
+<code>candidate_pairs.tsv</code> is <em>also</em> graded on tightness (O12), the blocking stage cannot over-retrieve to
+protect recall without a size penalty — recall and candidate-size are co-optimized, not traded freely.</p>
+<p><strong>Decomposition [PDD].</strong> The problem factors into three separable sub-problems, each with its own
+evaluation layer (§12, §18):</p>
+<ol>
+<li><strong>Retrieval / blocking</strong> — bound <code>M(e)</code> inside a small candidate set <code>C(e)</code>; measured by <em>pair
+recall</em> and <em>candidate size</em>. (FROZEN, §11.)</li>
+<li><strong>Pairwise scoring</strong> — for each <code>(e, c), c ∈ C(e)</code>, estimate <code>P(match)</code>; measured by pair
+precision/recall on held-out labels. (🟡 piloted — smoke matcher fit; full-scale ⬜)</li>
+<li><strong>Entity decision</strong> — turn per-pair scores into <code>M(e)</code> under the F₀.₅ objective, including the
+singleton call; measured by end-to-end macro-F₀.₅. (⬜)</li>
+</ol>
+<p><strong>Hard invariant [ORG]:</strong> <code>M(e) ⊆ C(e)</code> for every <em>e</em> (O13). The decision stage may only <em>filter</em>
+candidates; it can never introduce an ID absent from <code>candidate_pairs.tsv</code>. This makes retrieval pair
+recall (<strong>0.878084</strong>, §11) a <strong>hard upper bound</strong> on achievable recall, and the candidate oracle
+(<strong>macro-F₀.₅ ≈ 0.9486</strong>, §12) a <strong>hard upper bound</strong> on achievable score for this frozen candidate set.</p>
+<hr>
+<h2>6. System Goals and Non-Goals</h2>
+<p><strong>Goals [PDD unless tagged].</strong></p>
+<ul>
+<li><strong>G1.</strong> Maximize held-out macro-F₀.₅ under the precision-heavy β=0.5 regime <strong>[ORG objective]</strong>.</li>
+<li><strong>G2.</strong> Emit two validator-clean TSVs where <code>matches ⊆ candidates</code> and <code>candidate_pairs.tsv</code> is the
+<em>exact</em> set the matcher scored <strong>[ORG O10–O16]</strong>.</li>
+<li><strong>G3.</strong> Keep per-S1 candidate sets tight (smaller ranks higher) without sacrificing the frozen recall
+ceiling <strong>[ORG O12]</strong> — achieved p99 <strong>213</strong>, max <strong>292</strong> (§11).</li>
+<li><strong>G4.</strong> Generalize zero-shot to <strong>France</strong> (unseen country) — country enters only as an <em>agreement</em>
+signal, never one-hot <strong>[ORG O9]</strong>.</li>
+<li><strong>G5.</strong> Run end-to-end within a <strong>~0.8 GB free-RAM</strong> planning budget at 2M+ S1 / 5M+ S2 / 5M+ S3
+scale via out-of-core execution <strong>[ENG]</strong> (measured peaks §19).</li>
+<li><strong>G6.</strong> Be fully reproducible from <code>code/</code> with pinned versions, fixed seeds, and SHA-256 manifests
+<strong>[ORG O23]</strong>.</li>
+<li><strong>G7.</strong> Preserve a hard <strong>leakage firewall</strong> between matcher training and evaluation splits <strong>[PDD]</strong>.</li>
+</ul>
+<p><strong>Non-Goals.</strong></p>
+<ul>
+<li><strong>N1.</strong> <em>No</em> external business-identity lookup, enrichment, geocoding, registry, or commercial ER API
+— <strong>disqualifying</strong> <strong>[ORG O22]</strong>. The frozen policy asserts <code>label_use = all false</code>.</li>
+<li><strong>N2.</strong> <em>No</em> LLM as the final matcher; the model envelope is MIT/Apache-2.0, ≤8B params, satisfied by
+a tabular GBM <strong>[ORG O20]</strong>.</li>
+<li><strong>N3.</strong> <em>No</em> top-1 / 1:1 assignment — the task is one-to-many; forcing a single best match is
+structurally wrong (76.8% match multiple within one source) <strong>[ORG O3, data]</strong>.</li>
+<li><strong>N4.</strong> <em>No</em> redesign or regeneration of candidate policy v1 — it is a <strong>frozen upstream contract</strong>
+(§11) <strong>[PDD]</strong>.</li>
+<li><strong>N5.</strong> <em>No</em> optimization against a public leaderboard signal; trust the held-out
+<code>model_final_eval</code> split <strong>[PDD]</strong>.</li>
+<li><strong>N6.</strong> <em>No</em> hard-coding of the {US, India} country set; treat country as an open set <strong>[ORG O9]</strong>.</li>
+</ul>
+<p><strong>Design tension explicitly accepted [PDD].</strong> The frozen candidate recall of <strong>0.878084</strong> caps recall:
+~12.2% of true links (<strong>93,134</strong> of 763,919 dev GT links) are unreachable by any downstream matcher.
+This is a deliberate recall-for-precision-and-size trade (§11–§12): the F₀.₅ objective rewards it, and
+the oracle shows the ceiling is still <strong>0.9486</strong>, far above the recall figure — recall loss does not
+translate 1:1 into score loss because most missed links are on entities that still match other records.</p>
+<hr>
+<h2>7. Data Architecture</h2>
+<p><strong>Sources and scale [ORG facts, profiled].</strong> Two disjoint partitions — <strong>train</strong> (labelled) and
+<strong>test</strong> (unlabelled) — each with three record sets (<code>integrity_report.md</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Partition</th>
+<th>S1</th>
+<th>S2</th>
+<th>S3</th>
+<th>Countries</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>train</td>
+<td>2,206,821</td>
+<td>5,034,616</td>
+<td>5,285,603</td>
+<td>{US, India}</td>
+</tr>
+<tr>
+<td>test</td>
+<td>1,732,544</td>
+<td>4,887,273</td>
+<td>5,082,316</td>
+<td>{US, India, <strong>France</strong>}</td>
+</tr>
+</tbody></table>
+<p>Test S1 country breakdown: India <strong>809,986</strong> / US <strong>663,106</strong> / France <strong>259,452</strong> (~15% France, <strong>zero
+training rows</strong> — the open-set challenge, O9). Ground truth exists <strong>train-only</strong>: 7,638,365 matched
+pairs, avg <strong>3.461</strong>/S1, max <strong>11</strong>, singletons <strong>123,247 (5.6%)</strong>; target rows S3- <strong>3,944,746</strong> /
+S2- <strong>3,693,619</strong>.</p>
+<p><strong>Storage strategy [ENG/PDD].</strong> The dominant constraint is <strong>~0.8 GB free RAM</strong> against ~5M-row string
+tables. Therefore:</p>
+<ul>
+<li>Ingest TSV → <strong>typed columnar Parquet</strong> once; never <code>pd.read_csv</code> a full 5M-row string table into RAM.</li>
+<li><strong>Integer-code entity IDs</strong> for joins; keep the string ID only for final emission.</li>
+<li>Big joins run in <strong>DuckDB</strong> with a bounded <code>memory_limit</code> and a <code>temp_directory</code> so hash joins/sorts
+<strong>spill to disk</strong>; scans use <strong>polars streaming/lazy</strong>.</li>
+<li>Candidate materialization is <strong>partitioned into 16 shards</strong> by <code>hash(source1_entity_id) % 16</code> so no
+stage holds the full 34.6M-row candidate table in memory.</li>
+</ul>
+<p><strong>Data integrity guarantees [verified — <code>integrity_check.py</code>, <code>integrity_report.md</code>].</strong></p>
+<ul>
+<li><code>entity_id</code> unique within every file; S2/S3 id namespaces <strong>disjoint</strong>.</li>
+<li>Every GT id resolves in-source (<strong>0 missing</strong>); <strong>0</strong> duplicate S1 GT rows; <strong>0</strong> intra-list dup ids.</li>
+<li><strong>Each S2/S3 record matches ≤1 S1</strong> (cross-S1 sharing = <strong>0</strong>) → splitting on S1 partitions the labels
+with <strong>no target leakage</strong> (the firewall in §13 depends on this fact).</li>
+<li><code>business_name</code> never empty (0); empty <code>business_address</code> S2 ≈ <strong>3.36%</strong> / S3 ≈ <strong>3.33%</strong> (the ~3% in O8).</li>
+</ul>
+<p><strong>Diagram D2 — Data ingestion and integrity flow:</strong></p>
+<figure class="diagram"><figcaption>Diagram source 2 (Mermaid — render via mermaid-cli for graphics)</figcaption><pre class="mermaid-src">flowchart LR
+  RAW["Raw TSV&lt;br/&gt;train + test (S1/S2/S3)"] --&gt; ING["Ingest once&lt;br/&gt;typed columnar Parquet"]
+  ING --&gt; IDC["Integer-code IDs&lt;br/&gt;keep string id for emit"]
+  IDC --&gt; INT["Integrity checks&lt;br/&gt;uniqueness, disjoint ns, GT resolves"]
+  INT --&gt;|"0 missing / 0 dup / ≤1 S1 per target"| OK["Verified store&lt;br/&gt;DuckDB + Parquet"]
+  INT --&gt;|violation| STOP["Halt: report, do not proceed"]</pre></figure><hr>
+<h2>8. Data Schemas</h2>
+<p><strong>Record schema [ORG O5].</strong> All six input files share one schema; TSV with a header row.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>entity_id</code></td>
+<td>string</td>
+<td>Prefixed <code>S1-</code> / <code>S2-</code> / <code>S3-</code> (O6); unique within file; <strong>not stripped</strong> by validator</td>
+</tr>
+<tr>
+<td><code>business_name</code></td>
+<td>string</td>
+<td>Never empty (verified); noisy: translit, accents, suffixes, junk, domains</td>
+</tr>
+<tr>
+<td><code>business_address</code></td>
+<td>string</td>
+<td>~3% empty in S2/S3; free-form</td>
+</tr>
+<tr>
+<td><code>country</code></td>
+<td>string</td>
+<td>Open set; train {US, India}, test adds France</td>
+</tr>
+</tbody></table>
+<p><strong>Ground-truth schema [ORG O7] (train only).</strong></p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>source1_entity_id</code></td>
+<td>string</td>
+<td>One row per train S1; the reference key</td>
+</tr>
+<tr>
+<td><code>matched_entity_ids</code></td>
+<td>string</td>
+<td>Comma-joined S2-/S3- ids; <strong>empty ⇒ singleton</strong></td>
+</tr>
+</tbody></table>
+<p><strong>Output schemas [ORG O10/O11] — validator-exact.</strong></p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Header (real TABs)</th>
+<th>Row semantics</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>output/matching_results.tsv</code></td>
+<td><code>source1_entity_id⇥matched_entity_ids</code></td>
+<td>one row per <strong>test</strong> S1; empty field = singleton</td>
+</tr>
+<tr>
+<td><code>output/candidate_pairs.tsv</code></td>
+<td><code>source1_entity_id⇥candidate_entity_ids</code></td>
+<td>the <strong>exact</strong> last-stage candidate set fed to the matcher</td>
+</tr>
+</tbody></table>
+<p><strong>Format invariants the validator enforces [ORG O14/O15] (breaking any = rejection):</strong></p>
+<ul>
+<li>Real TAB field separator; comma-joined lists with <strong>no space after commas</strong>.</li>
+<li>S1 key and IDs are <strong>not stripped</strong> → emit <strong>no</strong> leading/trailing whitespace.</li>
+<li>Lists contain only S2-/S3- ids; <strong>no</strong> S1 self-matches; <strong>no</strong> duplicate id in a list; <strong>no</strong>
+duplicate S1 rows; <strong>every</strong> test S1 present; <strong>no</strong> id absent from the test set.</li>
+</ul>
+<p><strong>Internal schemas [PDD] (not organizer-facing).</strong></p>
+<ul>
+<li><strong>Candidate artifact</strong> (frozen): <code>(source1_entity_id, candidate_entity_id, provenance_bitmask, evidence_score)</code> across 16 hash-partitioned Parquet parts; <strong>34,568,979</strong> rows total (§11).</li>
+<li><strong>Feature matrix</strong> (🟡 contract only, §14): <code>(pair_key, 65 numeric features, [train-only label])</code>,
+float32-compact.</li>
+<li><strong>Split table</strong> (✅): <code>split_s1.parquet</code> (dev split) + matcher-split assignment (§13).</li>
+</ul>
+<hr>
+<h2>9. Normalization Architecture</h2>
+<p><strong>Status: ✅ Existing, FROZEN.</strong> <code>code/.../normalize.py</code>, SHA-256 <code>b3508b60…</code> (pinned in
+<code>final_candidate_policy_manifest.json</code> as a frozen input). Because candidate generation is frozen on
+top of it, normalization is itself immutable — any change would invalidate the candidate artifact&#39;s
+identity checksum (§11).</p>
+<p><strong>Purpose [PDD].</strong> Collapse the O8 noise classes into stable comparison keys <strong>using only deterministic,
+local, stdlib algorithms</strong> — satisfying fair-play (O22): normalization <em>transforms</em> text, it never
+<em>looks up</em> a business.</p>
+<p><strong>Transform pipeline [PDD/EXP].</strong> Applied to <code>business_name</code> and <code>business_address</code>:</p>
+<ol>
+<li><strong>Unicode fold</strong> — <code>unicodedata</code> NFKD + accent stripping (France accents; O8). Stdlib only.</li>
+<li><strong>Transliteration bridge</strong> — Devanagari↔Latin handling so India records collide on a common key (O8).</li>
+<li><strong>Case / whitespace</strong> — lowercase, collapse runs, strip leading junk (<code>--</code>, <code>&lt;&lt;</code>), trim.</li>
+<li><strong>Punctuation &amp; connective canon</strong> — <code>&amp;</code>↔<code>and</code>, drop non-alphanumerics to spaces.</li>
+<li><strong>Legal-suffix canon</strong> — Pvt/Private, Ltd/Limited, Corp/Corporation, Sarl/SCI, etc. → a canonical
+token or removal, producing a <strong>name-without-suffix</strong> key.</li>
+<li><strong>Domain-as-name</strong> — strip URL/domain scaffolding to the core token.</li>
+<li><strong>Token &amp; sorted-token keys</strong> — token set, and a <strong>sorted-name</strong> key (word-order-swap invariant).</li>
+</ol>
+<p><strong>Derived keys consumed downstream [PDD].</strong> <code>country</code> (agreement only), <code>name_nosuffix</code>, <code>sorted_name</code>,
+<code>name_token set</code>, <code>address_token set</code>, <code>exact_address</code>. These are exactly the keys the four frozen
+retrieval passes block on (§10).</p>
+<p><strong>Evidence it works [EXP — <code>baseline_blocking.md</code>].</strong> Exact <code>(country, name_nosuffix)</code> blocking recovers
+only <strong>47.02%</strong> of val true pairs (US 49%, India 44%); the sorted-key variant <strong>50.61%</strong>. Exact-name
+blocking is <strong>provably insufficient</strong> — this measured gap is the justification for the four-pass fuzzy /
+token / address design (§10), which lifts pair recall to <strong>0.878</strong> (§11). The jump <strong>0.47 → 0.88</strong> is
+the normalization+retrieval architecture&#39;s headline validated result, not an assumption.</p>
+<p><strong>Governance note [ORG].</strong> Nothing here contacts a network, reads an external dataset, or resolves a
+real business. All transforms are pure functions of the input string + Python stdlib tables.</p>
+<hr>
+<h2>10. Candidate Generation Architecture</h2>
+<p><strong>Status: ✅ Existing, FROZEN (design described here; policy numbers in §11).</strong> Label-free by
+construction — <code>label_use = all false</code> in the policy manifest, satisfying O22.</p>
+<p><strong>Four retrieval passes [EXP — <code>candidate_experiment_summary.md</code>].</strong> Each pass blocks S2∪S3 targets to
+each S1 on a different key, then results are unioned and deduplicated. Single-pass val recall:</p>
+<table>
+<thead>
+<tr>
+<th>Pass</th>
+<th>Key</th>
+<th>Provenance bit</th>
+<th>Single-pass recall</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>P1 sorted_name</td>
+<td>word-order-invariant name key</td>
+<td>1</td>
+<td>0.5061</td>
+</tr>
+<tr>
+<td>P2 exact_address</td>
+<td>normalized full address</td>
+<td>2</td>
+<td>0.0832</td>
+</tr>
+<tr>
+<td>P3 name_token</td>
+<td>shared name tokens</td>
+<td>4</td>
+<td>0.5317</td>
+</tr>
+<tr>
+<td>P4 address_token</td>
+<td>shared address tokens</td>
+<td>8</td>
+<td>0.7965</td>
+</tr>
+</tbody></table>
+<p><strong>Provenance bitmask [PDD].</strong> Each surviving <code>(S1, target)</code> pair carries an integer bitmask = OR of the
+passes that produced it (<code>sorted_name=1, exact_address=2, name_token=4, address_token=8</code>). Dedup is a
+bitwise OR over passes, so provenance is preserved without row duplication — and becomes a <strong>feature
+group</strong> for the matcher (§14) at zero extra cost.</p>
+<p><strong>IDF-aware evidence ranking [EXP/PDD].</strong> Token passes over-generate on frequent tokens. Each candidate
+gets <code>evidence_score = Σ_{shared tokens t} 1 / target_df(t)</code> (rare shared tokens weigh more). This score
+drives per-S1 pruning (§11). Ranker pinned as <code>evidence_ranker_v1.json</code> (SHA <code>a0fb606f…</code>); rank shards
+<code>rank_shards</code> (SHA <code>e2db9fd4…</code>, 106,487,165 rows, 128 parts). Cumulative unioned recall before pruning
+reaches <strong>0.9425</strong>; the per-pass-capped canonical union sits at <strong>0.8614</strong> (658,063 recovered) — the
+<em>intermediate</em> figure, distinct from the frozen-final <strong>0.878084</strong> (§11, §33 discrepancy note).</p>
+<p><strong>Diagram D3 — Candidate generation (four passes → union → rank):</strong></p>
+<figure class="diagram"><figcaption>Diagram source 3 (Mermaid — render via mermaid-cli for graphics)</figcaption><pre class="mermaid-src">flowchart TD
+  N["Normalized S1 + S2/S3 keys&lt;br/&gt;frozen normalize.py ✅"] --&gt; P1["P1 sorted_name&lt;br/&gt;bit 1"]
+  N --&gt; P2["P2 exact_address&lt;br/&gt;bit 2"]
+  N --&gt; P3["P3 name_token&lt;br/&gt;bit 4"]
+  N --&gt; P4["P4 address_token&lt;br/&gt;bit 8"]
+  P1 --&gt; U["Union + dedup&lt;br/&gt;provenance = bitwise OR"]
+  P2 --&gt; U
+  P3 --&gt; U
+  P4 --&gt; U
+  U --&gt; R["IDF evidence rank&lt;br/&gt;score = Σ 1/target_df(token)"]
+  R --&gt; PR["Per-S1 pruning + quotas&lt;br/&gt;(frozen policy v1, §11)"]</pre></figure><hr>
+<h2>11. Frozen Candidate Policy v1</h2>
+<p><strong>Status: ✅ Existing, FROZEN — immutable upstream contract.</strong> Policy id
+<strong><code>evidence_source_50_50_heavy100_v1</code></strong>; policy SHA <code>46fd324b…</code>; freeze gate <strong>passed=true</strong>
+(<code>final_candidate_policy_manifest.json</code>, <code>final_candidate_artifact_manifest.json</code>,
+<code>candidate_refinement_report.md</code>). <strong>This section is descriptive only. Do NOT redesign, re-tune, or
+regenerate it</strong> (§28, §36) — doing so breaks every downstream identity checksum.</p>
+<p><strong>Selection [EXP].</strong> 13 candidate policies were compared in <code>candidate_refinement_report.md</code>; the
+selected final policy applies, on top of the ranked four-pass union (§10):</p>
+<ul>
+<li><strong>Source 50/50 quota</strong> — reserve balanced capacity for S2 and S3 targets per S1, so one noisy source
+cannot crowd out the other.</li>
+<li><strong>Heavy sorted-name cap 100</strong> — cap the sorted-name pass at 100 for &quot;heavy&quot; S1 (blocks ≥120 records),
+taming quadratic blow-up on common names while protecting recall.</li>
+</ul>
+<p><strong>Frozen artifact — the graded <code>candidate_pairs.tsv</code> source:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Candidate rows</td>
+<td><strong>34,568,979</strong></td>
+</tr>
+<tr>
+<td>Partitions</td>
+<td><strong>16</strong> by <code>hash(source1_entity_id) % 16</code>; partition_manifest_sha256 <code>221fef24…9465b067</code></td>
+</tr>
+<tr>
+<td>Artifact bytes</td>
+<td>217,174,342</td>
+</tr>
+<tr>
+<td>Recovered GT links (dev)</td>
+<td><strong>670,785 / 763,919</strong></td>
+</tr>
+<tr>
+<td><strong>Pair recall (dev)</strong></td>
+<td><strong>0.878084</strong></td>
+</tr>
+<tr>
+<td>S2 recall / S3 recall</td>
+<td>0.881595 / 0.874805</td>
+</tr>
+<tr>
+<td>India recall / US recall</td>
+<td>0.875810 / 0.879595</td>
+</tr>
+<tr>
+<td>Both-address-present / either-missing</td>
+<td>0.884902 / 0.729202</td>
+</tr>
+<tr>
+<td>Candidates/S1 mean</td>
+<td><strong>156.75</strong></td>
+</tr>
+<tr>
+<td>Candidates/S1 p99 / max</td>
+<td><strong>213 / 292</strong> (from uncapped p99 755 / max 1537)</td>
+</tr>
+<tr>
+<td>Zero-candidate S1s</td>
+<td><strong>230</strong></td>
+</tr>
+<tr>
+<td>Identity reproduction</td>
+<td><strong>0 added / 0 removed / 0 duplicate</strong>, equal=true</td>
+</tr>
+</tbody></table>
+<p><strong>Recall discrepancy — reconciled, not hidden [per §36].</strong> Two recall numbers appear in the evidence
+and are <strong>both correct for different objects</strong>: <strong>0.8614</strong> (658,063 recovered) is the <em>intermediate</em>
+&quot;canonical IDF-100 per-pass-capped union&quot; (<code>candidate_experiment_summary.md</code>); <strong>0.878084</strong> (670,785
+recovered) is the <em>selected final frozen policy</em> <code>evidence_source_50_50_heavy100_v1</code>
+(<code>candidate_refinement_report.md</code>). The frozen-final number supersedes the intermediate; they are not
+in conflict.</p>
+<p><strong>Recall ceiling consequence [ORG O13].</strong> Because <code>matches ⊆ candidates</code>, <strong>0.878084</strong> is a hard recall
+ceiling and the <strong>93,134</strong> unreached links (mostly on either-address-missing pairs, recall 0.729) are
+permanently out of reach for this policy — a bounded, measured, accepted loss (§6, §12, §32).</p>
+<hr>
+<h2>12. Candidate Oracle and Quality Ceiling</h2>
+<p><strong>Status: ✅ Existing (<code>candidate_oracle_report.md</code>).</strong> The oracle answers one question: <em>if the matcher
+were perfect on the frozen candidate set, what macro-F₀.₅ is achievable?</em> It labels each candidate with
+the ground truth and computes the metric — an <strong>upper bound</strong>, not a live score (O19).</p>
+<p><strong>Ceiling for frozen policy v1:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Oracle macro-F₀.₅</strong></td>
+<td><strong>0.948629</strong></td>
+</tr>
+<tr>
+<td>Mean precision</td>
+<td>0.980357</td>
+</tr>
+<tr>
+<td>Mean recall</td>
+<td>0.884090</td>
+</tr>
+<tr>
+<td>India / US oracle F₀.₅</td>
+<td>0.94288 / 0.95244</td>
+</tr>
+</tbody></table>
+<p><strong>Interpretation [PDD].</strong> Oracle recall (0.884) exceeds pair recall (0.878) because macro-F₀.₅ is a
+per-entity mean: an entity that loses one of several links still scores high, so link-level recall loss
+is <strong>sub-linear</strong> in score loss. The <strong>0.9486 ceiling is the number the end-to-end system is measured
+against</strong> — the matcher&#39;s job (§16–17) is to convert as much of the 0.878→0.9486 headroom into realized
+score as precision allows.</p>
+<p><strong>Alternative policies bracket the trade [EXP].</strong> The recall-leaning <strong>75/75</strong> policy raises the ceiling
+to <strong>0.952327</strong>; the compact <strong>37/38</strong> policy still holds <strong>0.946593</strong> at a much smaller candidate size.
+The frozen 50/50+heavy100 choice sits deliberately between them — near-max ceiling, tight size (O12).
+These alternatives are recorded for §32 (future policy v2), <strong>not</strong> grounds to unfreeze v1.</p>
+<p><strong>Four distinct evaluation layers [PDD] — never conflated:</strong></p>
+<figure class="diagram"><figcaption>Diagram source 4 (Mermaid — render via mermaid-cli for graphics)</figcaption><pre class="mermaid-src">flowchart LR
+  L1["L1 Candidate pair recall&lt;br/&gt;0.878084 (diagnostic, O19)"] --&gt; L2["L2 Candidate oracle macro-F₀.₅&lt;br/&gt;0.948629 (score ceiling)"]
+  L2 --&gt; L3["L3 Matcher pair P/R&lt;br/&gt;pilot 0.9365/0.7345 🟡"]
+  L3 --&gt; L4["L4 End-to-end macro-F₀.₅&lt;br/&gt;model_final_eval ⬜"]</pre></figure><p>L1/L2 are frozen and known today; a <strong>pilot L3</strong> exists (smoke matcher); <strong>L4 requires the full matcher
+and is not computed.</strong> Reporting L1 as if it were L4, or
+L4 as if it could exceed L2, is a category error this architecture forbids.</p>
+<hr>
+<h2>13. Matcher Split Architecture</h2>
+<p><strong>Status: ✅ Existing (<code>matcher_split_checksums.json</code>, seed <code>matcher_split_v1_20260926</code>).</strong> A hard
+<strong>leakage firewall</strong> partitioning the labelled train S1 into four disjoint roles so tuning never
+contaminates evaluation (G7).</p>
+<table>
+<thead>
+<tr>
+<th>Split</th>
+<th>S1 count</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>model_train</code></td>
+<td><strong>1,765,608</strong></td>
+<td>fit the matcher</td>
+</tr>
+<tr>
+<td><code>model_calibration</code></td>
+<td><strong>110,341</strong></td>
+<td>probability calibration + threshold τ tuning</td>
+</tr>
+<tr>
+<td><code>model_final_eval</code></td>
+<td><strong>110,341</strong></td>
+<td><strong>untouched</strong> held-out end-to-end macro-F₀.₅</td>
+</tr>
+<tr>
+<td><code>candidate_dev</code></td>
+<td><strong>220,531</strong></td>
+<td>candidate-policy development (the 0.878 recall split, §11)</td>
+</tr>
+</tbody></table>
+<p><strong>Assignment mechanism [PDD].</strong> Deterministic <code>MD5(entity_id ‖ seed) → bucket</code>, so the split is
+reproducible from the id alone and stable across machines. Verified overlap: <strong>cross-split S1 overlap =
+0</strong>; <strong>labelled-target overlap = 0</strong>.</p>
+<p><strong>Why S1-partitioning is leak-safe [verified fact, §7].</strong> Because <strong>each S2/S3 target matches ≤1 S1</strong>
+(cross-S1 sharing = 0), partitioning on S1 also partitions the labelled targets — a target seen in
+<code>model_train</code> cannot reappear as a label in <code>model_final_eval</code>. This is the structural property that
+makes the firewall real, not nominal.</p>
+<p><strong>Honest scope of the firewall [per §36 — <code>foundation_gate_summary.md</code> correction].</strong> Id-uniqueness
+prevents <strong>target-record</strong> leakage; it does <strong>not</strong> prevent <strong>feature-distribution</strong> leakage: <strong>55,627</strong>
+name-keys are shared across splits, and <strong>46.31%</strong> of val S1 share a name-key with train. Therefore the
+grouped-key holdout is a <strong>stress-test diagnostic</strong>, not a guaranteed lower bound on generalization. This
+correction is recorded so no future session mistakes &quot;no target leakage&quot; for &quot;no leakage of any kind.&quot;</p>
+<p><strong>Distribution preserved [EXP].</strong> Each split retains mean_links ≈ <strong>3.46</strong>, the singleton rate, and the
+US/India country mix (per-split stats in the checksums file), so calibration and eval see the true
+match-count distribution.</p>
+<p><strong>Diagram D4 — Split / leakage firewall:</strong></p>
+<figure class="diagram"><figcaption>Diagram source 5 (Mermaid — render via mermaid-cli for graphics)</figcaption><pre class="mermaid-src">flowchart TD
+  GT["Train S1 + GT&lt;br/&gt;2,206,821 S1"] --&gt; H["MD5(entity_id ‖ seed)&lt;br/&gt;deterministic bucket"]
+  H --&gt; MT["model_train&lt;br/&gt;1,765,608"]
+  H --&gt; MC["model_calibration&lt;br/&gt;110,341 (τ tuning)"]
+  H --&gt; ME["model_final_eval&lt;br/&gt;110,341 (locked)"]
+  H --&gt; CD["candidate_dev&lt;br/&gt;220,531 (policy, §11)"]
+  MT -.-&gt;|"S1 overlap 0&lt;br/&gt;target overlap 0"| ME</pre></figure><hr>
+<h2>14. Feature Architecture</h2>
+<p><strong>Status: 🟡 In progress — pilot computed, full-scale materialization underway.</strong> <code>feature_spec_v1</code>
+defines <strong>65 label-free numeric features</strong> in <strong>7 groups</strong>. The matrix is <strong>no longer a scaffold</strong>: a
+<strong>pilot 65-d matrix has been computed</strong> (<code>feature_pilot_audit.json</code>: <strong>1,098,300 candidate rows</strong>,
+added/removed/dup <strong>0/0/0</strong>, null <strong>0</strong>, nan/inf <strong>0</strong>, positives 21,186 / negatives 1,077,114) and
+persisted (<code>feature_pilot_v1_final/*.parquet</code>, split by country). <strong>Full-scale feature materialization
+over the model-development splits is actively running</strong> (<code>model_development_features/</code>: <code>model_fit</code> and
+<code>baseline_dev</code> base features complete; &quot;extra&quot; features complete for India, US in a <code>.partial.parquet</code>
+at last inspection). This is a <strong>discrepancy correction</strong> from the earlier draft, which stated &quot;no
+feature matrix has been computed&quot; — see §36. Full production matrix over all 34,568,979 candidates is
+still pending; <strong>no test-set features exist</strong> and <code>model_final_eval</code> remains firewalled (§13).</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Group</th>
+<th>What it captures</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><strong>provenance</strong></td>
+<td>which of the 4 passes fired (bitmask decomposition, evidence_score, rank)</td>
+<td>§10 bitmask</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>exact</strong></td>
+<td>exact-key agreements (name_nosuffix, sorted_name, full address)</td>
+<td>normalize keys</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>missing_length</strong></td>
+<td>address-missing flags, name/address lengths, length ratios</td>
+<td>raw fields</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>token</strong></td>
+<td>shared-token counts, Jaccard, IDF-weighted overlap, coverage</td>
+<td>token sets</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>numeric</strong></td>
+<td>shared digit sequences (street numbers, unit ids)</td>
+<td>address digits</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>fuzzy</strong></td>
+<td>rapidfuzz ratios (token_sort, token_set, partial) on name/address</td>
+<td>rapidfuzz</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>script</strong></td>
+<td>writing-system agreement (Latin/Devanagari), transliteration-bridge flags</td>
+<td>unicode class</td>
+</tr>
+</tbody></table>
+<p><strong>Design constraints [PDD].</strong></p>
+<ul>
+<li><strong>Label-free features only</strong> — every feature is a pure function of the two records + corpus DF stats;
+no feature peeks at GT (fair-play O22, and prevents trivial leakage).</li>
+<li><strong>Country as agreement, not identity [ORG O9]</strong> — a boolean <code>country_match</code>, never a one-hot of
+{US, India}. This is what lets the model transfer zero-shot to France: France pairs still produce a
+<code>country_match</code> signal even though no France row was ever trained on.</li>
+<li><strong>Missing-aware [O8]</strong> — <code>either_address_missing</code> is explicit; it is the feature most correlated with
+the recall cliff (0.729 vs 0.885, §11), so the matcher must see it rather than infer it.</li>
+<li><strong>Compact dtypes [ENG]</strong> — float32 / small ints; the matrix is built per hash-partition and streamed,
+never fully resident (§19).</li>
+</ul>
+<p><strong>Diagram D5 — Feature extraction (pair → 65-d vector):</strong></p>
+<figure class="diagram"><figcaption>Diagram source 6 (Mermaid — render via mermaid-cli for graphics)</figcaption><pre class="mermaid-src">flowchart LR
+  PAIR["Candidate pair&lt;br/&gt;(S1 record, target record)"] --&gt; G1["provenance"]
+  PAIR --&gt; G2["exact"]
+  PAIR --&gt; G3["missing_length"]
+  PAIR --&gt; G4["token"]
+  PAIR --&gt; G5["numeric"]
+  PAIR --&gt; G6["fuzzy (rapidfuzz)"]
+  PAIR --&gt; G7["script / translit"]
+  G1 --&gt; V["65-d float32 vector&lt;br/&gt;+ train-only label"]
+  G2 --&gt; V
+  G3 --&gt; V
+  G4 --&gt; V
+  G5 --&gt; V
+  G6 --&gt; V
+  G7 --&gt; V</pre></figure><hr>
+<h2>15. Negative Sampling Architecture</h2>
+<p><strong>Status: 🟡 Pilot sampler built and run; full-scale pending.</strong> A negative sampler <strong>exists and has been
+executed at pilot scale</strong>, producing three checksummed policy artifacts (<code>negative_samples/</code>):
+<code>hard.parquet</code> (113,411 rows, 15,072 pos / 98,339 neg, SHA <code>b97d10a0…</code>), <code>random.parquet</code>
+(113,411 rows, SHA <code>8d3a65b5…</code>), and <strong><code>hybrid_source_balanced.parquet</code> — SELECTED</strong> (113,367 rows,
+15,072 pos / 98,295 neg, SHA <code>c34c0f65…</code>). Hard/random use 20 negatives/S1; the selected hybrid uses up
+to 10 hard-ranked negatives from <strong>each</strong> target source (S2, S3) to balance provenance. <strong>All recovered
+positives are retained in every policy.</strong> This corrects the earlier &quot;no sampler code exists yet&quot; draft
+(§36). Full-scale negative sampling over the complete <code>model_fit</code> split is pending.</p>
+<p><strong>Core principle [PDD].</strong> <strong>Negatives are drawn only from the frozen candidate set</strong> — never from the
+full S2∪S3 cross-product. The matcher&#39;s job is to discriminate <em>within the candidates it will actually
+see at inference</em>, so its training distribution must be the candidate distribution, not an artificial
+one.</p>
+<p><strong>Label assignment on candidates [PDD].</strong></p>
+<ul>
+<li><strong>Positives</strong> = candidate pairs that are in the ground truth: <code>GT ∩ candidates</code>. By construction these
+number <strong>670,785</strong> on the dev split (the recovered links, §11).</li>
+<li><strong>Hard negatives</strong> = high-similarity candidate pairs that are <strong>not</strong> in GT (high fuzzy/token overlap,
+low <code>1/df</code> distinctiveness) — the pairs the matcher will most easily confuse; kept in full or
+over-weighted.</li>
+<li><strong>Easy negatives</strong> = low-similarity candidate non-matches — <strong>subsampled</strong> to control class balance
+and matrix size (§19), since they are numerous and cheaply separable.</li>
+</ul>
+<p><strong>Explicit exclusion [PDD, critical].</strong> <strong>Candidate-generation misses are NOT matcher negatives.</strong> A
+true link that blocking failed to retrieve (the ~93,134 unreached, §11) is <em>absent from candidates</em>, so
+it can be neither a positive nor a negative — it is simply outside the matcher&#39;s universe. Treating
+misses as negatives would teach the model to reject true matches and is forbidden.</p>
+<p><strong>Class-balance policy [EXP-to-be].</strong> Target ratio tuned on <code>model_calibration</code> (not <code>model_final_eval</code>);
+GBMs handle moderate imbalance with <code>scale_pos_weight</code>, so the sampler aims for a <em>bounded</em> negative
+multiple rather than 50/50. Final ratio is an experiment to log (§21), not a fixed assumption.</p>
+<p><strong>Diagram D6 — Negative sampling from candidates:</strong></p>
+<figure class="diagram"><figcaption>Diagram source 7 (Mermaid — render via mermaid-cli for graphics)</figcaption><pre class="mermaid-src">flowchart TD
+  CAND["Frozen candidates (dev)&lt;br/&gt;+ GT labels"] --&gt; POS["Positives&lt;br/&gt;GT ∩ candidates = 670,785"]
+  CAND --&gt; HN["Hard negatives&lt;br/&gt;high-sim non-matches (keep)"]
+  CAND --&gt; EN["Easy negatives&lt;br/&gt;low-sim non-matches (subsample)"]
+  MISS["Candidate misses&lt;br/&gt;93,134 unreached"] --&gt;|EXCLUDED| X["not positives, not negatives"]
+  POS --&gt; TR["Matcher training set&lt;br/&gt;(model_train split)"]
+  HN --&gt; TR
+  EN --&gt; TR</pre></figure><hr>
+<h2>16. Matcher Architecture</h2>
+<p><strong>Status: 🟡 In progress — pilot/smoke matchers fit; full-scale bake-off pending.</strong> Contrary to the
+earlier &quot;⬜ Planned / no <code>.fit</code>&quot; draft (corrected here per §36), <strong>three matchers have been fit and
+thresholded at pilot scale</strong> on the negative-sampled pilot set (113,367 sampled rows, 15,072 positives),
+scored on the calibration-dev pilot. These are <strong>pilot/calibration-development numbers only — NOT
+leaderboard, NOT an end-to-end L4 score</strong>, and <code>model_final_eval</code> was <strong>never touched</strong> (§13, §18):</p>
+<table>
+<thead>
+<tr>
+<th>Pilot matcher</th>
+<th align="right">τ</th>
+<th align="right">macro-F₀.₅</th>
+<th align="right">Pair P</th>
+<th align="right">Pair R</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Deterministic rule</td>
+<td align="right">0.56</td>
+<td align="right">0.628979</td>
+<td align="right">0.928970</td>
+<td align="right">0.426153</td>
+<td>floor / feature sanity check</td>
+</tr>
+<tr>
+<td>Logistic (linear logit)</td>
+<td align="right">0.93</td>
+<td align="right">0.781286</td>
+<td align="right">0.859481</td>
+<td align="right">0.702334</td>
+<td>fixed-seed <strong>NumPy</strong> logit — Windows app-control blocked scikit-learn&#39;s compiled <code>_cd_fast</code> DLL</td>
+</tr>
+<tr>
+<td><strong>LightGBM smoke</strong></td>
+<td align="right">0.67</td>
+<td align="right"><strong>0.851852</strong></td>
+<td align="right">0.936502</td>
+<td align="right">0.734491</td>
+<td><strong>one fixed 40-tree / 15-leaf config, no search</strong>; model → <code>work/lightgbm_smoke_v1.txt</code></td>
+</tr>
+</tbody></table>
+<p>These artifacts (<code>baseline_results.json</code>, <code>logistic_baseline_v1.json</code>, <code>lightgbm_smoke.json</code>) confirm the
+progression below has been <em>piloted</em>, not that the production matcher is selected. <strong>No hyperparameter
+search, no full-scale training, no calibration on the full split, and no test inference have run.</strong></p>
+<p><strong>Model choice [ORG O20 / PDD].</strong> A <strong>tabular gradient-boosted tree</strong> (LightGBM 4.7.0 primary, XGBoost
+3.4.1 comparator) over the 65-feature vector (§14). This satisfies the envelope <strong>MIT/Apache-2.0, ≤8B
+params</strong> trivially (a GBM is megabytes, not billions of params) and is <strong>explicitly not an LLM</strong> — the
+brief says an LLM is not the default, and a GBM is the right tool for dense low-dimensional tabular
+signal at hundreds-of-millions-of-pairs scale (O21).</p>
+<p><strong>Empirical progression [PDD — compare before choosing, per working rules].</strong></p>
+<ol>
+<li><strong>Deterministic rule baseline</strong> — thresholded exact/fuzzy agreement; establishes a floor and sanity-
+checks features.</li>
+<li><strong>Logistic regression</strong> — calibrated linear baseline; cheap, interpretable, catches feature bugs.</li>
+<li><strong>GBM (LightGBM / XGBoost)</strong> — the intended production matcher; selected only if it beats the
+baselines on <code>model_calibration</code> by evidence, not assumption.</li>
+</ol>
+<p><strong>Output [PDD].</strong> Per candidate pair, a <strong>calibrated <code>P(match) ∈ [0,1]</code></strong> — <strong>not</strong> a forced top-1. This
+is mandatory: 76.8% of S1 match multiple records in one source (O3, data), so any argmax/1:1 assignment
+structurally caps recall. Calibration (isotonic/Platt on <code>model_calibration</code>) makes the probability
+comparable across entities so a single global threshold τ (§17) is meaningful.</p>
+<p><strong>Scale execution [ENG O21].</strong> Inference runs <strong>per hash-partition</strong> (16 shards): load one partition&#39;s
+feature matrix, score, write <code>P(match)</code>, release. Peak RSS stays bounded (§19); batched scoring, float32
+throughout.</p>
+<p><strong>Model card at selection [ORG].</strong> When the production model is chosen, a card records: family, license,
+param count, features, calibration method, <code>model_final_eval</code> macro-F₀.₅, and the deterministic seed —
+the O20/O23 compliance record. A <strong>pilot smoke model</strong> exists (<code>work/lightgbm_smoke_v1.txt</code>, 40 trees);
+the <strong>production card is not written yet</strong> because no model has been selected and <code>model_final_eval</code> is
+firewalled.</p>
+<p><strong>Diagram D7 — Matcher (candidate → calibrated probability):</strong></p>
+<figure class="diagram"><figcaption>Diagram source 8 (Mermaid — render via mermaid-cli for graphics)</figcaption><pre class="mermaid-src">flowchart LR
+  FM["65-d feature matrix&lt;br/&gt;(per hash-partition)"] --&gt; M["Tabular GBM&lt;br/&gt;LightGBM / XGBoost ⬜"]
+  M --&gt; RAW["raw score"]
+  RAW --&gt; CAL["Calibration&lt;br/&gt;isotonic/Platt on model_calibration"]
+  CAL --&gt; P["Calibrated P(match) per pair&lt;br/&gt;NOT top-1"]
+  P --&gt; DEC["→ S1 decision policy (§17)"]</pre></figure><hr>
+<h2>17. Entity-Level Decision Architecture</h2>
+<p><strong>Status: ⬜ Planned.</strong> Converts per-pair <code>P(match)</code> (§16) into the final per-S1 match set <code>M(e)</code> under
+the F₀.₅ objective. This is where the precision-heavy metric is actually <em>won or lost</em>.</p>
+<p><strong>Threshold policy [PDD].</strong> A single <strong>global, calibrated threshold τ</strong>, tuned on <code>model_calibration</code> to
+maximize macro-F₀.₅, then <strong>locked</strong> before touching <code>model_final_eval</code>. Because β=0.5 weights precision
+≈2× recall, the optimum τ is <strong>deliberately high</strong> — the system prefers to drop a marginal candidate
+than risk a false merge.</p>
+<p><strong>Per-candidate keep/drop [ORG O2/O3].</strong> For each S1, keep <strong>every</strong> candidate with <code>P(match) ≥ τ</code> — zero,
+one, or many, spanning S2 and S3 freely. <strong>No argmax, no per-source cap at decision time.</strong> The one-to-
+many structure is honored by thresholding, not ranking.</p>
+<p><strong>Singleton path [ORG O4 — first-class].</strong> If <strong>no</strong> candidate clears τ, emit an <strong>empty</strong> match set. A
+correct empty prediction scores a full <strong>1.0</strong>; a single false positive on a true singleton scores
+<strong>0.0</strong>. With 5.6% true singletons, the empty path is a direct, high-leverage contributor to macro-F₀.₅
+— it is engineered explicitly, not left to fall out of thresholding.</p>
+<p><strong>Multi-match refinement [PDD/FUT].</strong> Optional post-threshold logic to be validated on
+<code>model_calibration</code> only: e.g., a light per-S1 consistency check when accepted candidates disagree
+strongly. Any such rule ships <strong>only</strong> if it lifts held-out macro-F₀.₅; otherwise plain thresholding
+stands.</p>
+<p><strong>Hard invariant [ORG O13].</strong> The decision stage may only <strong>filter</strong> candidates. <code>M(e) ⊆ C(e)</code> always;
+it can never emit an id absent from <code>candidate_pairs.tsv</code>. This guarantees the submission&#39;s
+matches-⊆-candidates check passes by construction.</p>
+<p><strong>Diagram D8 — S1-level decision:</strong></p>
+<figure class="diagram"><figcaption>Diagram source 9 (Mermaid — render via mermaid-cli for graphics)</figcaption><pre class="mermaid-src">flowchart TD
+  P["Calibrated P(match)&lt;br/&gt;for each candidate of S1 e"] --&gt; T{"P ≥ τ ?&lt;br/&gt;(τ tuned on calibration)"}
+  T --&gt;|"none clear τ"| S["Emit empty set&lt;br/&gt;singleton = 1.0 if true (O4)"]
+  T --&gt;|"≥1 clears τ"| K["Keep all that clear τ&lt;br/&gt;0..many, S2+S3 (O2/O3)"]
+  K --&gt; INV["Invariant: M(e) ⊆ C(e) (O13)"]
+  S --&gt; OUT[["matching_results.tsv row"]]
+  INV --&gt; OUT</pre></figure><hr>
+<h2>18. Evaluation Architecture</h2>
+<p><strong>Status: ✅ Existing, FROZEN.</strong> <code>code/.../evaluate.py</code>, SHA-256 <code>e99d7f0a…</code> (pinned frozen input). It
+implements macro-F₀.₅ <strong>exactly</strong> per O17/O18 and <strong>reproduces the spec worked example → 0.714</strong>, which
+is the correctness gate for the whole scoring stack.</p>
+<p><strong>What it computes [ORG O17/O18].</strong> Per S1: <code>P = |pred∩truth|/|pred|</code>, <code>R = |pred∩truth|/|truth|</code>,
+<code>F₀.₅ = (1.25·P·R)/(0.25·P+R)</code>; then the <strong>macro-average</strong> over all S1. Edge cases hard-coded: empty
+truth ∧ empty pred = <strong>1.0</strong>; non-empty pred on empty truth = <strong>0.0</strong>; empty pred on non-empty truth =
+0.0.</p>
+<p><strong>Four evaluation layers, four purposes [PDD — §12]:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Question</th>
+<th>Number today</th>
+<th>Uses labels?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>L1 candidate pair recall</td>
+<td>did blocking retrieve the true links?</td>
+<td><strong>0.878084</strong></td>
+<td>dev GT (diagnostic, O19)</td>
+</tr>
+<tr>
+<td>L2 candidate oracle F₀.₅</td>
+<td>best possible score on this candidate set?</td>
+<td><strong>0.948629</strong></td>
+<td>dev GT (ceiling)</td>
+</tr>
+<tr>
+<td>L3 matcher pair P/R</td>
+<td>is the classifier accurate per pair?</td>
+<td>🟡 <strong>pilot</strong> (GBM-smoke P 0.9365 / R 0.7345)</td>
+<td>pilot calibration-dev GT</td>
+</tr>
+<tr>
+<td>L4 end-to-end macro-F₀.₅</td>
+<td>the actual leaderboard-shaped score</td>
+<td>⬜</td>
+<td><code>model_final_eval</code> (locked)</td>
+</tr>
+</tbody></table>
+<p><strong>Pilot L3 exists; L4 does not [per §36].</strong> The smoke matcher produced <strong>pilot</strong> pair P/R and per-entity
+macro-F₀.₅ (0.851852) on the <strong>calibration-development</strong> pilot — an L3-type diagnostic, explicitly <strong>not</strong>
+L4. <code>model_final_eval</code> was never scored.</p>
+<p><strong>Discipline [ORG O19 / PDD].</strong> L1 is a <strong>diagnostic, not the score</strong> — recall ≠ leaderboard. Only <strong>L4
+on <code>model_final_eval</code></strong> is the honest estimate of competition performance, and it is reported <strong>once</strong>,
+after τ is locked, to avoid overfitting the eval split (§13). Only a <strong>pilot L3</strong> diagnostic exists; <strong>no
+L4 number exists yet and none is claimed</strong> (§36).</p>
+<p><strong>Country-wise + open-set reporting [ORG O9].</strong> Evaluation is sliced by country. For the <strong>France</strong>
+zero-shot path, planned <strong>leave-one-country-out (LOCO)</strong> probes train on {US} or {India} and evaluate on
+the held-out country as a proxy for France generalization (⬜, §25). Today only candidate-layer country
+recall is known (India 0.8758 / US 0.8796, §11).</p>
+<p><strong>Release gate [ORG O16].</strong> Separately from scoring, <code>validate_submission.py</code> (§26) is the format gate;
+a run is release-eligible only when it prints <strong>PASS</strong> <em>and</em> the L4 estimate is recorded.</p>
+<hr>
+<h2>19. Resource and Scalability Architecture</h2>
+<p><strong>Dominant constraint [ENG].</strong> ~<strong>0.8 GB free RAM</strong> against ~5M-row string tables and <strong>hundreds of
+millions</strong> of candidate pairs pre-prune (O21). Every stage is designed out-of-core.</p>
+<p><strong>Out-of-core techniques [ENG].</strong></p>
+<ul>
+<li><strong>DuckDB</strong> for big joins with a bounded <code>memory_limit</code> + <code>temp_directory</code> → hash joins/sorts <strong>spill
+to disk</strong> rather than OOM.</li>
+<li><strong>polars streaming/lazy</strong> scans; <strong>pyarrow</strong> Parquet as the on-disk columnar format.</li>
+<li><strong>Integer-coded IDs</strong>, <strong>float32 / small-int</strong> feature dtypes, <strong>scipy sparse</strong> where applicable.</li>
+<li><strong>16 hash partitions</strong> (<code>hash(source1_entity_id) % 16</code>) so no stage materializes the full 34.6M-row
+candidate table; features and inference run <strong>per shard</strong>.</li>
+<li><strong>Atomic <code>.partial</code> writes</strong> + <strong>per-part SHA-256</strong> → restart/resume without corruption (§20).</li>
+</ul>
+<p><strong>Measured memory — reported honestly, NOT conflated [per §36].</strong> Distinct operations have distinct
+peaks; none should be described as &quot;comfortable&quot;:</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Peak RSS</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Production candidate reproduction</td>
+<td>≈ <strong>648.5 MiB</strong></td>
+<td>temp spill 0, exit 0, identity 0/0/0 (§11)</td>
+</tr>
+<tr>
+<td>Foundation steps</td>
+<td>600–680 MiB</td>
+<td>ingest/normalize/split</td>
+</tr>
+<tr>
+<td>Full candidate_generation audit (full materialization)</td>
+<td>≈ <strong>1.27 GiB</strong></td>
+<td>DuckDB spill enabled</td>
+</tr>
+<tr>
+<td>Projected full-scale test inference</td>
+<td>&lt; <strong>1.1 GiB</strong></td>
+<td>projection, ⬜ not yet measured</td>
+</tr>
+</tbody></table>
+<p><strong>Discrepancy surfaced [per §36].</strong> The audit peak (<strong>≈1.27 GiB</strong>) and projected inference (<strong>&lt;1.1 GiB</strong>)
+<strong>exceed the ~0.8 GB planning budget</strong>. They complete only because DuckDB spills to disk; the budget is a
+<em>resident</em> target, not a hard ceiling on peak. This is a real risk for full-scale test inference (§27)
+and must be validated, not assumed away.</p>
+<p><strong>A prior &quot;137 MB&quot; claim was corrected [per §36 — <code>foundation_gate_summary.md</code>]</strong> to the true process
+peak ≈<strong>600–680 MiB</strong>; the smaller figure measured only a sub-step, not the process.</p>
+<p><strong>Diagram D9 — Resource / partition strategy:</strong></p>
+<figure class="diagram"><figcaption>Diagram source 10 (Mermaid — render via mermaid-cli for graphics)</figcaption><pre class="mermaid-src">flowchart TD
+  BIG["S1×(S2∪S3) evidence&lt;br/&gt;hundreds of millions pre-prune"] --&gt; DUCK["DuckDB bounded memory_limit&lt;br/&gt;+ temp_directory spill"]
+  DUCK --&gt; HP["16 hash partitions&lt;br/&gt;hash(source1_entity_id)%16"]
+  HP --&gt; S0["shard 0"]
+  HP --&gt; SE["…"]
+  HP --&gt; S15["shard 15"]
+  S0 --&gt; PROC["per-shard: features → score&lt;br/&gt;load, compute, write, release"]
+  S15 --&gt; PROC
+  PROC --&gt; ATOM[".partial atomic write&lt;br/&gt;+ per-part SHA-256 (resume-safe)"]</pre></figure><hr>
+<h2>20. Reproducibility Architecture</h2>
+<p><strong>Status: ✅ Existing for frozen stages.</strong> Reproducibility is enforced by <strong>content-addressed
+manifests</strong>, fixed seeds, and pinned versions — the O23 compliance mechanism.</p>
+<p><strong>Manifest chain [PDD].</strong> Every frozen artifact pins the SHA-256 of its inputs <em>and</em> its outputs, so the
+whole candidate stage is verifiable end-to-end:</p>
+<ul>
+<li><code>final_candidate_policy_manifest.json</code> — pins <strong>normalize.py</strong> <code>b3508b60…</code>, <strong>evaluate.py</strong> <code>e99d7f0a…</code>,
+<code>split_s1.parquet</code> <code>d01e4811…</code> (2,206,821 rows), <code>evidence_ranker_v1.json</code> <code>a0fb606f…</code>, <code>rank_shards</code>
+<code>e2db9fd4…</code> (106,487,165 rows / 128 parts); policy <code>46fd324b…</code>.</li>
+<li><code>final_candidate_artifact_manifest.json</code> — 16 parts (part-00…15) with per-part rows/bytes/sha256;
+row_count <strong>34,568,979</strong>; partition_manifest_sha256 <code>221fef24…9465b067</code>.</li>
+<li><code>matcher_split_checksums.json</code> — split seed <code>matcher_split_v1_20260926</code>, per-split counts + <code>entity_id_sha256</code>.</li>
+</ul>
+<p><strong>Freeze gate [PDD].</strong> Regenerating the candidate artifact and diffing identities yields <strong>0 added / 0
+removed / 0 duplicate</strong>, <code>equal=true</code> → freeze gate <strong>passed</strong>. This is the objective proof the artifact
+is reproducible bit-for-bit from <code>code/</code>, and the reason it may be treated as an immutable contract
+(§11).</p>
+<p><strong>Determinism controls [PDD/ENG].</strong></p>
+<ul>
+<li><strong>Fixed seeds</strong> — candidate-dev split seed 42; matcher split seed <code>matcher_split_v1_20260926</code>; model
+seeds to be pinned at training (⬜).</li>
+<li><strong>Pinned versions</strong> — <code>requirements.txt</code> pins numpy 2.5.3 / pandas 3.0.6 / scikit-learn 1.9.1 /
+rapidfuzz 3.14.6 / lightgbm 4.7.0 / xgboost 3.4.1 / polars 1.44.2 / pyarrow 25.0.1 / duckdb 1.5.5.</li>
+<li><strong>Deterministic hashing</strong> — <code>MD5(entity_id‖seed)</code> splits and <code>hash()%16</code> partitions reproduce identically.</li>
+<li><strong>Runtime</strong> — <code>.venv</code> Python <strong>3.12</strong> (system 3.14 lacks wheels); <code>PYTHONUTF8=1</code>;
+<code>sys.stdout.reconfigure(utf-8, replace)</code> in every script (Windows UTF-8 safety).</li>
+</ul>
+<p><strong>Reproduction command [ORG O23].</strong> The policy manifest carries the exact regeneration command; running
+it must reproduce the checksum <code>221fef24…9465b067</code>. Experiment tracking (§21) is append-only, so any run
+is auditable after the fact.</p>
+<p><strong>Diagram D10 — Reproducibility / artifact chain:</strong></p>
+<figure class="diagram"><figcaption>Diagram source 11 (Mermaid — render via mermaid-cli for graphics)</figcaption><pre class="mermaid-src">flowchart LR
+  SEED["Fixed seeds + pinned reqs&lt;br/&gt;Python 3.12, PYTHONUTF8=1"] --&gt; INP["Frozen inputs (SHA-pinned)&lt;br/&gt;normalize / evaluate / split / ranker"]
+  INP --&gt; GEN["Candidate generation (frozen policy)"]
+  GEN --&gt; ART["16-part artifact&lt;br/&gt;34,568,979 rows"]
+  ART --&gt; MAN["Manifests + per-part SHA-256"]
+  MAN --&gt; GATE{"Freeze gate&lt;br/&gt;0 added / 0 removed / 0 dup?"}
+  GATE --&gt;|"equal=true"| PASS["Reproducible ✅ (checksum 221fef24…)"]
+  GATE --&gt;|diff| FAIL["Not reproducible: investigate"]</pre></figure><hr>
+<h2>21. Experiment Tracking</h2>
+<p><strong>Status: ✅ Existing (append-only ledger) + ✅ narrative reports.</strong> Every measured claim in this
+document traces to a logged run, per the working rule <em>measure, never assume</em>.</p>
+<p><strong>Ledger [PDD].</strong> <code>work/ledger.duckdb</code> — an <strong>append-only</strong> DuckDB store of runs: policy/experiment id,
+inputs (with SHA), metrics (recall, size, reduction-ratio, oracle F₀.₅, runtime, peak RSS), and outcome.
+Append-only so history cannot be silently rewritten to fit a narrative.</p>
+<p><strong>Narrative reports [PDD] — the human-readable evidence trail:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Report</th>
+<th>What it fixes as evidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>integrity_report.md</code></td>
+<td>dataset scale, GT distribution, referential integrity (§7)</td>
+</tr>
+<tr>
+<td><code>baseline_blocking.md</code></td>
+<td>exact-block recall 0.4702 / sorted 0.5061 (§9 justification)</td>
+</tr>
+<tr>
+<td><code>candidate_experiment_summary.md</code></td>
+<td>single-pass + cumulative recall; intermediate 0.8614 (§10)</td>
+</tr>
+<tr>
+<td><code>candidate_refinement_report.md</code></td>
+<td>13 policies; selected 0.878084 / 34.6M (§11)</td>
+</tr>
+<tr>
+<td><code>candidate_oracle_report.md</code></td>
+<td>ceiling 0.948629 + alternatives (§12)</td>
+</tr>
+<tr>
+<td><code>foundation_gate_summary.md</code></td>
+<td><strong>corrections</strong>: memory ~600–680 MiB; leakage scope (§13, §19)</td>
+</tr>
+</tbody></table>
+<p><strong>Why not MLflow [PDD].</strong> A hosted tracker adds a service dependency and RAM overhead for no benefit at
+this scale; a checksummed append-only DuckDB ledger + committed markdown reports give full auditability
+within the memory budget and the &quot;runnable from <code>code/</code>&quot; constraint (O23). Recorded as a deliberate
+decision (ADR-011, §29), revisitable if the team grows.</p>
+<p><strong>Discipline encoded [PDD].</strong> A claim enters this architecture only with a citable run; corrections
+(the two in <code>foundation_gate_summary.md</code>) are logged as first-class events, not edits — so &quot;137 MB→
+600–680 MiB&quot; and the leakage-scope re-scoping are part of the permanent record (§36).</p>
+<hr>
+<h2>22. Repository Architecture</h2>
+<p><strong>Principle [ORG O23].</strong> Everything needed to reproduce the submission lives under <code>code/</code>; <code>work/</code>
+holds manifests/reports/ledger; <code>dataset/</code> and <code>output/</code> are data in/out. Status markers reflect
+<strong>actual</strong> repo evidence (§31), not intent.</p>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Role</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>code/.../normalize.py</code></td>
+<td>frozen deterministic normalization (SHA <code>b3508b60…</code>)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>code/.../evaluate.py</code></td>
+<td>frozen macro-F₀.₅ evaluator (SHA <code>e99d7f0a…</code>, →0.714)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>code/.../split.py</code></td>
+<td>candidate-dev split (seed 42) + matcher split v1</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>code/.../materialize.py</code></td>
+<td>16-partition candidate materialization (out-of-core)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>matcher/</code> split tables + firewall; pilot matchers (<code>lightgbm_smoke_v1.txt</code>, logistic, deterministic) fit</td>
+<td>pilot done; full-scale ⬜</td>
+<td>🟡</td>
+</tr>
+<tr>
+<td>feature extraction</td>
+<td><code>feature_spec_v1</code> 65-d; pilot matrix computed (1,098,300 rows, audit 0/0/0); full-scale materialization running</td>
+<td>🟡</td>
+</tr>
+<tr>
+<td>negative sampler</td>
+<td>candidate-only sampling; 3 policies run (<code>negative_samples/*.parquet</code>), <code>hybrid_source_balanced</code> selected</td>
+<td>🟡</td>
+</tr>
+<tr>
+<td>S1 decision policy</td>
+<td>threshold + singleton + multi-match</td>
+<td>⬜</td>
+</tr>
+<tr>
+<td>submission assembler</td>
+<td>emits the two TSVs, exact format</td>
+<td>⬜</td>
+</tr>
+<tr>
+<td><code>utils/validate_submission.py</code></td>
+<td>official format gate (→PASS)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>scripts/integrity_check.py</code>, <code>scripts/profile_dataset.py</code></td>
+<td>profiling/integrity</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>work/*.json</code>, <code>work/*.md</code>, <code>work/ledger.duckdb</code></td>
+<td>manifests, reports, experiment ledger</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>dataset/{train,test}/</code></td>
+<td>inputs (S1/S2/S3 [+GT train])</td>
+<td>✅ (data)</td>
+</tr>
+<tr>
+<td><code>output/</code></td>
+<td><code>matching_results.tsv</code>, <code>candidate_pairs.tsv</code></td>
+<td><strong>⬜ empty</strong></td>
+</tr>
+</tbody></table>
+<p><strong>CLI surface [PDD].</strong> A single <code>er</code> entrypoint with subcommands mirrors the pipeline stages:
+<code>split | analyze-gt | block | features | train | predict | evaluate | submit | validate</code>. Stages
+<code>split</code>/<code>block</code> are backed by existing code; <code>features</code>/<code>train</code>/<code>predict</code>/<code>submit</code> are the planned
+modules above.</p>
+<p><strong>Module boundaries [PDD].</strong> The three hard concerns — <strong>candidate generation</strong> (frozen), <strong>pairwise
+scoring</strong>, <strong>entity decision</strong> — are separate modules with separate manifests and separate evaluation
+layers (§12/§18), so freezing one does not entangle the others. This is what lets policy v1 be immutable
+while the matcher is still unbuilt.</p>
+<hr>
+<h2>23. Technology Stack</h2>
+<p>All libraries are permissive-licensed (MIT/BSD/Apache), satisfying O20 for the shipped stack. Versions
+are pinned (§20). Status = whether the component is <em>actively used today</em> (✅) or <em>reserved for a planned
+stage</em> (⬜).</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Technology</th>
+<th>Role</th>
+<th>Why Used</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Runtime</td>
+<td>Python <strong>3.12</strong> (<code>.venv</code>)</td>
+<td>interpreter</td>
+<td>system 3.14 lacks wheels; 3.12 has all binaries</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Normalization</td>
+<td><strong>stdlib <code>unicodedata</code></strong></td>
+<td>deterministic folding/translit</td>
+<td>fair-play: transform, never look up (O22)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Columnar store</td>
+<td><strong>pyarrow 25.0.1</strong> / Parquet</td>
+<td>typed on-disk store</td>
+<td>avoids loading 5M-row string tables into RAM</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Out-of-core SQL</td>
+<td><strong>duckdb 1.5.5</strong></td>
+<td>big joins, spill to disk</td>
+<td>joins hundreds of M pairs under 0.8 GB budget (O21)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>DataFrame</td>
+<td><strong>polars 1.44.2</strong></td>
+<td>streaming/lazy scans</td>
+<td>low-memory columnar ops</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Fuzzy strings</td>
+<td><strong>rapidfuzz 3.14.6</strong></td>
+<td>token_sort/set/partial ratios</td>
+<td>fast C++ fuzzy features (§14 fuzzy group)</td>
+<td>🟡 (contract)</td>
+</tr>
+<tr>
+<td>Numerics</td>
+<td><strong>numpy 2.5.3 / scipy 1.18.1</strong></td>
+<td>arrays, sparse matrices</td>
+<td>compact dtypes, sparse overlap</td>
+<td>✅ / 🟡</td>
+</tr>
+<tr>
+<td>GBM (primary)</td>
+<td><strong>lightgbm 4.7.0</strong></td>
+<td>tabular matcher</td>
+<td>≤8B, fast, MIT; not an LLM (O20)</td>
+<td>🟡 smoke fit (<code>lightgbm_smoke_v1.txt</code>)</td>
+</tr>
+<tr>
+<td>GBM (comparator)</td>
+<td><strong>xgboost 3.4.1</strong></td>
+<td>matcher comparison</td>
+<td>empirical model bake-off</td>
+<td>⬜</td>
+</tr>
+<tr>
+<td>Calibration/LR</td>
+<td><strong>scikit-learn 1.9.1</strong></td>
+<td>logistic baseline, isotonic/Platt</td>
+<td>calibrated P(match), baselines (§16)</td>
+<td>⚠️ compiled <code>_cd_fast</code> DLL blocked by Windows app-control; pilot LR ran via fixed-seed NumPy logit</td>
+</tr>
+<tr>
+<td>Experiment log</td>
+<td><strong>duckdb</strong> (<code>work/ledger.duckdb</code>)</td>
+<td>append-only run ledger</td>
+<td>auditable, no service dependency (§21)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Validation</td>
+<td><code>utils/validate_submission.py</code></td>
+<td>official format gate</td>
+<td>O16 PASS gate</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Docs/diagrams</td>
+<td><strong>mermaid-cli (mmdc) 12.0.0</strong>, <strong>node 24.19.0</strong></td>
+<td>render diagrams → PNG, md → PDF</td>
+<td>local, no external service (§26 build)</td>
+<td>✅ (tooling)</td>
+</tr>
+</tbody></table>
+<p><strong>Deliberately excluded [PDD].</strong> No deep-learning framework, no vector DB, no hosted tracker, <strong>no LLM</strong>
+in the scored pipeline — each would add memory/latency/licensing/fair-play risk without evidence of
+benefit at this scale. <code>pandas 3.0.6</code> is available but <strong>not</strong> used for full-table string loads (ENG
+rule); DuckDB/polars handle scale.</p>
+<hr>
+<h2>24. End-to-End Implementation Plan</h2>
+<p>Phases with status from <strong>actual repo evidence</strong> (§31); COMPLETED requires a verified artifact.
+Traceable to <code>ULTRA_PLAN.md</code> (Phases 0–18) and <code>IMPLEMENTATION_PLAN.md</code> (ER-001…ER-032, a backlog with
+no done-markers).</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Work</th>
+<th>Status</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>Environment, pinned deps, UTF-8 harness</td>
+<td><strong>COMPLETED</strong></td>
+<td><code>.venv</code> 3.12, <code>requirements.txt</code></td>
+</tr>
+<tr>
+<td>1</td>
+<td>Ingest + profile + integrity</td>
+<td><strong>COMPLETED</strong></td>
+<td><code>integrity_report.md</code> (0 violations)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Frozen normalization</td>
+<td><strong>COMPLETED</strong></td>
+<td><code>normalize.py</code> SHA <code>b3508b60…</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Frozen evaluator (→0.714)</td>
+<td><strong>COMPLETED</strong></td>
+<td><code>evaluate.py</code> SHA <code>e99d7f0a…</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Baseline blocking (recall 0.47)</td>
+<td><strong>COMPLETED</strong></td>
+<td><code>baseline_blocking.md</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Four-pass retrieval + IDF rank</td>
+<td><strong>COMPLETED</strong></td>
+<td><code>candidate_experiment_summary.md</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Policy refinement + <strong>freeze v1</strong></td>
+<td><strong>COMPLETED</strong></td>
+<td><code>candidate_refinement_report.md</code>, freeze gate</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Candidate oracle ceiling</td>
+<td><strong>COMPLETED</strong></td>
+<td><code>candidate_oracle_report.md</code> (0.9486)</td>
+</tr>
+<tr>
+<td>7b</td>
+<td>Matcher split + firewall</td>
+<td><strong>COMPLETED</strong></td>
+<td><code>matcher_split_checksums.json</code> (overlap 0)</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Feature matrix computation</strong> (65-d)</td>
+<td><strong>PILOT DONE / full-scale IN PROGRESS</strong></td>
+<td>pilot 1,098,300 rows (audit 0/0/0); <code>model_development_features/</code> materializing 🟡</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Negative sampling from candidates</td>
+<td><strong>PILOT DONE</strong></td>
+<td>3 policies run; <code>hybrid_source_balanced</code> selected 🟡</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Matcher bake-off (rule→LR→GBM)</td>
+<td><strong>PILOT/SMOKE DONE / full-scale NEXT</strong></td>
+<td>pilot fits 0.629/0.781/0.852; no search yet 🟡</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Calibration + threshold τ tuning</td>
+<td><strong>NEXT</strong></td>
+<td>on <code>baseline_dev</code>/<code>model_tune</code>/<code>model_threshold</code> ⬜</td>
+</tr>
+<tr>
+<td>12</td>
+<td>S1 decision policy (singleton/multi)</td>
+<td><strong>NEXT</strong></td>
+<td>⬜</td>
+</tr>
+<tr>
+<td>13</td>
+<td>LOCO / France zero-shot probes</td>
+<td><strong>FUTURE</strong></td>
+<td>§25 ⬜</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Full-scale test inference (per shard)</td>
+<td><strong>FUTURE</strong></td>
+<td>memory risk §27 ⬜</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Submission assembly (two TSVs)</td>
+<td><strong>FUTURE</strong></td>
+<td><code>output/</code> empty ⬜</td>
+</tr>
+<tr>
+<td>16</td>
+<td>Validate → PASS + final L4 report</td>
+<td><strong>FUTURE</strong></td>
+<td>gate §26 ⬜</td>
+</tr>
+</tbody></table>
+<p><strong>Critical path now [PDD].</strong> Phase 8 (feature computation) unblocks 9→10→11→12; only after a τ is locked
+on <code>model_calibration</code> do Phases 13–16 run. <strong>No phase ≥8 may touch <code>model_final_eval</code></strong> except the
+single final L4 read (§13/§18).</p>
+<p><strong>Diagram D11 — Training pipeline (build-time):</strong></p>
+<figure class="diagram"><figcaption>Diagram source 12 (Mermaid — render via mermaid-cli for graphics)</figcaption><pre class="mermaid-src">flowchart TD
+  A["Frozen candidates + labels&lt;br/&gt;(model_train split)"] --&gt; B["Phase 8 features 65-d 🟡"]
+  B --&gt; C["Phase 9 negatives from candidates ⬜"]
+  C --&gt; D["Phase 10 GBM bake-off ⬜"]
+  D --&gt; E["Phase 11 calibrate + tune τ&lt;br/&gt;on model_calibration ⬜"]
+  E --&gt; F["Phase 12 decision policy ⬜"]
+  F --&gt; G["Lock model + τ → single L4 read&lt;br/&gt;on model_final_eval (§18)"]</pre></figure><hr>
+<h2>25. Final Production Pipeline</h2>
+<p><strong>Status: ⬜ Planned</strong> (frozen stages ✅ feed it). This is the <strong>test-time</strong> path that produces the two
+submission files for the <strong>1,732,544</strong> test S1 (incl. <strong>259,452</strong> France).</p>
+<p><strong>Steps [PDD].</strong></p>
+<ol>
+<li><strong>Ingest + normalize test</strong> — same frozen <code>normalize.py</code> (✅) on test S1/S2/S3; identical keys.</li>
+<li><strong>Candidate generation on test</strong> — apply the <strong>frozen policy v1</strong> (§11) to produce test candidates,
+16 hash partitions. <code>candidate_pairs.tsv</code> is written <strong>directly from this exact set</strong> (O11/O13).</li>
+<li><strong>Feature extraction</strong> — 65-d vectors per candidate, per shard (§14, Phase 8).</li>
+<li><strong>Matcher scoring</strong> — locked GBM → calibrated <code>P(match)</code> per candidate, per shard (§16).</li>
+<li><strong>Decision</strong> — global locked τ; keep-all-≥τ; empty-set singleton path (§17).</li>
+<li><strong>Assemble</strong> — emit <code>matching_results.tsv</code> (<code>M(e) ⊆ C(e)</code>) and <code>candidate_pairs.tsv</code>; exact format (§26).</li>
+<li><strong>Validate</strong> — <code>validate_submission.py</code> must print <strong>PASS</strong> (§26, O16).</li>
+</ol>
+<p><strong>France zero-shot handling [ORG O9 / PDD].</strong> No code path special-cases France. It generalizes because:
+(a) normalization is country-agnostic (accent-fold covers France, §9); (b) candidate generation is
+label-free and key-based, so France blocks like any country; (c) the matcher sees <strong><code>country_match</code> as
+agreement</strong>, never a {US, India} one-hot, so a France pair is in-distribution for the features even
+though no France row was trained on. <strong>LOCO probes</strong> (Phase 13) estimate the generalization gap before
+trusting the France slice.</p>
+<p><strong>Inference resource note [ENG/§27].</strong> Step 4 is the memory-risk stage (projected &lt;1.1 GiB vs 0.8 GiB
+budget, §19); it runs strictly <strong>per shard</strong> with release-between-shards and DuckDB spill, and must be
+<strong>measured</strong> at full scale before the final run — not assumed.</p>
+<p><strong>Diagram D12 — Test / inference pipeline (produces both TSVs):</strong></p>
+<figure class="diagram"><figcaption>Diagram source 13 (Mermaid — render via mermaid-cli for graphics)</figcaption><pre class="mermaid-src">flowchart TD
+  T["Test S1/S2/S3&lt;br/&gt;1,732,544 S1 (France 259,452)"] --&gt; NZ["Normalize (frozen) ✅"]
+  NZ --&gt; CGT["Candidate gen — frozen policy v1 ✅&lt;br/&gt;16 shards"]
+  CGT --&gt; CPQ[["candidate_pairs.tsv (exact set) O11/O13"]]
+  CGT --&gt; FET["Features 65-d per shard 🟡"]
+  FET --&gt; SC["GBM → calibrated P(match) ⬜"]
+  SC --&gt; DEC["Global τ + singleton path ⬜"]
+  DEC --&gt; MRT[["matching_results.tsv"]]
+  MRT --&gt; V["validate_submission.py → PASS ✅"]
+  CPQ --&gt; V</pre></figure><hr>
+<h2>26. Submission Architecture</h2>
+<p><strong>Status: assembler ⬜ / validator ✅.</strong> Two files, both graded (O10–O13), both format-gated (O14–O16).</p>
+<p><strong>Exact output contract [ORG].</strong></p>
+<ul>
+<li><code>output/matching_results.tsv</code> — header <code>source1_entity_id⇥matched_entity_ids</code> (real TAB); <strong>one row
+per test S1</strong>; empty field = singleton.</li>
+<li><code>output/candidate_pairs.tsv</code> — header <code>source1_entity_id⇥candidate_entity_ids</code>; the <strong>exact</strong> frozen
+candidate set the matcher scored (§11/§25).</li>
+</ul>
+<p><strong>Writer rules the assembler must obey [ORG O14/O15] (any breach = rejection):</strong></p>
+<ul>
+<li>Real TAB separator; comma-joined lists with <strong>no space after commas</strong>.</li>
+<li><strong>No leading/trailing whitespace</strong> on the S1 key or ids (validator does not strip).</li>
+<li>Only S2-/S3- ids; no S1 self-match; no duplicate id in a list; no duplicate S1 row; <strong>every</strong> test S1
+present; no id absent from the test set.</li>
+<li><code>M(e) ⊆ C(e)</code> for every row (O13) — guaranteed because decision only filters candidates (§17).</li>
+</ul>
+<p><strong>Release gate [ORG O16].</strong></p>
+<pre class="code"><code>.venv/Scripts/python utils/validate_submission.py --matching output/matching_results.tsv --candidate output/candidate_pairs.tsv --test-dir dataset/test</code></pre><p>Must print <strong>PASS</strong>. A run is release-eligible only when the validator passes <strong>and</strong> the L4
+<code>model_final_eval</code> macro-F₀.₅ is recorded (§18).</p>
+<p><strong>Diagram D13 — Submission / validation:</strong></p>
+<figure class="diagram"><figcaption>Diagram source 14 (Mermaid — render via mermaid-cli for graphics)</figcaption><pre class="mermaid-src">flowchart TD
+  DEC["Decision output M(e)"] --&gt; WM["Write matching_results.tsv&lt;br/&gt;exact format, no strip"]
+  FROZ["Frozen candidate artifact"] --&gt; WC["Write candidate_pairs.tsv&lt;br/&gt;exact set"]
+  WM --&gt; SUB{"validate_submission.py"}
+  WC --&gt; SUB
+  SUB --&gt;|PASS| REL["Release-eligible&lt;br/&gt;(+ record L4 macro-F₀.₅)"]
+  SUB --&gt;|FAIL| FIX["Reject: fix format, re-run"]</pre></figure><hr>
+<h2>27. Failure Modes and Safeguards</h2>
+<table>
+<thead>
+<tr>
+<th>Failure Mode</th>
+<th>Detection</th>
+<th>Prevention</th>
+<th>Recovery</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>OOM at full-scale inference</strong> (peak &gt;0.8 GB budget; §19)</td>
+<td>RSS monitor per shard; DuckDB spill counter</td>
+<td>16-shard per-partition processing; bounded <code>memory_limit</code>+<code>temp_directory</code>; float32</td>
+<td>resume from last <code>.partial</code> shard; shrink shard/batch; add spill</td>
+</tr>
+<tr>
+<td><strong>False merge</strong> (β=0.5 costs ≈2×)</td>
+<td>precision on <code>model_calibration</code>; per-S1 F₀.₅</td>
+<td>high τ; precision-weighted tuning; hard-negative training (§15)</td>
+<td>raise τ; re-tune on calibration only</td>
+</tr>
+<tr>
+<td><strong>Over-predicting on true singletons</strong> (→0.0)</td>
+<td>singleton-slice F₀.₅</td>
+<td>first-class empty path; conservative τ (§17)</td>
+<td>raise τ; audit singleton false-positives</td>
+</tr>
+<tr>
+<td><strong>Candidate recall ceiling</strong> (12.2% links unreachable; §11)</td>
+<td>oracle vs recall layers (§12)</td>
+<td>accepted, bounded trade; not fixable without unfreezing v1</td>
+<td>policy v2 experiment (§32) — never edit v1</td>
+</tr>
+<tr>
+<td><strong>France zero-shot collapse</strong> (0 train rows; O9)</td>
+<td>LOCO probes (Phase 13)</td>
+<td>country-agnostic normalize; agreement-only country feature</td>
+<td>fall back to deterministic-rule matcher for France slice</td>
+</tr>
+<tr>
+<td><strong>Split leakage</strong> (feature-distribution, not target; §13)</td>
+<td>cross-split name-key audit (55,627 shared)</td>
+<td>S1-partition (target-safe); grouped-key stress test</td>
+<td>report as diagnostic; discount optimistic val</td>
+</tr>
+<tr>
+<td><strong>Submission format rejection</strong> (O14/O15)</td>
+<td><code>validate_submission.py</code> → FAIL</td>
+<td>exact-format writer; no strip; subset check</td>
+<td>fix writer; re-validate before release</td>
+</tr>
+<tr>
+<td><strong>Matches ⊄ candidates</strong> (O13 breach)</td>
+<td>validator subset check</td>
+<td>decision only filters candidates (§17 invariant)</td>
+<td>drop offending ids; re-emit</td>
+</tr>
+<tr>
+<td><strong>Non-reproducible artifact</strong> (O23)</td>
+<td>freeze gate identity diff</td>
+<td>SHA-pinned manifests; fixed seeds; pinned reqs</td>
+<td>regenerate from <code>code/</code>; diff to <code>221fef24…</code></td>
+</tr>
+<tr>
+<td><strong>Fair-play violation</strong> (external lookup; O22)</td>
+<td>code review; <code>label_use=false</code> assertion</td>
+<td>stdlib-only normalize; no network in pipeline</td>
+<td>remove offending path; <strong>disqualifying if shipped</strong></td>
+</tr>
+<tr>
+<td><strong>Eval-split overfitting</strong></td>
+<td>single locked L4 read</td>
+<td>τ tuned only on calibration; <code>model_final_eval</code> locked</td>
+<td>never re-tune against final eval</td>
+</tr>
+</tbody></table>
+<p><strong>Standing safeguard [PDD/§28].</strong> The frozen stages (normalize, evaluate, candidate policy v1, splits)
+are checksum-guarded; any accidental edit is caught by a manifest mismatch <strong>before</strong> it can propagate
+into a submission.</p>
+<hr>
+<h2>28. Security / Data Governance Constraints</h2>
+<p><strong>Fair-play is the top governance rule [ORG O22 — disqualifying].</strong> Learning comes <strong>only</strong> from the
+provided data. Prohibited and absent from every code path: external business-identity lookup,
+enrichment, commercial ER APIs, government/business registries, geocoding APIs, external company
+datasets, any internet-based entity enrichment. <strong>Permitted:</strong> deterministic local normalization via
+stdlib <code>unicodedata</code>. The distinction is enforced conceptually and asserted in the policy manifest
+(<code>label_use = all false</code>); transforming a string is allowed, <strong>resolving a real business is not</strong>.</p>
+<p><strong>No network in the scored pipeline [PDD].</strong> The candidate→feature→matcher→decision→submit path makes no
+outbound calls. Web access is reserved for <strong>generic technical documentation only</strong>, never to
+resolve/enrich a business.</p>
+<p><strong>Label governance [PDD/§13].</strong> Ground truth exists train-only. The matcher-split firewall ensures GT
+touches <code>model_train</code>/<code>model_calibration</code> for fitting/tuning and reaches <code>model_final_eval</code> <strong>once</strong> for
+the honest estimate. <strong>Test labels are never accessed</strong> (there are none to access) and <strong>no full-scale
+test inference has been run</strong> (§31/§37).</p>
+<p><strong>Immutability governance [PDD/§20].</strong> Frozen inputs (normalize <code>b3508b60…</code>, evaluate <code>e99d7f0a…</code>, split
+<code>d01e4811…</code>, ranker <code>a0fb606f…</code>) and the candidate artifact (<code>221fef24…9465b067</code>) are SHA-pinned. Editing
+any of them <strong>must</strong> be caught by a manifest mismatch; freezing exists precisely so a later session
+cannot silently alter the contract (§36).</p>
+<p><strong>Secrets / PII [ENG].</strong> The data is business names/addresses, not credentials; no <code>.env</code>/secret files
+are read by the pipeline. Business text is handled as data, emitted only into the two output TSVs.</p>
+<p><strong>Model licensing [ORG O20].</strong> Only MIT/Apache-2.0, ≤8B components ship. The tabular GBM plan and every
+listed library (§23) comply; an LLM is excluded from the scored pipeline.</p>
+<p><strong>Reproducibility-as-governance [ORG O23].</strong> Because the whole frozen stage is content-addressed and the
+ledger is append-only, any reviewer can independently verify that what ran is what is documented — the
+integrity guarantee behind every number in this document.</p>
+<hr>
+<h2>29. Architecture Decision Records</h2>
+<p>Each ADR: <strong>Context / Decision / Alternatives / Consequences / Evidence-status.</strong></p>
+<p><strong>ADR-001 — Retrieve-then-score with a hard frozen boundary.</strong></p>
+<ul>
+<li><em>Context:</em> one-to-many ER over 2M+×10M+ records under 0.8 GB RAM; blocking is separately graded (O12).</li>
+<li><em>Decision:</em> three separated concerns — frozen candidate generation → pairwise matcher → S1 decision —
+each with its own manifest and evaluation layer.</li>
+<li><em>Alternatives:</em> monolithic end-to-end learned matcher; single-stage rules.</li>
+<li><em>Consequences:</em> candidate stage can be frozen/immutable while the matcher is still unbuilt; clean
+freeze gates; slight duplication of key logic across stages.</li>
+<li><em>Evidence:</em> <strong>Strong</strong> — freeze gate passed, four eval layers operational (§11/§12).</li>
+</ul>
+<p><strong>ADR-002 — Freeze candidate policy v1 as an immutable upstream contract.</strong></p>
+<ul>
+<li><em>Context:</em> candidate set is a graded deliverable and the recall ceiling for everything downstream.</li>
+<li><em>Decision:</em> freeze <code>evidence_source_50_50_heavy100_v1</code> (34,568,979 rows, recall 0.878084) and forbid
+edits; downstream builds against its checksum.</li>
+<li><em>Alternatives:</em> keep candidates fluid until the matcher exists; co-optimize blocking+matching jointly.</li>
+<li><em>Consequences:</em> stable target for feature/matcher work; reproducible; <strong>caps recall at 0.878</strong> (bounded
+loss, §6/§11); improvements require a <em>new</em> policy v2, never an edit.</li>
+<li><em>Evidence:</em> <strong>Strong</strong> — identity reproduction 0/0/0, <code>equal=true</code>.</li>
+</ul>
+<p><strong>ADR-003 — Optimize macro-F₀.₅ directly, precision-first.</strong></p>
+<ul>
+<li><em>Context:</em> β=0.5 ⇒ precision ≈2× recall; correct singleton = 1.0; false merge = 0.0.</li>
+<li><em>Decision:</em> high locked τ, precision-weighted tuning, first-class singleton path.</li>
+<li><em>Alternatives:</em> F₁-style balance; recall-max blocking then aggressive keep.</li>
+<li><em>Consequences:</em> conservative predictions; singleton accuracy directly lifts score; some recall
+deliberately foregone.</li>
+<li><em>Evidence:</em> <strong>Strong (metric)</strong> — <code>evaluate.py</code> reproduces spec 0.714; τ tuning ⬜.</li>
+</ul>
+<p><strong>ADR-004 — Country as an agreement feature, never a one-hot.</strong></p>
+<ul>
+<li><em>Context:</em> test adds France with <strong>0</strong> training rows (open set, O9).</li>
+<li><em>Decision:</em> single <code>country_match</code> boolean; no {US, India} encoding anywhere.</li>
+<li><em>Alternatives:</em> one-hot country; per-country models.</li>
+<li><em>Consequences:</em> France pairs stay in-distribution zero-shot; slightly less country-specific signal.</li>
+<li><em>Evidence:</em> <strong>Medium</strong> — design enforced; LOCO/France probes ⬜ (§25).</li>
+</ul>
+<p><strong>ADR-005 — Tabular GBM as the matcher, not an LLM.</strong></p>
+<ul>
+<li><em>Context:</em> O20 caps the model at MIT/Apache-2.0, ≤8B, LLM-not-default; signal is dense low-dim tabular.</li>
+<li><em>Decision:</em> LightGBM primary, XGBoost comparator, over 65 features; LR + rule baselines first.</li>
+<li><em>Alternatives:</em> fine-tuned small LLM; deep tabular nets; pure rules.</li>
+<li><em>Consequences:</em> megabyte-scale model, fast per-shard inference under budget, trivially compliant;
+needs good hand-designed features.</li>
+<li><em>Evidence:</em> <strong>Medium</strong> — envelope fit certain; a <strong>pilot LightGBM-smoke fit exists</strong> (macro-F₀.₅ 0.851852 on the calibration-dev pilot, <code>lightgbm_smoke.json</code>), but the production bake-off/search is not run (§16, §36).</li>
+</ul>
+<p><strong>ADR-006 — Per-candidate thresholding, never top-1.</strong></p>
+<ul>
+<li><em>Context:</em> mean 3.46 matches/S1; 76.8% match multiple within one source (O3).</li>
+<li><em>Decision:</em> keep every candidate with <code>P(match) ≥ τ</code>; 0..many; no argmax/1:1.</li>
+<li><em>Alternatives:</em> top-1; per-source top-k.</li>
+<li><em>Consequences:</em> honors one-to-many; requires calibrated cross-entity probabilities.</li>
+<li><em>Evidence:</em> <strong>Strong (structural)</strong> — GT distribution measured (§7); mechanism ⬜.</li>
+</ul>
+<p><strong>ADR-007 — Negatives drawn only from the candidate set.</strong></p>
+<ul>
+<li><em>Context:</em> matcher only ever sees candidates at inference; misses are outside its universe.</li>
+<li><em>Decision:</em> positives = GT∩candidates; hard negatives = high-sim non-matches; easy negatives
+subsampled; <strong>candidate misses excluded</strong>.</li>
+<li><em>Alternatives:</em> sample negatives from full cross-product; treat misses as negatives.</li>
+<li><em>Consequences:</em> train distribution = inference distribution; avoids teaching rejection of true matches.</li>
+<li><em>Evidence:</em> <strong>Medium</strong> — design fixed; sampler ⬜ (§15).</li>
+</ul>
+<p><strong>ADR-008 — Leakage firewall by deterministic S1 partition.</strong></p>
+<ul>
+<li><em>Context:</em> tuning must not contaminate the honest estimate; each S2/S3 target maps to ≤1 S1.</li>
+<li><em>Decision:</em> <code>MD5(entity_id‖seed)</code> → {model_train, model_calibration, model_final_eval, candidate_dev};
+<code>model_final_eval</code> read once.</li>
+<li><em>Alternatives:</em> random row split; k-fold on pairs.</li>
+<li><em>Consequences:</em> target-leak-free by construction; <strong>does not</strong> remove feature-distribution overlap
+(55,627 shared name-keys) — grouped-key holdout is a stress test, not a bound.</li>
+<li><em>Evidence:</em> <strong>Strong</strong> — overlaps 0/0 verified; leakage-scope correction logged (§13).</li>
+</ul>
+<p><strong>ADR-009 — Out-of-core everything; 16 hash partitions + DuckDB spill.</strong></p>
+<ul>
+<li><em>Context:</em> ~0.8 GB free RAM vs hundreds of millions of pairs (O21/ENG).</li>
+<li><em>Decision:</em> Parquet columnar, integer IDs, float32, DuckDB <code>memory_limit</code>+spill, 16 shards, atomic
+<code>.partial</code> + per-part SHA.</li>
+<li><em>Alternatives:</em> in-RAM pandas; a bigger machine (unavailable).</li>
+<li><em>Consequences:</em> fits budget with disk spill; resume-safe; <strong>peaks still exceed 0.8 GB</strong> on full
+materialization (≈1.27 GiB) and projected inference (&lt;1.1 GiB) — must be measured (§19/§27).</li>
+<li><em>Evidence:</em> <strong>Strong (reproduction ≈648.5 MiB, spill 0)</strong> + <strong>flagged risk</strong> at full scale.</li>
+</ul>
+<p><strong>ADR-010 — Deterministic stdlib-only normalization, frozen.</strong></p>
+<ul>
+<li><em>Context:</em> noise (translit, accents, suffixes, junk) must collapse without any external lookup (O22).</li>
+<li><em>Decision:</em> <code>unicodedata</code>-based fold/translit/suffix-canon in <code>normalize.py</code>, frozen at <code>b3508b60…</code>.</li>
+<li><em>Alternatives:</em> ML transliteration; external name-canonicalization services (<strong>disqualifying</strong>).</li>
+<li><em>Consequences:</em> fair-play-safe, reproducible, lifts recall 0.47→0.88; frozen so candidate identity holds.</li>
+<li><em>Evidence:</em> <strong>Strong</strong> — baseline vs four-pass recall measured (§9/§10).</li>
+</ul>
+<p><strong>ADR-011 — Append-only DuckDB ledger + markdown reports, not MLflow.</strong></p>
+<ul>
+<li><em>Context:</em> need auditable experiment history within the memory budget and &quot;runnable from <code>code/</code>&quot;.</li>
+<li><em>Decision:</em> <code>work/ledger.duckdb</code> (append-only) + committed narrative reports; no hosted tracker.</li>
+<li><em>Alternatives:</em> MLflow / W&amp;B (service + RAM overhead).</li>
+<li><em>Consequences:</em> zero service dependency, full auditability, corrections logged as events (§21);
+no fancy UI.</li>
+<li><em>Evidence:</em> <strong>Strong</strong> — reports back every number in this document.</li>
+</ul>
+<p><strong>ADR summary map.</strong></p>
+<table>
+<thead>
+<tr>
+<th>ADR</th>
+<th>Decision</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>001</td>
+<td>retrieve-then-score, frozen boundary</td>
+<td>Strong</td>
+</tr>
+<tr>
+<td>002</td>
+<td>freeze candidate policy v1</td>
+<td>Strong</td>
+</tr>
+<tr>
+<td>003</td>
+<td>precision-first macro-F₀.₅</td>
+<td>Strong (metric) / τ ⬜</td>
+</tr>
+<tr>
+<td>004</td>
+<td>country as agreement only</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>005</td>
+<td>tabular GBM, no LLM</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>006</td>
+<td>per-candidate threshold, no top-1</td>
+<td>Strong (structural)</td>
+</tr>
+<tr>
+<td>007</td>
+<td>negatives from candidates only</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>008</td>
+<td>S1-partition leakage firewall</td>
+<td>Strong</td>
+</tr>
+<tr>
+<td>009</td>
+<td>out-of-core, 16 shards + spill</td>
+<td>Strong + risk flagged</td>
+</tr>
+<tr>
+<td>010</td>
+<td>frozen stdlib normalization</td>
+<td>Strong</td>
+</tr>
+<tr>
+<td>011</td>
+<td>DuckDB ledger, not MLflow</td>
+<td>Strong</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>30. Requirement Traceability Matrix</h2>
+<p>Full O1–O23 → component → implementation → validation → status. Status reflects §31 evidence.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Organizer Requirement</th>
+<th>Source</th>
+<th>System Component</th>
+<th>Implementation</th>
+<th>Validation</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>O1</td>
+<td>S1 = deduplicated reference</td>
+<td>PS</td>
+<td>pipeline key, assembler</td>
+<td>key on S1; 1 row/S1</td>
+<td>integrity_report (1 GT/S1)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>O2</td>
+<td>0..many matches per S1</td>
+<td>PS</td>
+<td>decision policy</td>
+<td>keep-all-≥τ</td>
+<td>oracle recovered counts</td>
+<td>⬜</td>
+</tr>
+<tr>
+<td>O3</td>
+<td>matches span S2 &amp; S3</td>
+<td>PS</td>
+<td>decision policy</td>
+<td>no per-source cap</td>
+<td>GT 80.5% both</td>
+<td>⬜</td>
+</tr>
+<tr>
+<td>O4</td>
+<td>singletons exist</td>
+<td>PS</td>
+<td>empty path</td>
+<td>empty set if none≥τ</td>
+<td>evaluator empty/empty=1.0</td>
+<td>⬜</td>
+</tr>
+<tr>
+<td>O5</td>
+<td>record schema</td>
+<td>PS/validator</td>
+<td><code>io.py</code></td>
+<td>typed columns</td>
+<td>integrity_check</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>O6</td>
+<td>id prefixes, disjoint ns</td>
+<td>PS</td>
+<td>id handling</td>
+<td>S1/S2/S3, disjoint</td>
+<td>integrity (disjoint 0)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>O7</td>
+<td>GT schema (train)</td>
+<td>PS</td>
+<td>GT loader</td>
+<td>comma-join, empty=singleton</td>
+<td>0 dup GT rows</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>O8</td>
+<td>noise classes</td>
+<td>PS</td>
+<td><code>normalize.py</code> (frozen)</td>
+<td>fold/translit/suffix</td>
+<td>recall 0.47→0.88</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>O9</td>
+<td>open-set France</td>
+<td>PS</td>
+<td>country feature; LOCO</td>
+<td>agreement only</td>
+<td>country_open_set:true; probes ⬜</td>
+<td>🟡</td>
+</tr>
+<tr>
+<td>O10</td>
+<td>matching_results.tsv</td>
+<td>validator</td>
+<td>assembler</td>
+<td>exact header/TAB</td>
+<td>validate → PASS</td>
+<td>⬜</td>
+</tr>
+<tr>
+<td>O11</td>
+<td>candidate_pairs.tsv = exact set</td>
+<td>validator</td>
+<td>frozen artifact + writer</td>
+<td>write from artifact</td>
+<td>validate subset</td>
+<td>🟡</td>
+</tr>
+<tr>
+<td>O12</td>
+<td>smaller sets rank higher</td>
+<td>PS</td>
+<td>policy v1</td>
+<td>50/50 + heavy100</td>
+<td>p99 213 / max 292</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>O13</td>
+<td>matches ⊆ candidates</td>
+<td>validator</td>
+<td>decision invariant</td>
+<td>filter-only</td>
+<td>validator subset check</td>
+<td>🟡</td>
+</tr>
+<tr>
+<td>O14</td>
+<td>TAB/no-strip/no-space</td>
+<td>validator</td>
+<td>writer</td>
+<td>exact-format</td>
+<td>validator FAIL on breach</td>
+<td>⬜</td>
+</tr>
+<tr>
+<td>O15</td>
+<td>list content rules</td>
+<td>validator</td>
+<td>writer</td>
+<td>S2/S3 only, no dup</td>
+<td>validator checks</td>
+<td>⬜</td>
+</tr>
+<tr>
+<td>O16</td>
+<td>PASS gate</td>
+<td>validator</td>
+<td><code>validate_submission.py</code></td>
+<td>run gate</td>
+<td>manual PASS</td>
+<td>✅ (tool)</td>
+</tr>
+<tr>
+<td>O17</td>
+<td>macro-F₀.₅ formula</td>
+<td>PS</td>
+<td><code>evaluate.py</code> (frozen)</td>
+<td>per-S1→macro</td>
+<td>spec → 0.714</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>O18</td>
+<td>edge cases (1.0/0.0)</td>
+<td>PS</td>
+<td><code>evaluate.py</code></td>
+<td>hard-coded</td>
+<td>spec cases</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>O19</td>
+<td>recall ≠ score</td>
+<td>PS</td>
+<td>4 eval layers</td>
+<td>separated</td>
+<td>0.878 vs 0.9486 vs L4</td>
+<td>✅ (layers)</td>
+</tr>
+<tr>
+<td>O20</td>
+<td>≤8B, MIT/Apache, no LLM</td>
+<td>PS</td>
+<td>GBM plan (§16)</td>
+<td>LightGBM/XGBoost</td>
+<td>model card at selection</td>
+<td>⬜</td>
+</tr>
+<tr>
+<td>O21</td>
+<td>scale to M rows / 100s M pairs</td>
+<td>PS</td>
+<td>out-of-core, 16 shards</td>
+<td>DuckDB spill</td>
+<td>RSS ≈648.5 MiB, spill 0</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>O22</td>
+<td>no external lookup</td>
+<td>PS</td>
+<td>stdlib normalize; label_use=false</td>
+<td>no network</td>
+<td>manifest assertions</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>O23</td>
+<td>reproducible from code/</td>
+<td>PS</td>
+<td>manifests, seeds, pins</td>
+<td>SHA-256 chain</td>
+<td>freeze gate 0/0/0</td>
+<td>✅</td>
+</tr>
+</tbody></table>
+<p><strong>Legend:</strong> ✅ built+verified · 🟡 partially built (contract/artifact present, computation pending) ·
+⬜ planned. PS = problem statement; validator = <code>validate_submission.py</code>.</p>
+<hr>
+<h2>31. Current Project Status</h2>
+<p>Status dashboard from <strong>actual repo evidence</strong>. Nothing planned is presented as implemented (§36).</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Status</th>
+<th>Evidence</th>
+<th>Next Gate</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Environment / deps</td>
+<td>✅ Existing</td>
+<td><code>.venv</code> 3.12, pinned <code>requirements.txt</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>Ingest + integrity</td>
+<td>✅ Existing</td>
+<td><code>integrity_report.md</code> (0 violations)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Normalization (frozen)</td>
+<td>✅ Existing</td>
+<td><code>normalize.py</code> SHA <code>b3508b60…</code></td>
+<td>immutable</td>
+</tr>
+<tr>
+<td>Evaluator (frozen)</td>
+<td>✅ Existing</td>
+<td><code>evaluate.py</code> SHA <code>e99d7f0a…</code> → 0.714</td>
+<td>immutable</td>
+</tr>
+<tr>
+<td>Baseline blocking</td>
+<td>✅ Existing</td>
+<td><code>baseline_blocking.md</code> (0.4702 / 0.5061)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Four-pass retrieval + IDF rank</td>
+<td>✅ Existing</td>
+<td><code>candidate_experiment_summary.md</code> (0.8614 interm.)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Candidate policy v1 (FROZEN)</strong></td>
+<td>✅ Existing</td>
+<td>34,568,979 rows, recall <strong>0.878084</strong>, gate 0/0/0</td>
+<td>immutable</td>
+</tr>
+<tr>
+<td>Candidate oracle ceiling</td>
+<td>✅ Existing</td>
+<td><code>candidate_oracle_report.md</code> <strong>0.948629</strong></td>
+<td>—</td>
+</tr>
+<tr>
+<td>Matcher split + firewall</td>
+<td>✅ Existing</td>
+<td><code>matcher_split_checksums.json</code>, overlap 0/0</td>
+<td>protect <code>model_final_eval</code></td>
+</tr>
+<tr>
+<td>Feature spec (65-d)</td>
+<td>🟡 In progress</td>
+<td>pilot matrix computed (1,098,300 rows, 0/0/0); full-scale running</td>
+<td>finish materialization (Phase 8)</td>
+</tr>
+<tr>
+<td>Matcher (<code>matcher/</code>)</td>
+<td>🟡 In progress</td>
+<td>pilot fits (det/LR/GBM-smoke) + <code>lightgbm_smoke_v1.txt</code>; no search</td>
+<td>GBM bake-off (Phase 10)</td>
+</tr>
+<tr>
+<td>Negative sampling</td>
+<td>🟡 In progress</td>
+<td>3 policies run (<code>negative_samples/*.parquet</code>); <code>hybrid_source_balanced</code> selected</td>
+<td>full-split sampling (Phase 9)</td>
+</tr>
+<tr>
+<td>Calibration + τ</td>
+<td>⬜ Planned</td>
+<td>(§17)</td>
+<td>tune on calibration (Phase 11)</td>
+</tr>
+<tr>
+<td>S1 decision policy</td>
+<td>⬜ Planned</td>
+<td>(§17)</td>
+<td>build (Phase 12)</td>
+</tr>
+<tr>
+<td>France / LOCO probes</td>
+<td>⬜ Planned</td>
+<td>(§25)</td>
+<td>probe (Phase 13)</td>
+</tr>
+<tr>
+<td>Full-scale test inference</td>
+<td>⬜ Planned</td>
+<td>memory risk (§19/§27)</td>
+<td>measure at scale (Phase 14)</td>
+</tr>
+<tr>
+<td>Submission assembler</td>
+<td>⬜ Planned</td>
+<td><code>output/</code> <strong>empty</strong></td>
+<td>emit two TSVs (Phase 15)</td>
+</tr>
+<tr>
+<td>Validator</td>
+<td>✅ Existing (tool)</td>
+<td><code>utils/validate_submission.py</code></td>
+<td>run → PASS (Phase 16)</td>
+</tr>
+</tbody></table>
+<p><strong>One-line state.</strong> The <strong>entire label-free retrieval half is built, frozen, and reproducible</strong> (recall
+<strong>0.878084</strong>, ceiling <strong>0.9486</strong>). The supervised half has been <strong>piloted end-to-end at smoke scale</strong>
+(features 1,098,300 rows, negatives 3 policies, matchers det/LR/GBM-smoke fit) and <strong>full-scale feature
+materialization is running</strong>; <strong>full-scale training, calibration, decision policy, test inference, and
+the submission assembler are not built</strong> and <code>output/</code> is empty. No end-to-end macro-F₀.₅ (L4) exists
+yet, and none is claimed; <code>model_final_eval</code> is firewalled/untouched.</p>
+<p><strong>Open discrepancies carried forward (per §36):</strong> (1) <strong>Pilot-vs-planned status (NEW, corrected in this
+revision):</strong> the earlier draft labelled features/negatives/matcher as &quot;no matrix / no <code>.fit</code> / planned&quot;,
+but the repository shows a <strong>completed pilot/smoke end-to-end</strong> (<code>feature_pilot_*</code>, <code>negative_samples/</code>,
+<code>baseline_results.json</code>, <code>lightgbm_smoke.json</code>, <code>lightgbm_smoke_v1.txt</code>) — status labels were corrected
+to 🟡, and the pilot numbers are explicitly <strong>not</strong> leaderboard/L4 (§14/§15/§16). (2) candidate recall
+<strong>0.8614 intermediate vs 0.878084 frozen-final</strong> — reconciled as different objects (§11); (3) <strong>memory
+budget 0.8 GB vs measured peaks 648.5 MiB / 1.27 GiB / &lt;1.1 GiB</strong> — distinct operations, disk-spill
+dependent, flagged as inference risk (§19/§27); (4) prior <strong>&quot;137 MB&quot; → ~600–680 MiB</strong> correction and
+<strong>leakage-scope</strong> re-scoping logged (§13/§21).</p>
+<hr>
+<h2>32. Future Extensions</h2>
+<p>All <strong>[FUT]</strong>; none authorizes editing a frozen stage. Each is an experiment to run and log (§21), kept
+only on held-out evidence.</p>
+<ul>
+<li><strong>Candidate policy v2 (new artifact, not an edit) [FUT].</strong> The oracle brackets show a recall-leaning
+<strong>75/75</strong> ceiling of <strong>0.952327</strong> and a compact <strong>37/38</strong> at <strong>0.946593</strong> (§12). A v2 could target the
+either-address-missing cliff (recall <strong>0.729</strong>, §11) — e.g., a phonetic/name-only pass for
+address-missing S1 — and be frozen as its <strong>own</strong> policy for A/B, leaving v1 intact (ADR-002).</li>
+<li><strong>France zero-shot hardening [FUT/ORG O9].</strong> LOCO probes (train {US} eval {India} and vice-versa) to
+quantify the transfer gap; optionally a deterministic-rule fallback for the France slice if the GBM
+under-generalizes.</li>
+<li><strong>Blocking recall recovery [FUT].</strong> Targeted passes for the <strong>93,134</strong> unreached links (translit-heavy
+India names, domain-as-name) — measured against candidate-size cost (O12) before adoption.</li>
+<li><strong>Matcher upgrades [FUT].</strong> Monotonic constraints on similarity features; per-pair uncertainty for a
+smarter decision rule; feature ablation to prune the 65-d set.</li>
+<li><strong>Decision-policy refinement [FUT].</strong> Per-entity adaptive τ or a light multi-match consistency check —
+only if it beats a single global τ on <code>model_calibration</code>.</li>
+<li><strong>Inference memory validation [FUT/ENG].</strong> Measure full-scale test inference RSS against the 0.8 GB
+budget (projected &lt;1.1 GiB, §19) and tune shard count/batch before the final run.</li>
+<li><strong>Tracking [FUT].</strong> Revisit MLflow only if the team scales (ADR-011); not needed now.</li>
+</ul>
+<p><strong>Guardrail on all extensions [§36].</strong> Any change that would alter a frozen artifact ships as a <strong>new,
+separately-frozen</strong> version with its own manifest and A/B evidence — never as an in-place edit to
+normalize.py, evaluate.py, the splits, or candidate policy v1.</p>
+<hr>
+<h2>33. Final Architecture Summary</h2>
+<p>This architecture resolves business entities across three noisy sources under a <strong>precision-heavy
+macro-F₀.₅</strong> objective, with <strong>S1 as the deduplicated reference</strong> and <strong>one-to-many, cross-source</strong>
+matching as the norm (mean 3.46/S1, 5.6% singletons). It is a disciplined <strong>retrieve-then-score</strong>
+pipeline with three separated concerns behind hard boundaries: <strong>frozen label-free candidate generation</strong>
+→ <strong>pairwise tabular matcher</strong> → <strong>S1-level decision policy</strong>, feeding the two graded outputs
+(<code>matching_results.tsv</code>, <code>candidate_pairs.tsv</code>) through the official validator.</p>
+<p><strong>What is real today (✅).</strong> Deterministic frozen <strong>normalization</strong> (<code>b3508b60…</code>); the frozen
+<strong>evaluator</strong> reproducing the spec&#39;s <strong>0.714</strong>; the leakage-safe <strong>matcher split</strong> (overlaps 0/0); the
+<strong>FROZEN candidate policy v1</strong> — <strong>34,568,979</strong> candidates, pair recall <strong>0.878084</strong>, p99 <strong>213</strong> /
+max <strong>292</strong>, reproduced <strong>0/0/0</strong> (checksum <code>221fef24…9465b067</code>); the candidate <strong>oracle ceiling
+0.948629</strong>; and a <strong>65-feature contract</strong>. The whole label-free retrieval half is built and reproducible.</p>
+<p><strong>What has been piloted (🟡) and what is not yet built (⬜).</strong> A <strong>pilot/smoke end-to-end has run</strong>:
+65-feature matrix computed on 1,098,300 pilot candidates (0/0/0), three checksummed negative-sampling
+policies (<code>hybrid_source_balanced</code> selected), and Deterministic/Logistic/LightGBM-smoke matchers fit and
+thresholded (pilot macro-F₀.₅ 0.629/0.781/0.852); full-scale feature materialization is running. <strong>Not
+yet built:</strong> full-scale GBM <strong>bake-off/hyperparameter search</strong>, <strong>calibration/threshold</strong> on the full
+split, the <strong>decision policy</strong>, <strong>France/LOCO</strong> probes, <strong>full-scale test inference</strong>, and the
+<strong>submission assembler</strong> — <code>output/</code> is <strong>empty</strong>. <code>model_final_eval</code> is <strong>firewalled/untouched</strong> — <strong>no
+end-to-end score (L4) exists and none is claimed.</strong></p>
+<p><strong>Design commitments that make it competition-safe.</strong> Precision-first thresholding and a first-class
+singleton path for the F₀.₅ regime; per-candidate keep/drop (never top-1) for one-to-many;
+<strong>country-as-agreement</strong> for France zero-shot; <strong>out-of-core</strong> execution (16 shards + DuckDB spill) for
+the 0.8 GB budget; <strong>fair-play</strong> by construction (<code>label_use=false</code>, stdlib-only normalize, no network);
+and <strong>reproducibility</strong> via a SHA-256 manifest chain plus an append-only ledger.</p>
+<p><strong>Honesty ledger (surfaced, not hidden).</strong> Recall <strong>0.8614</strong> (intermediate) vs <strong>0.878084</strong> (frozen-final)
+are different objects; the <strong>0.8 GB</strong> budget is a resident target that measured peaks (<strong>648.5 MiB</strong> /
+<strong>≈1.27 GiB</strong> audit / <strong>&lt;1.1 GiB</strong> projected inference) can exceed via disk spill — a flagged inference
+risk; and two prior claims (<strong>&quot;137 MB&quot;</strong>, <strong>&quot;no leakage by construction&quot;</strong>) were corrected and logged.</p>
+<p><strong>Bottom line.</strong> The retrieval foundation is frozen, measured, and reproducible with a <strong>0.9486</strong> score
+ceiling; the remaining work is the supervised scoring-and-decision half, whose contracts, splits, and
+guardrails are already fixed so it can be built without disturbing anything frozen upstream.</p>
+<hr>
+<p><em>End of master architecture. Companion artifacts: <code>amazon_ml_challenge_architecture_diagrams.md</code> (all
+Mermaid diagrams), <code>amazon_ml_challenge_master_architecture.pdf</code> (polished render).</em></p>
+</body></html>

@@ -1,0 +1,60 @@
+{
+  "feature_spec_version": "feature_spec_v1",
+  "feature_count": 65,
+  "parts": [
+    {
+      "input": "work/model_threshold_candidates/model_threshold_a_india.parquet",
+      "output": "work/model_threshold_features/model_threshold_a_india.parquet",
+      "rows": 1693224,
+      "bytes": 63234359,
+      "wall_seconds": 150.51550340652466,
+      "group_seconds": {
+        "exact": 36.14367479994144,
+        "token": 11.68548750080663,
+        "fuzzy": 41.50472750208064
+      },
+      "peak_temp_bytes": 474021888
+    },
+    {
+      "input": "work/model_threshold_candidates/model_threshold_a_us.parquet",
+      "output": "work/model_threshold_features/model_threshold_a_us.parquet",
+      "rows": 2620893,
+      "bytes": 81867496,
+      "wall_seconds": 183.11169624328613,
+      "group_seconds": {
+        "exact": 42.78243259788178,
+        "token": 14.476532999009578,
+        "fuzzy": 36.888562798618295
+      },
+      "peak_temp_bytes": 1502216192
+    },
+    {
+      "input": "work/model_threshold_candidates/model_threshold_b_india.parquet",
+      "output": "work/model_threshold_features/model_threshold_b_india.parquet",
+      "rows": 1694060,
+      "bytes": 63336678,
+      "wall_seconds": 143.4113326072693,
+      "group_seconds": {
+        "exact": 34.42672269949617,
+        "token": 11.23221079995892,
+        "fuzzy": 39.499483801744645
+      },
+      "peak_temp_bytes": 463863808
+    },
+    {
+      "input": "work/model_threshold_candidates/model_threshold_b_us.parquet",
+      "output": "work/model_threshold_features/model_threshold_b_us.parquet",
+      "rows": 2612839,
+      "bytes": 81522438,
+      "wall_seconds": 178.9176709651947,
+      "group_seconds": {
+        "exact": 41.99173110050833,
+        "token": 14.145728201403472,
+        "fuzzy": 36.26051369925699
+      },
+      "peak_temp_bytes": 1496612864
+    }
+  ],
+  "rows": 8621016,
+  "bytes": 289960971
+}

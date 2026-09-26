@@ -1,0 +1,31 @@
+{
+  "status": "completed_smoke_only",
+  "seed": 42,
+  "trees": 40,
+  "num_leaves": 15,
+  "threads": 2,
+  "training_rows": 113367,
+  "positives": 15072,
+  "training_seconds": 0.49685025215148926,
+  "wall_seconds": 13.039035081863403,
+  "best": {
+    "threshold": 0.6699999999999999,
+    "macro_f0_5": 0.851852148686723,
+    "mean_entity_precision": 0.9153555693489518,
+    "mean_entity_recall": 0.746395634920635,
+    "pair_precision": 0.9365021770682148,
+    "pair_recall": 0.734490608992601,
+    "avg_predicted": 2.756,
+    "singleton_accuracy": 0.9122807017543859,
+    "empty_prediction_rate": 0.0935,
+    "s2_precision": 0.9253141831238779,
+    "s2_recall": 0.7592810842663524,
+    "s3_precision": 0.9479281261459479,
+    "s3_recall": 0.7113373692900385,
+    "india_macro_f0_5": 0.8064790917469599,
+    "us_macro_f0_5": 0.8808002333354334,
+    "address_present_recall": 0.7681980906921241,
+    "address_missing_recall": 0.037037037037037035
+  },
+  "model_path": "work/lightgbm_smoke_v1.txt"
+}

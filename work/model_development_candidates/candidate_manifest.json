@@ -1,0 +1,23 @@
+{
+  "policy_id": "evidence_source_50_50_heavy100_v1",
+  "pilot_seed": "feature_pilot_v1_20260926",
+  "groups": [
+    {
+      "split": "model_tune_a",
+      "country": "us",
+      "s1": 16263,
+      "candidates": 2584303,
+      "bytes": 22479985,
+      "wall_seconds": 117.5370409488678
+    },
+    {
+      "split": "model_tune_b",
+      "country": "us",
+      "s1": 16526,
+      "candidates": 2635717,
+      "bytes": 22949105,
+      "wall_seconds": 122.61998391151428
+    }
+  ],
+  "candidates": 5220020
+}

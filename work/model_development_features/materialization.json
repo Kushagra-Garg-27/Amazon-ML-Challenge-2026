@@ -1,0 +1,127 @@
+{
+  "feature_spec_version": "feature_spec_v1",
+  "feature_count": 65,
+  "parts": [
+    {
+      "input": "work/model_development_candidates/baseline_dev_base_india.parquet",
+      "output": "work/model_development_features/baseline_dev_base_india.parquet",
+      "rows": 118849,
+      "bytes": 4442481,
+      "resumed": true
+    },
+    {
+      "input": "work/model_development_candidates/baseline_dev_base_us.parquet",
+      "output": "work/model_development_features/baseline_dev_base_us.parquet",
+      "rows": 196710,
+      "bytes": 6157528,
+      "resumed": true
+    },
+    {
+      "input": "work/model_development_candidates/baseline_dev_extra_india.parquet",
+      "output": "work/model_development_features/baseline_dev_extra_india.parquet",
+      "rows": 480740,
+      "bytes": 17993556,
+      "wall_seconds": 42.8807098865509,
+      "group_seconds": {
+        "exact": 9.961238199408399,
+        "token": 3.248346499940453,
+        "fuzzy": 11.226275999808422
+      },
+      "peak_temp_bytes": 0
+    },
+    {
+      "input": "work/model_development_candidates/baseline_dev_extra_us.parquet",
+      "output": "work/model_development_features/baseline_dev_extra_us.parquet",
+      "rows": 771818,
+      "bytes": 24098615,
+      "wall_seconds": 51.135220766067505,
+      "group_seconds": {
+        "exact": 12.298393698847576,
+        "token": 4.112447800072914,
+        "fuzzy": 10.617320899753395
+      },
+      "peak_temp_bytes": 0
+    },
+    {
+      "input": "work/model_development_candidates/model_fit_base_india.parquet",
+      "output": "work/model_development_features/model_fit_base_india.parquet",
+      "rows": 300238,
+      "bytes": 11277844,
+      "resumed": true
+    },
+    {
+      "input": "work/model_development_candidates/model_fit_base_us.parquet",
+      "output": "work/model_development_features/model_fit_base_us.parquet",
+      "rows": 482503,
+      "bytes": 15078636,
+      "resumed": true
+    },
+    {
+      "input": "work/model_development_candidates/model_fit_extra_india.parquet",
+      "output": "work/model_development_features/model_fit_extra_india.parquet",
+      "rows": 2788782,
+      "bytes": 104320696,
+      "wall_seconds": 239.63988399505615,
+      "group_seconds": {
+        "exact": 58.05101430060131,
+        "token": 18.88533119900967,
+        "fuzzy": 66.02989250031715
+      },
+      "peak_temp_bytes": 1773502464
+    },
+    {
+      "input": "work/model_development_candidates/model_fit_extra_us.parquet",
+      "output": "work/model_development_features/model_fit_extra_us.parquet",
+      "rows": 4261758,
+      "bytes": 133142060,
+      "wall_seconds": 284.3331229686737,
+      "group_seconds": {
+        "exact": 69.95489829863254,
+        "token": 23.631424300454455,
+        "fuzzy": 59.755701500791474
+      },
+      "peak_temp_bytes": 2287271936
+    },
+    {
+      "input": "work/model_development_candidates/model_tune_a_us.parquet",
+      "output": "work/model_development_features/model_tune_a_us.parquet",
+      "rows": 2584303,
+      "bytes": 80769916,
+      "wall_seconds": 173.94448471069336,
+      "group_seconds": {
+        "exact": 43.0492344994891,
+        "token": 14.427927300990632,
+        "fuzzy": 36.824864499290925
+      },
+      "peak_temp_bytes": 1501790208
+    },
+    {
+      "input": "work/model_development_candidates/model_tune_b_us.parquet",
+      "output": "work/model_development_features/model_tune_b_us.parquet",
+      "rows": 2635717,
+      "bytes": 82323757,
+      "wall_seconds": 191.8089325428009,
+      "group_seconds": {
+        "exact": 45.15349170002628,
+        "token": 15.080703999807156,
+        "fuzzy": 38.507044699439575
+      },
+      "peak_temp_bytes": 1486979072
+    },
+    {
+      "input": "work/model_development_candidates/model_tune_india.parquet",
+      "output": "work/model_development_features/model_tune_india.parquet",
+      "rows": 3360259,
+      "bytes": 125555909,
+      "wall_seconds": 334.23612570762634,
+      "group_seconds": {
+        "exact": 82.59929459788145,
+        "token": 26.732350300599137,
+        "fuzzy": 92.32274330145628
+      },
+      "peak_temp_bytes": 2076213248
+    }
+  ],
+  "rows": 17981677,
+  "bytes": 605160998
+}

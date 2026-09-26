@@ -1,0 +1,95 @@
+{
+  "current_hybrid_tier_b": {
+    "rows": 453429,
+    "positives": 60539,
+    "negatives": 392890,
+    "s1": 19979,
+    "negative_s2": 196544,
+    "negative_s3": 196346,
+    "negative_address_missing": 1370,
+    "bytes": 15392977,
+    "sha256": "a2e3b7b25fd30d14c7bb44f3a473a866046def583dc0da604396af700c43f8ce",
+    "path": "work/model_development_negative_samples/current_hybrid_tier_b.parquet",
+    "country": {
+      "us": 268977,
+      "india": 184452
+    },
+    "negative_provenance": {
+      "1": 102794,
+      "2": 148,
+      "4": 100804,
+      "5": 20403,
+      "8": 159101,
+      "9": 700,
+      "10": 1008,
+      "12": 6906,
+      "13": 1018,
+      "14": 8
+    },
+    "hard_negatives": 392890,
+    "random_negatives": 0,
+    "collision_negatives": 0
+  },
+  "mixed_tier_b": {
+    "rows": 403808,
+    "positives": 60539,
+    "negatives": 343269,
+    "s1": 19979,
+    "negative_s2": 171697,
+    "negative_s3": 171572,
+    "negative_address_missing": 3014,
+    "bytes": 14275395,
+    "sha256": "f5c5db23b35e55f0c9fb466affee205b7faa6b504f2ba1cfc28ba01be0ace3df",
+    "path": "work/model_development_negative_samples/mixed_tier_b.parquet",
+    "country": {
+      "us": 239812,
+      "india": 163996
+    },
+    "negative_provenance": {
+      "1": 76731,
+      "2": 166,
+      "4": 88978,
+      "5": 17660,
+      "8": 150565,
+      "9": 701,
+      "10": 989,
+      "12": 6453,
+      "13": 1018,
+      "14": 8
+    },
+    "hard_negatives": 236487,
+    "collision_negatives": 50,
+    "random_negatives": 106732
+  },
+  "mined_tier_b": {
+    "rows": 519936,
+    "positives": 60539,
+    "negatives": 459397,
+    "s1": 19979,
+    "negative_s2": 229798,
+    "negative_s3": 229599,
+    "path": "work/model_development_negative_samples/mined_tier_b.parquet",
+    "bytes": 18344651,
+    "sha256": "a1d6b60028744aa211612268e9b6374c1244893bd9f7e3d591dc829affa21aa2",
+    "country": {
+      "us": 308445,
+      "india": 211491
+    },
+    "negative_provenance": {
+      "1": 60905,
+      "2": 182,
+      "4": 130215,
+      "5": 10120,
+      "8": 249236,
+      "9": 698,
+      "10": 913,
+      "12": 6102,
+      "13": 1018,
+      "14": 8
+    },
+    "hard_negatives": 392890,
+    "random_negatives": 66507,
+    "collision_negatives": 0,
+    "origin_note": "mined sample retains up to 10 scored false positives/source plus up to 2 deterministic random/source; overlap assigned to mined"
+  }
+}

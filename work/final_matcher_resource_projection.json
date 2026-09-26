@@ -1,0 +1,52 @@
+{
+  "chosen_training_sample": {
+    "rows": 519936,
+    "matrix_bytes": 127384320,
+    "sample_bytes": 18344651,
+    "training_seconds": 12.714578628540039
+  },
+  "model_threshold_observed": {
+    "s1": 55091,
+    "candidates": 8621016,
+    "feature_bytes": 289960971,
+    "score_bytes": 102078146,
+    "candidate_seconds": 421.318,
+    "feature_seconds": 656.0,
+    "inference_seconds": 21.462211847305298,
+    "peak_rss_bytes": 1760399360
+  },
+  "model_final_eval_projected": {
+    "s1": 110341,
+    "candidates": 17266913,
+    "feature_bytes": 580758808,
+    "score_bytes": 204450903,
+    "wall_seconds": 2201
+  },
+  "test_projected": {
+    "s1": 1732544,
+    "candidates": 271582123,
+    "candidate_identity_provenance_bytes": 2399309219,
+    "feature_bytes": 9134447273,
+    "score_bytes": 3215699820,
+    "candidate_hours": 3.686805621225632,
+    "feature_hours": 5.740425254852664,
+    "inference_minutes": 11.268495998164882,
+    "output_grouping_minutes": 2.8171239995412205
+  },
+  "in_memory": {
+    "batch_candidates": 200000,
+    "float32_matrix_bytes": 48800000,
+    "score_bytes": 800000,
+    "expected_process_peak_bytes": 1800000000
+  },
+  "restart_partitions": {
+    "train": 128,
+    "final_eval": 64,
+    "test": 96
+  },
+  "temp_disk_recommendation_gb": {
+    "final_eval": 8,
+    "test": 48
+  },
+  "model_load_overhead": "below one second; 645 KB native text model"
+}
