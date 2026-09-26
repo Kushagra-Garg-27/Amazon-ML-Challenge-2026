@@ -1,0 +1,97 @@
+{
+  "candidates": 41816190,
+  "gt_total": 763919,
+  "recovered": 673355,
+  "pair_recall": 0.881448164006917,
+  "s1_recovered": 204185,
+  "s1_gt": 208254,
+  "s1_coverage": 0.9804613596857683,
+  "candidate_intersection": 23691269,
+  "candidate_added": 18124921,
+  "candidate_removed": 15550717,
+  "gt_intersection": 649592,
+  "gained": 23763,
+  "lost": 8471,
+  "net": 15292,
+  "source": {
+    "S2": {
+      "total": 368894,
+      "recovered": 326549,
+      "recall": 0.8852109278003979
+    },
+    "S3": {
+      "total": 395025,
+      "recovered": 346806,
+      "recall": 0.8779343079551927
+    }
+  },
+  "country": {
+    "india": {
+      "total": 305017,
+      "recovered": 267866,
+      "recall": 0.8782002314625087
+    },
+    "us": {
+      "total": 458902,
+      "recovered": 405489,
+      "recall": 0.8836069574767598
+    }
+  },
+  "address_missingness": {
+    "both_present": {
+      "total": 730466,
+      "recovered": 648329,
+      "recall": 0.8875553413848146
+    },
+    "either_missing": {
+      "total": 33453,
+      "recovered": 25026,
+      "recall": 0.7480943413146803
+    }
+  },
+  "candidates_by_source": {
+    "S2": 20644509,
+    "S3": 21171681
+  },
+  "mean": 189.61592701252886,
+  "median": 195.0,
+  "p90": 298.0,
+  "p95": 313.0,
+  "p99": 788.0,
+  "max": 1587,
+  "zero_candidate_s1": 230,
+  "only_s2_s1": 440,
+  "only_s3_s1": 486,
+  "bands": [
+    {
+      "k_per_source": 25,
+      "s1": 20830,
+      "candidates": 2359723,
+      "gt_total": 87338,
+      "recovered": 80524,
+      "recall": 0.9219812681765096
+    },
+    {
+      "k_per_source": 50,
+      "s1": 121236,
+      "candidates": 19480629,
+      "gt_total": 432041,
+      "recovered": 389142,
+      "recall": 0.9007061829780044
+    },
+    {
+      "k_per_source": 75,
+      "s1": 78465,
+      "candidates": 19975838,
+      "gt_total": 244540,
+      "recovered": 203689,
+      "recall": 0.8329475750388484
+    }
+  ],
+  "policy": "evidence_dynamic",
+  "ranker": "evidence_ranker_v1",
+  "hard_upper_per_source_per_pass": 75,
+  "wall_seconds": 104.85,
+  "artifact_bytes": 263146315,
+  "peak_temp_bytes": 2318696448
+}

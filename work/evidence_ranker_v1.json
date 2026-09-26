@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "policy_id": "evidence_ranker_v1",
+  "label_free": true,
+  "target_df": {
+    "definition": "Distinct target entity count by (country, token), computed separately for normalized name and normalized address tokens across S2 and S3.",
+    "maximum_inclusive": 2000
+  },
+  "candidate_score_fields": {
+    "score": "sum(1.0 / target_df(token)) over shared eligible tokens in the active token pass",
+    "shared_token_count": "count of shared distinct eligible tokens in the active token pass",
+    "coverage_s1": "shared_token_count / distinct active-field S1 token count",
+    "coverage_target": "shared_token_count / distinct active-field target token count",
+    "token_jaccard": "shared_token_count / (S1 token count + target token count - shared_token_count)",
+    "exact_name": "exact equality of non-empty frozen normalized name",
+    "exact_address": "exact equality of non-empty frozen normalized address",
+    "postal_shared": "equal non-empty first 5-6 digit sequence extracted from frozen normalized address",
+    "numeric_shared": "equal non-empty first numeric sequence extracted from frozen normalized address",
+    "both_pass": "candidate is present in both the name-token and address-token top-200-per-source shortlists"
+  },
+  "lexicographic_order": [
+    {"field": "both_pass", "direction": "descending"},
+    {"field": "postal_shared", "direction": "descending"},
+    {"field": "numeric_shared", "direction": "descending"},
+    {"field": "exact_name", "direction": "descending"},
+    {"field": "exact_address", "direction": "descending"},
+    {"field": "round(score, 12)", "direction": "descending"},
+    {"field": "shared_token_count", "direction": "descending"},
+    {"field": "coverage_s1", "direction": "descending"},
+    {"field": "coverage_target", "direction": "descending"},
+    {"field": "token_jaccard", "direction": "descending"},
+    {"field": "target_entity_id", "direction": "ascending"}
+  ],
+  "null_handling": {
+    "exact_and_numeric_flags": "false when the required non-empty value is absent",
+    "coverage_and_jaccard": "NULL only when a denominator is zero; DuckDB default DESC NULLS LAST applies",
+    "target_entity_id": "non-null by frozen input integrity contract"
+  },
+  "source_handling": "Source identifier is excluded from identity evidence. It is used only to calculate per-source ranks and enforce policy quotas.",
+  "provenance_bits": {"sorted_name": 1, "exact_address": 2, "name_token": 4, "address_token": 8, "sister_expansion": 16},
+  "assertions": {
+    "gt_labels_enter_ranking": false,
+    "validation_fitted_coefficients": false,
+    "test_labels_used": false,
+    "external_identity_data_used": false,
+    "all_inputs_available_at_test_inference": true
+  }
+}

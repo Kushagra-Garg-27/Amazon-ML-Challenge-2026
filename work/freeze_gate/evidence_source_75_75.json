@@ -1,0 +1,69 @@
+{
+  "candidates": 53035472,
+  "gt_total": 763919,
+  "recovered": 677352,
+  "pair_recall": 0.8866803941255552,
+  "s1_recovered": 204243,
+  "s1_gt": 208254,
+  "s1_coverage": 0.9807398657408741,
+  "candidate_intersection": 27248377,
+  "candidate_added": 25787095,
+  "candidate_removed": 11993609,
+  "gt_intersection": 651484,
+  "gained": 25868,
+  "lost": 6579,
+  "net": 19289,
+  "source": {
+    "S2": {
+      "total": 368894,
+      "recovered": 328232,
+      "recall": 0.8897732139855894
+    },
+    "S3": {
+      "total": 395025,
+      "recovered": 349120,
+      "recall": 0.8837921650528447
+    }
+  },
+  "country": {
+    "india": {
+      "total": 305017,
+      "recovered": 268896,
+      "recall": 0.8815770924243567
+    },
+    "us": {
+      "total": 458902,
+      "recovered": 408456,
+      "recall": 0.890072390183525
+    }
+  },
+  "address_missingness": {
+    "both_present": {
+      "total": 730466,
+      "recovered": 651774,
+      "recall": 0.8922715088724185
+    },
+    "either_missing": {
+      "total": 33453,
+      "recovered": 25578,
+      "recall": 0.7645951035781544
+    }
+  },
+  "candidates_by_source": {
+    "S2": 26242516,
+    "S3": 26792956
+  },
+  "mean": 240.48987217216626,
+  "median": 235.0,
+  "p90": 301.0,
+  "p95": 321.0,
+  "p99": 801.0,
+  "max": 1587,
+  "zero_candidate_s1": 230,
+  "only_s2_s1": 440,
+  "only_s3_s1": 486,
+  "policy": "evidence_source_75_75",
+  "wall_seconds": 80.83,
+  "artifact_bytes": 329570387,
+  "peak_temp_bytes": 2651947008
+}

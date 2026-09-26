@@ -1,0 +1,11 @@
+{
+  "left": "evidence_joint_100",
+  "right": "evidence_dynamic",
+  "candidate_intersection": 34167092,
+  "candidates_added": 7649098,
+  "candidates_removed": 4783872,
+  "gt_intersection": 670064,
+  "gt_gained": 3291,
+  "gt_lost": 1491,
+  "net_gt": 1800
+}

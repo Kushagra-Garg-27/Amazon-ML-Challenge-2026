@@ -1,0 +1,121 @@
+{
+  "key_ineligible_loss": {
+    "count": 43959,
+    "groups": {
+      "source": {
+        "S2": 20733,
+        "S3": 23226
+      },
+      "country": {
+        "india": 23326,
+        "us": 20633
+      },
+      "address_missingness": {
+        "both_present": 37964,
+        "target_missing": 5995
+      },
+      "eligible_passes": {
+        "": 43959
+      }
+    },
+    "overlap": {
+      "raw_name_overlap": {
+        "0": 21512,
+        "1": 7356,
+        "2": 10814,
+        "3+": 4277
+      },
+      "raw_addr_overlap": {
+        "0": 6026,
+        "1": 589,
+        "2": 3226,
+        "3+": 34118
+      },
+      "eligible_name_overlap": {
+        "0": 43959
+      },
+      "eligible_addr_overlap": {
+        "0": 43959
+      }
+    },
+    "ranks": {}
+  },
+  "cap_ranking_loss": {
+    "count": 61897,
+    "groups": {
+      "source": {
+        "S2": 28632,
+        "S3": 33265
+      },
+      "country": {
+        "india": 20959,
+        "us": 40938
+      },
+      "address_missingness": {
+        "both_present": 59431,
+        "target_missing": 2466
+      },
+      "eligible_passes": {
+        "addr_token": 41681,
+        "name_token ": 9820,
+        "name_token addr_token": 10396
+      }
+    },
+    "overlap": {
+      "raw_name_overlap": {
+        "0": 19567,
+        "1": 13534,
+        "2": 19055,
+        "3+": 9741
+      },
+      "raw_addr_overlap": {
+        "0": 2472,
+        "1": 498,
+        "2": 4263,
+        "3+": 54664
+      },
+      "eligible_name_overlap": {
+        "0": 41681,
+        "1": 19801,
+        "2": 404,
+        "3+": 11
+      },
+      "eligible_addr_overlap": {
+        "0": 9820,
+        "1": 49168,
+        "2": 2245,
+        "3+": 664
+      }
+    },
+    "ranks": {
+      "name": {
+        "eligible": 20216,
+        "missing_rank": 0,
+        "min": 101,
+        "median": 306.0,
+        "p95": 1582.0,
+        "max": 3814,
+        "joint_bands": {
+          "101-150": 4457,
+          "151-200": 2708,
+          "201+": 13051
+        }
+      },
+      "addr": {
+        "eligible": 52077,
+        "missing_rank": 0,
+        "min": 83,
+        "median": 421.0,
+        "p95": 1613.0,
+        "max": 7106,
+        "joint_bands": {
+          "001-100": 2,
+          "101-150": 6699,
+          "151-200": 5092,
+          "201+": 40284
+        }
+      }
+    }
+  },
+  "total_selected_loss": 105856
+}

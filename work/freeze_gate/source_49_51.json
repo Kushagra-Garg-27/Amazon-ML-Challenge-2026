@@ -1,0 +1,31 @@
+{
+  "candidates": 39220691,
+  "gt_total": 763919,
+  "recovered": 658048,
+  "pair_recall": 0.8614106993018893,
+  "gained": 1197,
+  "lost": 1212,
+  "net": -15,
+  "source": {
+    "S2": {
+      "total": 368894,
+      "recovered": 319395,
+      "recall": 0.8658178230060668
+    },
+    "S3": {
+      "total": 395025,
+      "recovered": 338653,
+      "recall": 0.857295107904563
+    }
+  },
+  "mean": 177.84661113403558,
+  "p95": 272.0,
+  "p99": 770.0,
+  "max": 1538,
+  "only_s2_s1": 440,
+  "only_s3_s1": 486,
+  "policy": "source_49_51",
+  "wall_seconds": 210.54,
+  "artifact_bytes": 246541598,
+  "peak_temp_bytes": 0
+}

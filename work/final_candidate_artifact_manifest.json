@@ -1,0 +1,109 @@
+{
+  "parts": [
+    {
+      "path": "work/final_candidate_policy_parts/part-00.parquet",
+      "rows": 2152775,
+      "bytes": 13524783,
+      "sha256": "990d6999f1b81522c4ab5a0d67153b8cd4dbcbf1a66088b95810aa68cf4e4df7"
+    },
+    {
+      "path": "work/final_candidate_policy_parts/part-01.parquet",
+      "rows": 2175869,
+      "bytes": 13668513,
+      "sha256": "969b36b49770edf536f78d6c4002985b62f80cacf8991b8c685db5de3c4bbcd1"
+    },
+    {
+      "path": "work/final_candidate_policy_parts/part-02.parquet",
+      "rows": 2158260,
+      "bytes": 13566121,
+      "sha256": "6762c7b0c6866a115b13c5760004b1b217bf07784fc4f18b89e4eeaf03c416dc"
+    },
+    {
+      "path": "work/final_candidate_policy_parts/part-03.parquet",
+      "rows": 2169996,
+      "bytes": 13632005,
+      "sha256": "c471291abe6a0d8d00602188e43ed349fa54af21b20cd38659574d6f613f04fe"
+    },
+    {
+      "path": "work/final_candidate_policy_parts/part-04.parquet",
+      "rows": 2166991,
+      "bytes": 13606120,
+      "sha256": "dfefdfa080f5d0242bbec220238b582e6a1346ee35f3f62599c3bc768753d6ef"
+    },
+    {
+      "path": "work/final_candidate_policy_parts/part-05.parquet",
+      "rows": 2173302,
+      "bytes": 13653741,
+      "sha256": "2a46d82a0cfb6372cf992e6636b210a238db1b5f6fbf31fb254459c4191562a2"
+    },
+    {
+      "path": "work/final_candidate_policy_parts/part-06.parquet",
+      "rows": 2190714,
+      "bytes": 13761837,
+      "sha256": "e4f9228e4c60a2f734a026ec931d6f8d92c23c314b7d915be2c2ab488f69de70"
+    },
+    {
+      "path": "work/final_candidate_policy_parts/part-07.parquet",
+      "rows": 2160122,
+      "bytes": 13570135,
+      "sha256": "76c0a6a878bbaff432e3eba12275dc8be1ac318c74eb7741c1b6d9c85edd0d27"
+    },
+    {
+      "path": "work/final_candidate_policy_parts/part-08.parquet",
+      "rows": 2129082,
+      "bytes": 13373800,
+      "sha256": "afed58b65aae8f49182579ba630c07bd9c48188960ae84023a1e6da60682bd13"
+    },
+    {
+      "path": "work/final_candidate_policy_parts/part-09.parquet",
+      "rows": 2158571,
+      "bytes": 13563358,
+      "sha256": "66e8589cf08f52663d4174144bd91795dbea452ef829c8fbe95f7961b27d4141"
+    },
+    {
+      "path": "work/final_candidate_policy_parts/part-10.parquet",
+      "rows": 2160649,
+      "bytes": 13572485,
+      "sha256": "affd321063be24ab03c006d71161fe792e3d2f1e4ad014fb24e5b7f1f67a7db6"
+    },
+    {
+      "path": "work/final_candidate_policy_parts/part-11.parquet",
+      "rows": 2173723,
+      "bytes": 13657927,
+      "sha256": "1eebabc8c9cae6706e765e36324682c7da8de1d51b8934383ebc19b0ab202f8b"
+    },
+    {
+      "path": "work/final_candidate_policy_parts/part-12.parquet",
+      "rows": 2152575,
+      "bytes": 13524962,
+      "sha256": "0231598dc515217e2287bd66b0ce1eb34158bd7f5ff5a3f72f4ce1ca792680f5"
+    },
+    {
+      "path": "work/final_candidate_policy_parts/part-13.parquet",
+      "rows": 2160848,
+      "bytes": 13573184,
+      "sha256": "ed21148e7359810fef1003a55ea899401a02a570e8271198d416149889a8e92e"
+    },
+    {
+      "path": "work/final_candidate_policy_parts/part-14.parquet",
+      "rows": 2134661,
+      "bytes": 13412876,
+      "sha256": "64778e15cf07ddb12124dee09c7d9512373edc4901bd89f289646f3cfdc83b41"
+    },
+    {
+      "path": "work/final_candidate_policy_parts/part-15.parquet",
+      "rows": 2150841,
+      "bytes": 13512495,
+      "sha256": "2cd1b6bab040e84ebed754d7847e48de533c26a4b92fe5ff8d73681eb3d1d0e0"
+    }
+  ],
+  "row_count": 34568979,
+  "artifact_bytes": 217174342,
+  "partition_manifest_sha256": "221fef2400511bf14c5e2c167b44adea7cad7eac3df2b786eb0bc8ad9465b067",
+  "identity_comparison": {
+    "added": 0,
+    "removed": 0,
+    "duplicates": 0,
+    "equal": true
+  }
+}

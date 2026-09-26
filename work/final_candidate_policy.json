@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "policy": {
+    "policy_id": "evidence_source_50_50_heavy100_v1",
+    "candidate_identity": ["source1_entity_id", "target_entity_id"],
+    "ranker_version": "evidence_ranker_v1",
+    "normalization_version": 1,
+    "retrieval_passes": [
+      {"name": "exact_sorted_name", "uncapped": false, "provenance_bit": 1},
+      {"name": "exact_normalized_address", "uncapped": true, "provenance_bit": 2},
+      {"name": "name_token", "target_df_max_inclusive": 2000, "provenance_bit": 4},
+      {"name": "address_token", "target_df_max_inclusive": 2000, "provenance_bit": 8}
+    ],
+    "df_thresholds": {"name": 2000, "address": 2000},
+    "ranking_tuple": [
+      "both_pass DESC", "postal_shared DESC", "numeric_shared DESC",
+      "exact_name DESC", "exact_addr DESC", "round(score,12) DESC",
+      "shared_token_count DESC", "coverage_s1 DESC", "coverage_target DESC",
+      "token_jaccard DESC", "target_entity_id ASC"
+    ],
+    "source_quotas": {"S2": 50, "S3": 50},
+    "dynamic_k": null,
+    "heavy_sorted": {
+      "target_block_min": 120,
+      "cap": 100,
+      "order": ["exact_addr DESC", "postal_shared DESC", "numeric_shared DESC", "exact_name DESC", "address_jaccard DESC", "target_entity_id ASC"],
+      "applies_only_when_provenance_equals": 1,
+      "exact_address_uncapped": true
+    },
+    "partitioning": {"key": "hash(source1_entity_id)", "hash_partitions": 16},
+    "provenance_bits": {"sorted_name": 1, "exact_address": 2, "name_token": 4, "address_token": 8, "sister_expansion": 16},
+    "deduplication": "bitwise OR provenance by candidate identity after retrieval union and before heavy cap",
+    "output_order": ["source1_entity_id", "target_entity_id"],
+    "label_use": {
+      "ranking_uses_gt": false,
+      "validation_fitted_coefficients": false,
+      "test_labels_used": false,
+      "external_identity_data_used": false
+    }
+  }
+}

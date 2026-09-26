@@ -1,0 +1,58 @@
+{
+  "candidates": 42104509,
+  "gt_total": 763919,
+  "recovered": 660551,
+  "pair_recall": 0.8646872246926703,
+  "gained": 4528,
+  "lost": 2040,
+  "net": 2488,
+  "source": {
+    "S2": {
+      "total": 368894,
+      "recovered": 321069,
+      "recall": 0.870355711938931
+    },
+    "S3": {
+      "total": 395025,
+      "recovered": 339482,
+      "recall": 0.8593937092589077
+    }
+  },
+  "mean": 190.92331236878263,
+  "p95": 317.0,
+  "p99": 799.0,
+  "max": 1587,
+  "only_s2_s1": 440,
+  "only_s3_s1": 486,
+  "bands": [
+    {
+      "k_per_source": 25,
+      "s1": 20830,
+      "candidates": 2403375,
+      "gt_total": 87338,
+      "recovered": 78474,
+      "recall": 0.8985092399642767
+    },
+    {
+      "k_per_source": 50,
+      "s1": 121236,
+      "candidates": 19602148,
+      "gt_total": 432041,
+      "recovered": 381186,
+      "recall": 0.8822912640235533
+    },
+    {
+      "k_per_source": 75,
+      "s1": 78465,
+      "candidates": 20098986,
+      "gt_total": 244540,
+      "recovered": 200891,
+      "recall": 0.8215056841416537
+    }
+  ],
+  "policy": "dynamic",
+  "hard_upper_per_source_per_pass": 75,
+  "wall_seconds": 104.08,
+  "artifact_bytes": 264652317,
+  "peak_temp_bytes": 0
+}

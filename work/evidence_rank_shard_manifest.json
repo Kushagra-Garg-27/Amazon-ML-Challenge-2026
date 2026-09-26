@@ -1,0 +1,775 @@
+{
+  "parts": [
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_0.parquet",
+      "rows": 861183,
+      "bytes": 6414820,
+      "sha256": "63b44148c0b706c9e146eb643eeb5cc6b7098c5a3718923f243ad2a3e83f0be5"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_1.parquet",
+      "rows": 856464,
+      "bytes": 6389806,
+      "sha256": "d8082a1f01ca923a10264bca125af6c25f6fca8541d5ca1643ba761f4b5659de"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_10.parquet",
+      "rows": 839747,
+      "bytes": 6256336,
+      "sha256": "036405b595e2c6753547cea006e0898a730805e87cf5c349fe234d4be34e1f3c"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_11.parquet",
+      "rows": 839629,
+      "bytes": 6262089,
+      "sha256": "50a84ac6afa018224d5950ff558d08d38373898cdc67e08385d203374f436ae6"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_12.parquet",
+      "rows": 873620,
+      "bytes": 6510519,
+      "sha256": "3a9f5dbc2332dc5c59da657d7643e37089461ebb6c8444d36ae516c9f8850209"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_13.parquet",
+      "rows": 854033,
+      "bytes": 6366674,
+      "sha256": "bb0aeb3be022745fd8c3d191908fb182080385df5eac37c81e6a66e7149cf42c"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_14.parquet",
+      "rows": 833479,
+      "bytes": 6200414,
+      "sha256": "072271a8414f6f8ea8b95d5865a5b8aa61ca5841a22abbb034eaed942297b15c"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_15.parquet",
+      "rows": 840984,
+      "bytes": 6279444,
+      "sha256": "cf1288e0a59811a0f91ac6d6ba1c04dfccd3a97a5c12069f472f0cf3d15a3062"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_16.parquet",
+      "rows": 844118,
+      "bytes": 6290012,
+      "sha256": "7b0c065816bb1e9ccac710104a747574fdb5dbf5dee3795b3dbe32bac54009ed"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_17.parquet",
+      "rows": 863932,
+      "bytes": 6427437,
+      "sha256": "6aeeeaeec61ff9cb78369f8b17729690873df7d2ec032e4ebf55a64fa1673999"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_18.parquet",
+      "rows": 890450,
+      "bytes": 6650792,
+      "sha256": "38d43e0f2d120c753c9eb5aa77858b4279b2fcaacff3d450e03980f325bf12d2"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_19.parquet",
+      "rows": 841589,
+      "bytes": 6276416,
+      "sha256": "d57dffbbfb56e3849fde66ba0db8dc0f60f9746a18022a5df89cf3be29f1530c"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_2.parquet",
+      "rows": 859695,
+      "bytes": 6410326,
+      "sha256": "c6091f59b6ee0391133fb40a44de8215880fe5857c16c7118ed1a4cae2d3943d"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_20.parquet",
+      "rows": 841508,
+      "bytes": 6273471,
+      "sha256": "db707faf0876c332f04eb0d5a6520fe04ffa31143293f5429de63a9a734f1cc3"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_21.parquet",
+      "rows": 885806,
+      "bytes": 6609149,
+      "sha256": "b0d937d9e31e9d88e7b7485bfec0cea0be31041d96f217e7ab668389227b63ef"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_22.parquet",
+      "rows": 844098,
+      "bytes": 6295572,
+      "sha256": "6d55cc13a9fa28a799253194b05cb1abd51286b45e5649142c25ac27544f8386"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_23.parquet",
+      "rows": 842019,
+      "bytes": 6273867,
+      "sha256": "91c418cd4d9ec1bb8210343030ecc9fb69a97e272a6932afaf16d657c2de7971"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_24.parquet",
+      "rows": 837034,
+      "bytes": 6222924,
+      "sha256": "736e46ef48ee2ddbecc1baaa84d706c8f9241b1e2375093023f601db8a60be6c"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_25.parquet",
+      "rows": 858693,
+      "bytes": 6388386,
+      "sha256": "2b9d8088bf161a4a2de0280adacd5fd9b3bb5757b78b4884dc4d24ec10e278d5"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_26.parquet",
+      "rows": 846420,
+      "bytes": 6280494,
+      "sha256": "c558e929b26f575d872d0fd418423ca7dbf90d1d35cc5a90c0212c4b5015d907"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_27.parquet",
+      "rows": 871954,
+      "bytes": 6499820,
+      "sha256": "f61c000cf5df1a8b4090671d7895caf00853e1de5e4425f60786691f91391ef3"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_28.parquet",
+      "rows": 843607,
+      "bytes": 6293744,
+      "sha256": "84b1f707889b0b5cd38f5ae9968172183527087cc855235eace219cd554aca65"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_29.parquet",
+      "rows": 821664,
+      "bytes": 6109201,
+      "sha256": "01b95d8c979ee2d2a785a04a3f7112761a7bf37517f84521dc55b5ec50d61c62"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_3.parquet",
+      "rows": 851082,
+      "bytes": 6331141,
+      "sha256": "3ad3e52cc7a26edc9f367c067cb0d15906836119fe38d248c7bff7c190a8a29c"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_30.parquet",
+      "rows": 829482,
+      "bytes": 6176522,
+      "sha256": "bd983742393c106b2a828fc12237e32cda1c8bf6818a2745a4ee48dfdfc10a40"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_31.parquet",
+      "rows": 836482,
+      "bytes": 6227679,
+      "sha256": "04f5a652b0fb4c12ffe707bf8fce663f7b2c816f0003e72b96e0e5a53e72ffdd"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_4.parquet",
+      "rows": 856930,
+      "bytes": 6383739,
+      "sha256": "e93023b3204ecbbba8be80f4879e4b59cb911849e6d8b1a0b8bfae153950ea83"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_5.parquet",
+      "rows": 842051,
+      "bytes": 6270075,
+      "sha256": "ae9cc8ed753ab7821aac2fde04b0700df531aea2da1daf2ce5f938ed73a8cf45"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_6.parquet",
+      "rows": 835286,
+      "bytes": 6221201,
+      "sha256": "c3a4c612336026e080b56a3dc779626799a00c11bafb8f0e733e75b8891b25d8"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_7.parquet",
+      "rows": 854621,
+      "bytes": 6370909,
+      "sha256": "a7b97c4950ecc74edef59a8cfe9195d8b2539bd91c8fdf721488578f2dda9c1e"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_8.parquet",
+      "rows": 843862,
+      "bytes": 6307094,
+      "sha256": "c9f55f57801487e824e05a52b3d499428ec536c8d5f44f40623f0bf365752d4f"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_india_9.parquet",
+      "rows": 877429,
+      "bytes": 6547016,
+      "sha256": "588e71634d599ee3781efd6c82da9f44cea3aea704050f348680c774c77c91ec"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_0.parquet",
+      "rows": 1285759,
+      "bytes": 8770138,
+      "sha256": "71df38d6c61b00b28686066b085cdca61728029d81f278927a1ce4fb44acd575"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_1.parquet",
+      "rows": 1307472,
+      "bytes": 8934786,
+      "sha256": "5ef215be30958ff76d0d2d83c668b3248a1acf51651440a59c43668e544246b4"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_10.parquet",
+      "rows": 1262936,
+      "bytes": 8624086,
+      "sha256": "d8550322b41ab7f32fe964d8e2e287c1c9ca75ebf6dc3bd30179368538c08e8a"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_11.parquet",
+      "rows": 1300063,
+      "bytes": 8907918,
+      "sha256": "298f96672e2bb8d57d966c62b54548763b2e7d2c37cda66d2c6d207d58dd1be1"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_12.parquet",
+      "rows": 1282132,
+      "bytes": 8770291,
+      "sha256": "742cfccab0a46c90149c4e866c8d87c1b3515a1831c8daf05f09471d63a43e19"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_13.parquet",
+      "rows": 1291261,
+      "bytes": 8818551,
+      "sha256": "f258465ffbd4beac538cfd61fae84d937428fd3c86fab0cd3c50e87f978c0d02"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_14.parquet",
+      "rows": 1261053,
+      "bytes": 8636357,
+      "sha256": "271a6b324de08664a83cd3402a950aca1b7287cee913f27d2af6fda2c5685c49"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_15.parquet",
+      "rows": 1267434,
+      "bytes": 8672518,
+      "sha256": "fa055227723dc29c9c2bfd95d5860590d80178626bd31d0ba566673a699454b0"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_16.parquet",
+      "rows": 1258976,
+      "bytes": 8610609,
+      "sha256": "5a2d5bee845bcab0b18d47c94c2505603f810ef88f4eff6efc2711a6b69b80d9"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_17.parquet",
+      "rows": 1279765,
+      "bytes": 8726781,
+      "sha256": "4f0cc97f4aaf3b5fd82a5e599c5970fab0a42651f1c57f670d3417e4aa6d52a0"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_18.parquet",
+      "rows": 1270874,
+      "bytes": 8690933,
+      "sha256": "ce5125c6d721b9f486c92e8ba32ee4b3229a89ac24c3c7c7dbf66d40049e7a47"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_19.parquet",
+      "rows": 1277491,
+      "bytes": 8734975,
+      "sha256": "c49683e0566b19cf6fad66683e98209f997ae1c7ae42c7ec7fde3cee859579e4"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_2.parquet",
+      "rows": 1254785,
+      "bytes": 8578673,
+      "sha256": "f1633eae0c5284cf75a1f90376ad89b74d45ca77e9a033dea44f3eb164984519"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_20.parquet",
+      "rows": 1309959,
+      "bytes": 8952025,
+      "sha256": "033c550305d542bc8721709d1c74e9e7f8bf25a501e9b0675a5a463040d07d6d"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_21.parquet",
+      "rows": 1304401,
+      "bytes": 8911767,
+      "sha256": "06c299105d15962d1d50b4cb8e3fb43985a8d58bed69b536e9bd03de9f105551"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_22.parquet",
+      "rows": 1313071,
+      "bytes": 8974577,
+      "sha256": "11e45ea6c92ea227f3071f5a95b7961ce75ed9c22bf6d69e261d1b4c7bcd0297"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_23.parquet",
+      "rows": 1295969,
+      "bytes": 8866092,
+      "sha256": "9c4b7828b28e3e20474e9555d23f9b8d01bb245aae9bef625048d74820daf31f"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_24.parquet",
+      "rows": 1234447,
+      "bytes": 8428893,
+      "sha256": "8da28117faf30d4aeebaa504018033ae06769a3c2f80479e0690d50cd0e766f9"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_25.parquet",
+      "rows": 1259548,
+      "bytes": 8592011,
+      "sha256": "26d65dcaf764bf1aff5304a493a4cf86d1831f78b9d87253f6ddb740f898d3de"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_26.parquet",
+      "rows": 1302065,
+      "bytes": 8894807,
+      "sha256": "874488e8d367314d7aac21940d6868f3641be067e28cb5f4f07de4e754351a13"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_27.parquet",
+      "rows": 1281593,
+      "bytes": 8773388,
+      "sha256": "f46d8b44309d0eb6ea5d72bd48eb50acf033ec2bc2e56cdc086c57585b7e3715"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_28.parquet",
+      "rows": 1257437,
+      "bytes": 8582279,
+      "sha256": "17348dbb93127b94257feea02345314255db1506f1632f8291c6eddfe1379f1b"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_29.parquet",
+      "rows": 1305304,
+      "bytes": 8936493,
+      "sha256": "09a7fa4b727e4df13706ba2c6989e6421014c87801f905a04ffbfa17ab3c808b"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_3.parquet",
+      "rows": 1308542,
+      "bytes": 8937391,
+      "sha256": "040777d2958927e79f8ac24b7451630efd9c2b0b50e194f2d135708cbc9290a3"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_30.parquet",
+      "rows": 1292899,
+      "bytes": 8841587,
+      "sha256": "46b1f4e84accf6d48ae132072feff6917246a6a6f0d5e350fd341ee8c35c2ad0"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_31.parquet",
+      "rows": 1298442,
+      "bytes": 8865504,
+      "sha256": "b63c586132b6d5262cf4a50a5876cbbb1c72e95e330030f9d9b96d50afbaeca5"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_4.parquet",
+      "rows": 1248907,
+      "bytes": 8552881,
+      "sha256": "ffb01605fe7a3d84e7ccd4b42ffc387f3a28089b9717d11b606a26b024eb3a50"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_5.parquet",
+      "rows": 1259496,
+      "bytes": 8614144,
+      "sha256": "f4830c0bb7faba2d6850f9cf52bd7ba777392273953734931b65a9a0dd852b4e"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_6.parquet",
+      "rows": 1340613,
+      "bytes": 9152692,
+      "sha256": "95e058d5f7a343295a68394693b7f16140957b499c4dabc8746309c0fef2d251"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_7.parquet",
+      "rows": 1260045,
+      "bytes": 8593202,
+      "sha256": "a00d4d2d8cd8a46b6178bcdd3be0fae7a0b54187fa90138f7b328678161f8ef0"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_8.parquet",
+      "rows": 1266012,
+      "bytes": 8667078,
+      "sha256": "8959dafdd8f9f690532238702b28fdaa2b1f81f4f841504eb96cde5a5bc6db47"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_addr_us_9.parquet",
+      "rows": 1272695,
+      "bytes": 8714782,
+      "sha256": "31813d87a87c57a6a48958f85eb364808cdad3b5a76bbb557ff37b3b918c1c5b"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_0.parquet",
+      "rows": 383523,
+      "bytes": 2536670,
+      "sha256": "32e0d6bc5989349057ccb312b401b0efaa910c1d34bb3b3bb0d17a4424e52dae"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_1.parquet",
+      "rows": 377203,
+      "bytes": 2509998,
+      "sha256": "6a542336ea1d6de9c33df891363f28e99a9c22c374c21d18bacbbb6d3347d3fe"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_10.parquet",
+      "rows": 395772,
+      "bytes": 2613575,
+      "sha256": "5d162832472befc4f4147ff8fdd424fed9137e676fb63a0f2008b8822d4dc6c5"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_11.parquet",
+      "rows": 400609,
+      "bytes": 2647814,
+      "sha256": "95db3585d3e6139e2931086fd452b93ae54147a688b7ec71d240ada41653aa9c"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_12.parquet",
+      "rows": 394764,
+      "bytes": 2634428,
+      "sha256": "4c17875318667055b1eff4c0193e78a498249e633f6e1d96f3a1aa2b2672b5f4"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_13.parquet",
+      "rows": 376635,
+      "bytes": 2506400,
+      "sha256": "481573006941ca1dd6abed4dd134bc5c2176977783cb8a8e3f954eb3ae4f7993"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_14.parquet",
+      "rows": 369275,
+      "bytes": 2448865,
+      "sha256": "c7975dc2476c05b54c400e9c3db7953003be3f12388bbb1825b33a7ac9d533c8"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_15.parquet",
+      "rows": 370032,
+      "bytes": 2447372,
+      "sha256": "05f91377d273946f176301b5cd3d1ad6933861aae675bcdd7d7dcaff2f67fccc"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_16.parquet",
+      "rows": 377425,
+      "bytes": 2507933,
+      "sha256": "aac82dbe9c5115735561f3d0273516b303d8ed10baf33e67cfce74aae4114cc6"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_17.parquet",
+      "rows": 398833,
+      "bytes": 2652322,
+      "sha256": "ee76ad6a76bf9c03cac40ab751f668a69e96f919cfb30d2afd410c976a6d0aaf"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_18.parquet",
+      "rows": 388508,
+      "bytes": 2595592,
+      "sha256": "332cd49c7962d4dd4b85b01fda527483ca5c87c856596de5e7ae1e907c47ec81"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_19.parquet",
+      "rows": 377471,
+      "bytes": 2513506,
+      "sha256": "b0a26e946f3a8994abaad141cb1445c0d7555f1f678d9a765eb53a78b015d737"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_2.parquet",
+      "rows": 396736,
+      "bytes": 2639959,
+      "sha256": "9b02498cdd1519e3c6d867d662c47c0b094e9ae36a6b8868736abf112cf07e5f"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_20.parquet",
+      "rows": 404107,
+      "bytes": 2685203,
+      "sha256": "9b7c3b77e009c87e348c7e760f0cdd5b781e878a8eb6943dca31e82869fac66c"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_21.parquet",
+      "rows": 396506,
+      "bytes": 2628457,
+      "sha256": "dd2392e8365e8921cb025505e37e6de78ed30685707f1e706d58144e3b25905f"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_22.parquet",
+      "rows": 378045,
+      "bytes": 2512929,
+      "sha256": "182a49d34007600a44c6b6f22c9be47099fb2cafc4b79c1b6be4aad165d82eab"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_23.parquet",
+      "rows": 380535,
+      "bytes": 2547772,
+      "sha256": "038f17afedb9b28393f83c396dfd1683f7d5e799103ec0c742f2809a5c694852"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_24.parquet",
+      "rows": 371252,
+      "bytes": 2458596,
+      "sha256": "a9f20541bfca9c884153c7fa6a04d44bd0a491dad8f50aac111c5e9617f8cddf"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_25.parquet",
+      "rows": 364596,
+      "bytes": 2421874,
+      "sha256": "83238fb5a2ebc4ebf6102779dd5f0b130502805e234874d97e36e822e13245fa"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_26.parquet",
+      "rows": 377547,
+      "bytes": 2503667,
+      "sha256": "e7b93c1827872fc24c78629385689b44902e497bb02ded023256b6e0b88638a1"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_27.parquet",
+      "rows": 376064,
+      "bytes": 2517033,
+      "sha256": "097301a32a3c26585651d8de5d2e32652a551ea0192963dc95126d332c2eaad0"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_28.parquet",
+      "rows": 373835,
+      "bytes": 2462477,
+      "sha256": "1b0d2910295c6c3aad658ac01d4b294c7b9cbaac269422e12fd150108acadbaf"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_29.parquet",
+      "rows": 351832,
+      "bytes": 2333582,
+      "sha256": "db60313077fe4825ceb4c5331e769e2b10ed8b06a3f5ca7b296d3d2507ca31ef"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_3.parquet",
+      "rows": 375241,
+      "bytes": 2510772,
+      "sha256": "80e3d413c7c15e2a7d28a573770d584caaef3818d16d997e553cd1bb2e475bfb"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_30.parquet",
+      "rows": 359433,
+      "bytes": 2379088,
+      "sha256": "4e083ebd8c2d19f7f2a7a8b3e077114cbc4345495cd628b2ae194c21c1758d76"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_31.parquet",
+      "rows": 376436,
+      "bytes": 2496322,
+      "sha256": "9b833c20ce0e60fd2b1e23727d00690f005b8b1ad75f42d0b576fbf467e5d474"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_4.parquet",
+      "rows": 382275,
+      "bytes": 2540290,
+      "sha256": "25ff918a3365e0ede0777ba80549b21958dc87d4f18df3bdfc5cdfdc40fcf22b"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_5.parquet",
+      "rows": 373746,
+      "bytes": 2463365,
+      "sha256": "05a84e1c2a4c21d80536c0558c5e44ec99a65b79f8dfd30805c6c8890ce3ce1d"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_6.parquet",
+      "rows": 369853,
+      "bytes": 2436375,
+      "sha256": "592d45d281aeeded95eb2d42230cae371e17761a9e4d432a301b29e32dbb57ac"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_7.parquet",
+      "rows": 376087,
+      "bytes": 2493145,
+      "sha256": "d0ebe3e30647978b3ba6808a7441a7d2cff00095e5c002a0e063e14b06b33244"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_8.parquet",
+      "rows": 371383,
+      "bytes": 2460374,
+      "sha256": "f21c5d5eb2279fd6b13af40b53a790f2188a6df2fd78faec3feeb84115633722"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_india_9.parquet",
+      "rows": 380794,
+      "bytes": 2539155,
+      "sha256": "60e725ad49e8319844b882d8878c0e9100bd8a1915c608f9dfd08053cc7da209"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_0.parquet",
+      "rows": 809626,
+      "bytes": 5342621,
+      "sha256": "554eb7e9b02b9803e44d2ee0a9c12dfa2cd4488a02870399b1196db55901f7e6"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_1.parquet",
+      "rows": 807887,
+      "bytes": 5334667,
+      "sha256": "2939fee63d876536cef3fa1a4cd7154be5226d97b86f355057d797daff123550"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_10.parquet",
+      "rows": 810170,
+      "bytes": 5377337,
+      "sha256": "b9c577ba202a571589725054aa609f54ace19fc96cb8e67c8b1ed7916086c68d"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_11.parquet",
+      "rows": 823261,
+      "bytes": 5462905,
+      "sha256": "c1637237a9556acaed759afedff60e1ca210a7c50ca4a8f134d1d9fdeda87960"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_12.parquet",
+      "rows": 817837,
+      "bytes": 5413546,
+      "sha256": "0369b15cc6f577e2f062a2137d400881db137f8f6896f672cdaa7718df2819d4"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_13.parquet",
+      "rows": 800074,
+      "bytes": 5312585,
+      "sha256": "1dd3746da2b71f6cbf747cda76ca416784d4a2d178112a31fcc537ff3d592fa0"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_14.parquet",
+      "rows": 808915,
+      "bytes": 5360170,
+      "sha256": "84f35c5e1a63a5743e004ae8435ff81e7b18d8baaff6fe661f3cca679c14e59e"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_15.parquet",
+      "rows": 818223,
+      "bytes": 5412162,
+      "sha256": "58662ecb70ab77c89e3821ea4ef04a92503ba60e89a171bb72527c311da9e2db"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_16.parquet",
+      "rows": 821666,
+      "bytes": 5439325,
+      "sha256": "9997199ce855717823544806e9176981152dd345b5f54c35d34e853562cdccc8"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_17.parquet",
+      "rows": 810228,
+      "bytes": 5359055,
+      "sha256": "9a532a6e2d5cc3488736e592be76fbc626488c29be4bfba0d93b929875e75e3a"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_18.parquet",
+      "rows": 788630,
+      "bytes": 5215970,
+      "sha256": "40b029d61107c7b37c90eda0fbbe7166a19f797e9020c8525c965c03dd03109c"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_19.parquet",
+      "rows": 799339,
+      "bytes": 5298689,
+      "sha256": "de1b19ea206b28f18fdbd2f0c60dd4d90103f0b42cbc009fc8bff899e62c266f"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_2.parquet",
+      "rows": 808062,
+      "bytes": 5349558,
+      "sha256": "baff34bc7454aa315e65502bbf20575ce51db784fec8d404fbb2f873c4c70bbe"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_20.parquet",
+      "rows": 849894,
+      "bytes": 5601724,
+      "sha256": "f58874a57d3c8be54ff5a13a559e553d649d5270c53819248f94e50abeaa68ae"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_21.parquet",
+      "rows": 816572,
+      "bytes": 5391864,
+      "sha256": "c8158f6562b1fc62a6434eefdcd55ace34df8ebe0389311628cbc198e3e62fb8"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_22.parquet",
+      "rows": 817897,
+      "bytes": 5405546,
+      "sha256": "2d4700202144dcf2859b89634168ca2eb8d828b24488123ca9a3aad599aa5ebe"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_23.parquet",
+      "rows": 820878,
+      "bytes": 5413405,
+      "sha256": "2ac27281a881e602cf73b9304bc90588c3a8f8f7dc81d0d94c5ec37a28b4b4fa"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_24.parquet",
+      "rows": 796240,
+      "bytes": 5282559,
+      "sha256": "004e10fb654231c163e70e27784eed1adc11daf649a1255e144f13f6f9a8b252"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_25.parquet",
+      "rows": 814999,
+      "bytes": 5354064,
+      "sha256": "5d3d96f92c9085d2490cb6c6caf336524dd027a7f3b225bc1d21e2efb6bdbcd3"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_26.parquet",
+      "rows": 842541,
+      "bytes": 5561310,
+      "sha256": "2a9471aeaf6893ea9fa26b74d2bc210837401c372b828667ff2a1e1491402670"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_27.parquet",
+      "rows": 826485,
+      "bytes": 5450115,
+      "sha256": "29474e54ccf0eb441737b273e9994b2fdc7aa209fec68e685cf7949057d1d0fe"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_28.parquet",
+      "rows": 812152,
+      "bytes": 5370154,
+      "sha256": "0edc1a11e4ec736bfa5f9f9cbca751de3bc3f3ef1cde28b7ae8ce0753f8f634d"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_29.parquet",
+      "rows": 814653,
+      "bytes": 5393663,
+      "sha256": "044d49de88c10e2f97f8b1a4b3b9cd79b52a45cc429fab59d981209a741c8245"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_3.parquet",
+      "rows": 843989,
+      "bytes": 5578763,
+      "sha256": "f79efda728ee8a3fe81d724ad57868c9d8a691dcc7bfd80e9e70eec02c8ab725"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_30.parquet",
+      "rows": 824544,
+      "bytes": 5458364,
+      "sha256": "f8192e6336f596ae0c5d056b476a2e911ee5a4d55b0053a84142489ba707ea23"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_31.parquet",
+      "rows": 819254,
+      "bytes": 5406392,
+      "sha256": "9c4092da07be3d2c525c5fdf63ed3a3f9397ff07e6c487b10974e289745fc7fe"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_4.parquet",
+      "rows": 788301,
+      "bytes": 5234238,
+      "sha256": "e09450d9c89b78075d2e3de37feb498da92292bf481d3615edc6326531df1820"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_5.parquet",
+      "rows": 804273,
+      "bytes": 5323824,
+      "sha256": "b9210bae5bee1598be9f9375fbf8fe854ac1f4a4ca128b795707f940ae108043"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_6.parquet",
+      "rows": 852147,
+      "bytes": 5649140,
+      "sha256": "176a3fc000d2a1a5bb3404be93f05bd564bd1982e108b2a12f8e3aaa43d69ff6"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_7.parquet",
+      "rows": 797869,
+      "bytes": 5304193,
+      "sha256": "515173365d89ac1ae120f5d3ca52108a9cb373531712ee929a527b9b5fc646f6"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_8.parquet",
+      "rows": 839284,
+      "bytes": 5544752,
+      "sha256": "92775a2948bbbd2d3d69bebe8e5c7acdf930498df86b0aa01b80f161678a29e2"
+    },
+    {
+      "path": "work/freeze_gate/rank_evidence_name_us_9.parquet",
+      "rows": 804525,
+      "bytes": 5312360,
+      "sha256": "ede58f7e31f0238df0aad323991735d7b05f07aa612b90a4f415addd2e1cbc1e"
+    }
+  ],
+  "row_count": 106487165,
+  "artifact_bytes": 736505228,
+  "partition_manifest_sha256": "c0740bb1f9c6928f9ab845941a12b539028aba9b6e70403a01d8e67b60525213"
+}

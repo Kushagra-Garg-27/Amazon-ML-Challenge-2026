@@ -1,0 +1,25 @@
+{
+  "policy_id": "evidence_source_50_50_heavy100_v1",
+  "parts": 16,
+  "rows": 34568979,
+  "wall_seconds": 151.63820910453796,
+  "peak_temp_bytes": 0,
+  "files": [
+    "work/final_candidate_policy_parts/part-00.parquet",
+    "work/final_candidate_policy_parts/part-01.parquet",
+    "work/final_candidate_policy_parts/part-02.parquet",
+    "work/final_candidate_policy_parts/part-03.parquet",
+    "work/final_candidate_policy_parts/part-04.parquet",
+    "work/final_candidate_policy_parts/part-05.parquet",
+    "work/final_candidate_policy_parts/part-06.parquet",
+    "work/final_candidate_policy_parts/part-07.parquet",
+    "work/final_candidate_policy_parts/part-08.parquet",
+    "work/final_candidate_policy_parts/part-09.parquet",
+    "work/final_candidate_policy_parts/part-10.parquet",
+    "work/final_candidate_policy_parts/part-11.parquet",
+    "work/final_candidate_policy_parts/part-12.parquet",
+    "work/final_candidate_policy_parts/part-13.parquet",
+    "work/final_candidate_policy_parts/part-14.parquet",
+    "work/final_candidate_policy_parts/part-15.parquet"
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "side_by_prov": [
+    {
+      "side": "canonical_only",
+      "prov": 4,
+      "n": 4
+    },
+    {
+      "side": "canonical_only",
+      "prov": 8,
+      "n": 1433
+    },
+    {
+      "side": "rebuild_only",
+      "prov": 4,
+      "n": 4
+    },
+    {
+      "side": "rebuild_only",
+      "prov": 8,
+      "n": 1432
+    }
+  ],
+  "name": [
+    {
+      "side": "canonical_only",
+      "rank_band": "101-110",
+      "n": 4,
+      "min_rank": 101,
+      "max_rank": 103,
+      "same_score_as_100": 4
+    },
+    {
+      "side": "canonical_only",
+      "rank_band": "not_shortlisted",
+      "n": 1433,
+      "min_rank": null,
+      "max_rank": null,
+      "same_score_as_100": 0
+    },
+    {
+      "side": "rebuild_only",
+      "rank_band": "<=100",
+      "n": 4,
+      "min_rank": 99,
+      "max_rank": 100,
+      "same_score_as_100": 4
+    },
+    {
+      "side": "rebuild_only",
+      "rank_band": ">200",
+      "n": 1,
+      "min_rank": 396,
+      "max_rank": 396,
+      "same_score_as_100": 1
+    },
+    {
+      "side": "rebuild_only",
+      "rank_band": "not_shortlisted",
+      "n": 1431,
+      "min_rank": null,
+      "max_rank": null,
+      "same_score_as_100": 0
+    }
+  ],
+  "addr": [
+    {
+      "side": "canonical_only",
+      "rank_band": "101-110",
+      "n": 575,
+      "min_rank": 101,
+      "max_rank": 110,
+      "same_score_as_100": 547
+    },
+    {
+      "side": "canonical_only",
+      "rank_band": "111-200",
+      "n": 795,
+      "min_rank": 111,
+      "max_rank": 199,
+      "same_score_as_100": 717
+    },
+    {
+      "side": "canonical_only",
+      "rank_band": ">200",
+      "n": 63,
+      "min_rank": 201,
+      "max_rank": 285,
+      "same_score_as_100": 42
+    },
+    {
+      "side": "canonical_only",
+      "rank_band": "not_shortlisted",
+      "n": 4,
+      "min_rank": null,
+      "max_rank": null,
+      "same_score_as_100": 0
+    },
+    {
+      "side": "rebuild_only",
+      "rank_band": "<=100",
+      "n": 1432,
+      "min_rank": 2,
+      "max_rank": 100,
+      "same_score_as_100": 1304
+    },
+    {
+      "side": "rebuild_only",
+      "rank_band": "not_shortlisted",
+      "n": 4,
+      "min_rank": null,
+      "max_rank": null,
+      "same_score_as_100": 0
+    }
+  ]
+}

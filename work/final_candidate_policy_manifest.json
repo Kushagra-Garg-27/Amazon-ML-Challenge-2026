@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "policy_id": "evidence_source_50_50_heavy100_v1",
+  "frozen_inputs": {
+    "normalization": {
+      "path": "code/business_entity_resolution/src/er/normalize.py",
+      "sha256": "b3508b600e05e6008ceb7872d7b48e715df935ee7c4bb586d1cd7d5ec02ccedd",
+      "version": 1
+    },
+    "evaluator": {
+      "path": "code/business_entity_resolution/src/er/evaluate.py",
+      "sha256": "e99d7f0ad83a582cba21f5d76d42b5f9ff5822740d5e962ec9759d071cc0441e"
+    },
+    "split": {
+      "path": "work/split_s1.parquet",
+      "sha256": "d01e4811836db39406a4dc33112a3a4a5105802a1fbbc21f9756d1d8bd3b0f2f",
+      "rows": 2206821,
+      "validation_rows": 220531
+    },
+    "ranker_config": {
+      "path": "work/evidence_ranker_v1.json",
+      "sha256": "a0fb606f9aed5bfef2f62184c1b5417d3936633c767326fe948907a193bf6e3c"
+    },
+    "rank_shards": {
+      "path": "work/evidence_rank_shard_manifest.json",
+      "sha256": "e2db9fd4ff0d141ccec5b117091ab3b2c97d2df4b481d74b4f3d36628008bd08",
+      "rows": 106487165,
+      "parts": 128,
+      "bytes": 736505228
+    }
+  },
+  "policy": {
+    "path": "work/final_candidate_policy.json",
+    "sha256": "46fd324b3d4db7dbdf5fa4b8ce528f681335ce16f759fb93a39ba5b98a040fea"
+  },
+  "ranking_code": {
+    "files": {
+      "code/business_entity_resolution/src/er/candidates/ranking.py": "42448fd21480c7bcbde167fd775f2ae2f6d275be2c1a4077c9dc5a347164cc4a",
+      "code/business_entity_resolution/src/er/candidates/policies.py": "6d7c63c17d965a956ec9a81025421afa18008c1acdcce65aadefbcdb3438e584",
+      "code/business_entity_resolution/src/er/candidates/materialize.py": "c37757403df5bfc0de68d5547af399e0f9bc1d7d2fa8daae4ecb904cc03597d9",
+      "code/business_entity_resolution/src/er/candidates/audit.py": "9da40e44c244fcac85045d6e4c01451f6fa013ce476836f77bf9237a8199796f"
+    },
+    "aggregate_sha256": "e3628daa37ed63f693dc88028152ef740900198c99d8e802b088a168674a7e09"
+  },
+  "artifact": {
+    "directory": "work/final_candidate_policy_parts",
+    "parts": 16,
+    "row_count": 34568979,
+    "bytes": 217174342,
+    "partition_manifest_sha256": "221fef2400511bf14c5e2c167b44adea7cad7eac3df2b786eb0bc8ad9465b067",
+    "manifest_path": "work/final_candidate_artifact_manifest.json",
+    "manifest_sha256": "7a8f0ec1b6a1caf7607225bd1d3b265cc2594f98a5919fe4bc8c68d74755c64f",
+    "identity_comparison": {
+      "added": 0,
+      "removed": 0,
+      "duplicates": 0,
+      "equal": true
+    }
+  },
+  "reproduction": {
+    "materialize": "$env:PYTHONPATH='code/business_entity_resolution/src'; .venv\\Scripts\\python.exe scripts/measure_peak.py --module er.candidates.materialize -- --config work/final_candidate_policy.json --rank-root work/freeze_gate --output-dir work/final_candidate_policy_parts --no-resume",
+    "verify": "$env:PYTHONPATH='code/business_entity_resolution/src'; .venv\\Scripts\\python.exe scripts/measure_peak.py --module er.candidates.audit -- --reference work/freeze_gate/evidence_source_50_50_heavy100.parquet --parts work/final_candidate_policy_parts --output work/final_candidate_artifact_manifest.json"
+  },
+  "freeze_gate": {
+    "passed": true,
+    "basis": "production module reproduced materialized selected artifact with zero candidate identity differences and zero duplicates"
+  }
+}
