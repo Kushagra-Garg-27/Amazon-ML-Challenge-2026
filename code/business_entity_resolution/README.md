@@ -10,6 +10,7 @@ py -3.12 -m venv .venv
 .venv\Scripts\python.exe -m pip install -r code\business_entity_resolution\requirements.txt -c code\business_entity_resolution\constraints.txt
 $env:PYTHONPATH='code/business_entity_resolution/src'
 $env:PYTHONUTF8='1'
+$env:ER_FEATURE_DUCKDB_MEMORY_MB='1200'
 New-Item -ItemType Directory -Force work,output | Out-Null
 Copy-Item code\business_entity_resolution\release\* work\
 ```
@@ -21,7 +22,7 @@ dataset/train/train_source1.tsv, train_source2.tsv, train_source3.tsv, train_gro
 dataset/test/test_source1.tsv, test_source2.tsv, test_source3.tsv
 ```
 
-The packaged frozen model and configurations are sufficient for test inference; retraining is unnecessary. No test labels or external identity service is used. The final output is `output/matching_results.tsv` and `output/candidate_pairs.tsv`.
+The packaged frozen model and configurations are sufficient for test inference; retraining is unnecessary. No test labels or external identity service is used. The final output is `output/matching_results.tsv` and `output/candidate_pairs.tsv`. The 1,200 MB feature DuckDB limit is the measured working setting for this dataset; it does not change feature definitions.
 
 ## Release stages and resume
 
@@ -42,7 +43,7 @@ From the archive root, run the stages in this order, one large data process at a
 
 After candidates finish, `python -m er.test_pipeline.release` runs the remaining audit, feature, scoring, assembly, diagnostics and validator stages sequentially. Use `--resume-from features` (or any listed stage) after an interruption; each stage also validates and reuses its own completed parts.
 
-All data stages use atomic writes and SHA-256 receipts. Re-run the same command to resume; valid completed parts are reused. To isolate a failed partition, use `--only p00_france` on candidate, feature, score and assembly modules. The candidate policy has 16 logical hash buckets, each split into two execution chunks, for 96 country/hash work units. Countries are discovered from input keys; France uses the same frozen policy. DuckDB uses approximately 700 MB internal memory and a single thread. Model scoring reads 200,000 candidates per batch as float32. Approximate test runtime from the held-out projection is 9.6 hours plus ingestion, rank construction and retries; actual runtime varies with hardware and France density.
+All data stages use atomic writes and SHA-256 receipts. Re-run the same command to resume; valid completed parts are reused. To isolate a failed partition, use `--only p00_france` on candidate, feature, score and assembly modules. The candidate policy has 16 logical hash buckets, each split into two execution chunks, for 96 country/hash work units. Countries are discovered from input keys; France uses the same frozen policy. Candidate DuckDB processing used a 500 MB internal limit after a planned restart; feature materialization used 1,200 MB. Each runs with one thread. Model scoring reads 200,000 candidates per batch as float32. The original 9.6-hour projection excluded key ingestion, rank construction and retries; measured stage times are recorded in the release manifests.
 
 Do not edit `work/final_candidate_policy.json`, `work/feature_spec_v1_1.json`, `work/final_matcher_model.txt`, or `work/final_matcher_policy.json`. Their hashes are verified by the stage code.
 

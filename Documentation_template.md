@@ -22,6 +22,8 @@ On the one-time held-out final evaluation, this policy generated 17,295,784 uniq
 
 On the full label-free test set, the same policy generated **273,502,145** unique post-pruning pairs across 96 checksummed physical parts: 135,832,608 S2 and 137,669,537 S3. All 1,732,544 S1 records were covered; 1,346 had zero candidates. The maximum observed per S1 was 296. These counts describe retrieval structure, not accuracy.
 
+By country, the candidate totals were France 40,719,179 (6 zero-candidate S1), India 124,118,027 (1,040), and US 108,664,939 (300). France's candidate volume was recorded as a structural result; it did not trigger a policy change.
+
 ## 4. Features and matcher
 
 Physical feature v1 materializes 65 columns: retrieval provenance and ranks, source identity, exact normalized fields, name and address lengths, token overlap and containment, inverse-frequency overlap, numeric and postal agreement/conflict, fuzzy ratios, and script compatibility. Feature specification v1.1 selects 61 fixed ordered float32 model inputs, removing four redundant columns while leaving physical feature values unchanged. Model checksum and feature order are checked before inference.

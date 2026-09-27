@@ -110,7 +110,7 @@ def main() -> None:
         raise RuntimeError("Frozen release gate is not PASS")
     env = os.environ.copy()
     env["PYTHONUTF8"] = "1"
-    env.setdefault("ER_FEATURE_DUCKDB_MEMORY_MB", "900")
+    env.setdefault("ER_FEATURE_DUCKDB_MEMORY_MB", "1200")
     names = [name for name,_ in STAGES] + ["validators"]
     for name, argv in STAGES:
         if names.index(name) < names.index(args.resume_from):
