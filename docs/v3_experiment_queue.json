@@ -1,0 +1,67 @@
+{
+  "status": "PREPARATION_ONLY_NOT_EXECUTED",
+  "population": "approved research S1 roles 0, 1 and 2; role3 excluded from retrieval selection",
+  "candidate_baseline": "work/v2_research/v1_plus_all.parquet",
+  "matcher_requirement": "freeze only after V2 assessment and exact reproduction",
+  "minimum_retained_final_f05_gain": 0.001,
+  "resource_limits": {
+    "normal_peak_RAM_bytes": 1800000000,
+    "duckdb_memory_MB": 1000,
+    "threads": 2,
+    "temporary_disk_bytes": 20000000000,
+    "research_join_rows_per_pass": 100000000,
+    "physical_partitions": 16,
+    "test_candidate_limit": "retain established budget until a measured end-to-end gain and a new explicit resource preflight justify revision"
+  },
+  "queue": [
+    {
+      "id": "v3_current_union_gap",
+      "priority": 0,
+      "entrypoint": "scripts/v3/gap_analysis.py --execute",
+      "purpose": "Current-union missed-pair and unique-S1 categories; correct historical 19897 pair/S1 confusion",
+      "labels": "research development only; diagnostic artifact never drives inference membership"
+    },
+    {
+      "id": "v3_complete_target_df",
+      "priority": 1,
+      "purpose": "Verify and adapt existing complete-corpus ngram DF receipts; build missing n=5 or transliteration DF only after corpus-size and shard pilot estimates",
+      "families": ["name3", "name4", "name5", "address3", "address4", "address5"],
+      "df_caps": [100, 500, 1000, 5000],
+      "query_key_caps": [4, 8],
+      "source_quotas": [10, 25, 50],
+      "entrypoint": "scripts/v3/ngram_preflight.py --execute --field FIELD --n N --df PATH --receipt PATH",
+      "no_cartesian_sweep": "Gap evidence chooses one or two highest-value families first"
+    },
+    {
+      "id": "v3_target_sister",
+      "priority": 1,
+      "purpose": "Reuse audited complete-target neighbor indexes; replace V1 seed acceptance with frozen validated V2 decisions",
+      "seed_quota": [1, 2],
+      "neighbor_quota": [5, 10],
+      "hop_limit": 1,
+      "two_hop_gate": "only after a retained one-hop gain; deduplicate visited targets and cap total added targets per S1",
+      "label_free": true
+    },
+    {
+      "id": "v3_zero_observable_eligibility",
+      "priority": 2,
+      "purpose": "Specialize retrieval for S1s lacking observable eligible keys, not S1s selected from missed GT pairs",
+      "families": ["locally normalized transliteration", "acronym plus locality or numeric context", "address character keys"],
+      "required_counts": ["zero-observable-key S1", "missed-pair-no-eligible-key S1", "recovered S1", "recovered GT pairs", "added candidates"]
+    },
+    {
+      "id": "v3_adaptive_union",
+      "priority": 3,
+      "purpose": "Union only productive passes, then compare static/source-balanced/confidence-adaptive budgets with the same frozen matcher",
+      "inference_signals": ["country", "script", "missing address", "candidate count", "frozen top score and gap", "observable eligible-key count"],
+      "mandatory": "Candidate TSV must equal the final candidate set actually scored"
+    }
+  ],
+  "per_pass_receipt": ["input hashes", "configuration hash", "new pair count", "new GT pairs", "GT per 1000", "incremental pair recall", "incremental oracle", "overlap", "S1 mean/p95/p99/max", "test projection", "runtime", "peak RSS", "final macro F05", "decision", "rejection reason"],
+  "readiness_gaps": [
+    "All new preparation scripts require synthetic test execution after reset",
+    "Complete-target DF receipt adapter and selected pass materializer need implementation after gap audit",
+    "Frozen V2 arbitrary-candidate feature/scoring adapter needs implementation and parity tests",
+    "No V3 retrieval policy, test inference, official validator result or final ZIP exists yet"
+  ]
+}
