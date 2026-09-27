@@ -118,6 +118,30 @@ def parquet_identity(path: Path, accepted_only: bool = False) -> tuple[str, int]
     return digest.hexdigest(), n
 
 
+def score_identities(path: Path) -> tuple[str, int, str, int]:
+    """Audit score decisions and hash both identity sets in one streaming pass."""
+    all_digest = hashlib.sha256()
+    accepted_digest = hashlib.sha256()
+    all_count = accepted_count = 0
+    last = None
+    columns = ["source1_entity_id", "target_entity_id", "predicted", "score"]
+    for batch in pq.ParquetFile(path).iter_batches(batch_size=100000, columns=columns):
+        d = batch.to_pydict()
+        for s1, target, predicted, value in zip(*(d[x] for x in columns), strict=True):
+            if last is not None and (s1, target) <= last:
+                raise RuntimeError(f"Duplicate/unsorted score identity in {path}")
+            last = (s1, target)
+            if value is None or not math.isfinite(value) or predicted != (value >= 0.61):
+                raise RuntimeError(f"Nonfinite or wrong decision in {path}")
+            encoded = f"{s1}\t{target}\n".encode("utf-8")
+            all_digest.update(encoded)
+            all_count += 1
+            if predicted:
+                accepted_digest.update(encoded)
+                accepted_count += 1
+    return all_digest.hexdigest(), all_count, accepted_digest.hexdigest(), accepted_count
+
+
 def target_existence(candidates: Path) -> int:
     c = duckdb.connect()
     c.execute("SET memory_limit='700MB'; SET threads=1")
@@ -153,8 +177,7 @@ def run(output: Path = Path("output"), selection: Path = Path("work/test_rank/se
         name = candidate.stem
         score_path = scores / candidate.name
         candidate_hash, candidate_n = parquet_identity(candidate)
-        score_all_hash, score_n = parquet_identity(score_path)
-        accepted_hash, accepted_n = parquet_identity(score_path, accepted_only=True)
+        score_all_hash, score_n, accepted_hash, accepted_n = score_identities(score_path)
         if candidate_hash != parsed["candidate_sha256"][name] or candidate_hash != score_all_hash:
             raise RuntimeError(f"Candidate/output/score identity mismatch: {name}")
         if accepted_hash != parsed["matching_sha256"][name]:

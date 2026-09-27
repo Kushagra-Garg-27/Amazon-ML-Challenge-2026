@@ -1,0 +1,33 @@
+{
+  "status": "PASS",
+  "rows": 1732544,
+  "candidate_ids": 273502145,
+  "matched_ids": 5715482,
+  "empty_candidates": 1346,
+  "empty_matches": 127684,
+  "candidate_distribution": {
+    "mean": 157.86158677643974,
+    "median": 175,
+    "p95": 201,
+    "p99": 217,
+    "max": 296
+  },
+  "matching_distribution": {
+    "mean": 3.2988957279007054,
+    "median": 3,
+    "p95": 6,
+    "p99": 14,
+    "max": 86
+  },
+  "unknown_targets": 0,
+  "candidate_file": {
+    "bytes": 3547454398,
+    "sha256": "e720888b85f0a4742558844e7d26a871c05ddc7a7bdd9574917d4ad183df13d3",
+    "line_count": 1732545
+  },
+  "matching_file": {
+    "bytes": 96123635,
+    "sha256": "82c7ba426c1984d13952d3c8f25e79c594a8c7a66a61f4fdcb9c634b090d1b22",
+    "line_count": 1732545
+  }
+}

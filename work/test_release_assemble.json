@@ -1,0 +1,18 @@
+{
+  "stage": "assemble",
+  "command": [
+    "C:\\Projects\\amazon-challenge\\.venv\\Scripts\\python.exe",
+    "-m",
+    "er.test_pipeline.assemble"
+  ],
+  "started_utc": "2026-09-27T08:13:51.130700+00:00",
+  "finished_utc": "2026-09-27T08:18:48.449876+00:00",
+  "wall_seconds": 297.319176,
+  "exit_code": 0,
+  "resource_preflight": {
+    "free_ram_bytes": 5441785856,
+    "free_disk_bytes": 197311901696
+  },
+  "log": "work/test_release_assemble.log",
+  "log_sha256": "443511cf43c574e03ca3361418fc6ba5e7a62f475be7df946bdebcd75dd49902"
+}

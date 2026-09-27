@@ -22,11 +22,18 @@ def db(temp: Path):
     return c
 
 
+def scored_rows(score: Path):
+    """Yield identities in the sorted order preserved by feature scoring."""
+    columns = ["source1_entity_id", "target_entity_id", "predicted"]
+    for batch in pq.ParquetFile(score).iter_batches(batch_size=100000, columns=columns):
+        data = batch.to_pydict()
+        yield from zip(*(data[column] for column in columns), strict=True)
+
+
 def fragment(score: Path, selection: Path, root: Path) -> dict:
     name = score.stem
     split, country = name.split("_", 1)
     root.mkdir(parents=True, exist_ok=True)
-    lists = root / f"{name}.parquet"
     candidate = root / f"{name}.candidate.tsv"
     matching = root / f"{name}.matching.tsv"
     manifest = root / f"{name}.json"
@@ -35,41 +42,57 @@ def fragment(score: Path, selection: Path, root: Path) -> dict:
         saved = json.loads(manifest.read_text(encoding="utf-8"))
         if saved.get("matching_sha256") == sha256(matching):
             return saved
-    c = db(root / "tmp")
-    partial = lists.with_suffix(".partial.parquet")
-    partial.unlink(missing_ok=True)
     started = time.time()
-    c.execute(f"""COPY (SELECT s.entity_id source1_entity_id,
-       coalesce(a.candidates,'') candidate_entity_ids,
-       coalesce(a.matches,'') matched_entity_ids
-       FROM read_parquet('{selection.as_posix()}') s
-       LEFT JOIN (SELECT source1_entity_id,
-         string_agg(target_entity_id,',' ORDER BY target_entity_id) candidates,
-         string_agg(CASE WHEN predicted THEN target_entity_id ELSE NULL END,',' ORDER BY target_entity_id) matches
-         FROM read_parquet('{score.as_posix()}') GROUP BY 1) a
-       ON s.entity_id=a.source1_entity_id
-       WHERE s.split=? AND s.country_norm=? ORDER BY s.entity_id)
-       TO '{partial.as_posix()}' (FORMAT PARQUET,COMPRESSION ZSTD)""", [split, country])
-    os.replace(partial, lists)
-    c.close()
+    c = db(root / "tmp")
+    try:
+        selected = [row[0] for row in c.execute(
+            f"SELECT entity_id FROM read_parquet('{selection.as_posix()}') "
+            "WHERE split=? AND country_norm=? ORDER BY entity_id", [split, country]).fetchall()]
+    finally:
+        c.close()
     cand_tmp = candidate.with_suffix(".partial.tsv")
     match_tmp = matching.with_suffix(".partial.tsv")
-    rows = 0
+    rows = candidate_ids = matched_ids = 0
+    stream = iter(scored_rows(score))
+    current = next(stream, None)
+    previous_s1 = None
     with cand_tmp.open("w", encoding="utf-8", newline="") as cf, match_tmp.open("w", encoding="utf-8", newline="") as mf:
-        for batch in pq.ParquetFile(lists).iter_batches(batch_size=50000):
-            d = batch.to_pydict()
-            for s1, ids, matched in zip(d["source1_entity_id"], d["candidate_entity_ids"],
-                                        d["matched_entity_ids"], strict=True):
-                if "\t" in s1 or "\n" in s1 or " " in ids or " " in matched:
-                    raise RuntimeError("Malformed output ID/list")
-                cf.write(f"{s1}\t{ids}\n")
-                mf.write(f"{s1}\t{matched}\n")
-                rows += 1
+        for s1 in selected:
+            if previous_s1 is not None and s1 <= previous_s1:
+                raise RuntimeError("Duplicate or unordered selection S1")
+            if "\t" in s1 or "\n" in s1 or "\r" in s1:
+                raise RuntimeError("Malformed S1 ID")
+            if current is not None and current[0] < s1:
+                raise RuntimeError(f"Scored S1 missing from selection: {current[0]}")
+            candidates = []
+            matches = []
+            previous_target = None
+            while current is not None and current[0] == s1:
+                _, target, predicted = current
+                if previous_target is not None and target <= previous_target:
+                    raise RuntimeError(f"Duplicate or unordered scored target for {s1}")
+                if not target.startswith(("S2-", "S3-")) or any(
+                    char in target for char in (",", " ", "\t", "\n", "\r")):
+                    raise RuntimeError(f"Malformed scored target ID for {s1}")
+                candidates.append(target)
+                if predicted:
+                    matches.append(target)
+                previous_target = target
+                current = next(stream, None)
+            cf.write(f"{s1}\t{','.join(candidates)}\n")
+            mf.write(f"{s1}\t{','.join(matches)}\n")
+            candidate_ids += len(candidates)
+            matched_ids += len(matches)
+            rows += 1
+            previous_s1 = s1
+    if current is not None:
+        raise RuntimeError(f"Scored S1 missing from selection: {current[0]}")
     os.replace(cand_tmp, candidate)
     os.replace(match_tmp, matching)
     record = record_part(candidate, manifest, rows, inputs,
                          matching_sha256=sha256(matching),
                          matching_bytes=matching.stat().st_size,
+                         candidate_ids=candidate_ids, matched_ids=matched_ids,
                          wall_seconds=time.time()-started)
     return record
 

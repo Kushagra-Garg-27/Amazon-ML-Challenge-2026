@@ -1,0 +1,18 @@
+{
+  "stage": "score",
+  "command": [
+    "C:\\Projects\\amazon-challenge\\.venv\\Scripts\\python.exe",
+    "-m",
+    "er.test_pipeline.score"
+  ],
+  "started_utc": "2026-09-27T07:57:31.442196+00:00",
+  "finished_utc": "2026-09-27T08:10:17.650003+00:00",
+  "wall_seconds": 766.207807,
+  "exit_code": 0,
+  "resource_preflight": {
+    "free_ram_bytes": 5415395328,
+    "free_disk_bytes": 200630259712
+  },
+  "log": "work/test_release_score.log",
+  "log_sha256": "c7e183408ee2d59f04348ce9a77b7eb6d235816fca898bbb34d830d4844af284"
+}

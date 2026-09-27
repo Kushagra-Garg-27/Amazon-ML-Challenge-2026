@@ -1,0 +1,54 @@
+{
+  "runs": [
+    {
+      "command": [
+        "C:\\Projects\\amazon-challenge\\.venv\\Scripts\\python.exe",
+        "utils/validate_submission.py",
+        "--matching",
+        "output/matching_results.tsv",
+        "--candidate",
+        "output/candidate_pairs.tsv",
+        "--test-dir",
+        "dataset/test"
+      ],
+      "started_utc": "2026-09-27T08:31:24.470102+00:00",
+      "finished_utc": "2026-09-27T08:32:47.808455+00:00",
+      "exit_code": 0,
+      "stdout": "ML Challenge 2026 \u2014 submission validator\n  test dir: dataset/test\n  required S1 entities: 1732544\n  matching_results.tsv: 1732544 rows (127684 empty, 1604860 non-empty).\n  candidate_pairs.tsv: 1732544 rows (1346 empty, 1731198 non-empty).\n\nWARNING: ID-existence check is OFF (the default) \u2014 re-run with --check-ids to enable it.\nPASS \u2014 no blocking issues found. Safe to submit.\n",
+      "stderr": "",
+      "resource_preflight": {
+        "free_ram_bytes": 5842616320,
+        "free_disk_bytes": 190253903872
+      },
+      "matching_sha256": "82c7ba426c1984d13952d3c8f25e79c594a8c7a66a61f4fdcb9c634b090d1b22",
+      "candidate_sha256": "e720888b85f0a4742558844e7d26a871c05ddc7a7bdd9574917d4ad183df13d3",
+      "validator_variant": "large-file streaming extension; original challenge helper preserved separately"
+    },
+    {
+      "command": [
+        "C:\\Projects\\amazon-challenge\\.venv\\Scripts\\python.exe",
+        "utils/validate_submission.py",
+        "--matching",
+        "output/matching_results.tsv",
+        "--candidate",
+        "output/candidate_pairs.tsv",
+        "--test-dir",
+        "dataset/test",
+        "--check-ids"
+      ],
+      "started_utc": "2026-09-27T08:32:51.135573+00:00",
+      "finished_utc": "2026-09-27T08:35:48.961126+00:00",
+      "exit_code": 0,
+      "stdout": "ML Challenge 2026 \u2014 submission validator\n  test dir: dataset/test\n  required S1 entities: 1732544\n  valid S2/S3 match IDs: 9969589\n  matching_results.tsv: 1732544 rows (127684 empty, 1604860 non-empty).\n  candidate_pairs.tsv: 1732544 rows (1346 empty, 1731198 non-empty).\n\nPASS \u2014 no blocking issues found. Safe to submit.\n",
+      "stderr": "",
+      "resource_preflight": {
+        "free_ram_bytes": 5651558400,
+        "free_disk_bytes": 190247587840
+      },
+      "matching_sha256": "82c7ba426c1984d13952d3c8f25e79c594a8c7a66a61f4fdcb9c634b090d1b22",
+      "candidate_sha256": "e720888b85f0a4742558844e7d26a871c05ddc7a7bdd9574917d4ad183df13d3",
+      "validator_variant": "large-file streaming extension; original challenge helper preserved separately"
+    }
+  ],
+  "status": "PASS"
+}

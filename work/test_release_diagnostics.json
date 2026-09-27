@@ -1,0 +1,18 @@
+{
+  "stage": "diagnostics",
+  "command": [
+    "C:\\Projects\\amazon-challenge\\.venv\\Scripts\\python.exe",
+    "-m",
+    "er.test_pipeline.diagnostics"
+  ],
+  "started_utc": "2026-09-27T08:27:16.812575+00:00",
+  "finished_utc": "2026-09-27T08:31:24.466103+00:00",
+  "wall_seconds": 247.653528,
+  "exit_code": 0,
+  "resource_preflight": {
+    "free_ram_bytes": 5773885440,
+    "free_disk_bytes": 190251413504
+  },
+  "log": "work/test_release_diagnostics.log",
+  "log_sha256": "f44d7ba29f2159abce3e8aa3af1f72f65fb1f1a9e8bb54f9d0bee6ffe2707d13"
+}

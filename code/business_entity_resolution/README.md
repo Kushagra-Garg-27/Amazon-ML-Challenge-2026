@@ -2,7 +2,7 @@
 
 ## Environment and data
 
-Use **Python 3.12.10** on Windows, with at least 48 GB free scratch disk and 1.35 GB free RAM before each large stage. The observed process peak in the held-out run was under 1.5 GB, but a full test run may need more scratch. The five direct Python dependencies are pinned in `requirements.txt` (NumPy, DuckDB, PyArrow, RapidFuzz, LightGBM); LightGBM's SciPy and Narwhals transitive dependencies are pinned in `constraints.txt`. From the archive root:
+Use **Python 3.12.10** on Windows, with at least 48 GB free scratch disk and 3 GB free RAM recommended for full feature and ID-check stages. The release driver refuses to start a large stage below 1.35 GB free RAM. The measured full-test feature process peak was 1.65 GB. The five direct Python dependencies are pinned in `requirements.txt` (NumPy, DuckDB, PyArrow, RapidFuzz, LightGBM); LightGBM's SciPy and Narwhals transitive dependencies are pinned in `constraints.txt`. From the archive root:
 
 ```powershell
 py -3.12 -m venv .venv
@@ -43,7 +43,7 @@ From the archive root, run the stages in this order, one large data process at a
 
 After candidates finish, `python -m er.test_pipeline.release` runs the remaining audit, feature, scoring, assembly, diagnostics and validator stages sequentially. Use `--resume-from features` (or any listed stage) after an interruption; each stage also validates and reuses its own completed parts.
 
-All data stages use atomic writes and SHA-256 receipts. Re-run the same command to resume; valid completed parts are reused. To isolate a failed partition, use `--only p00_france` on candidate, feature, score and assembly modules. The candidate policy has 16 logical hash buckets, each split into two execution chunks, for 96 country/hash work units. Countries are discovered from input keys; France uses the same frozen policy. Candidate DuckDB processing used a 500 MB internal limit after a planned restart; feature materialization used 1,200 MB. Each runs with one thread. Model scoring reads 200,000 candidates per batch as float32. The original 9.6-hour projection excluded key ingestion, rank construction and retries; measured stage times are recorded in the release manifests.
+All data stages use atomic writes and SHA-256 receipts. Re-run the same command to resume; valid completed parts are reused. To isolate a failed partition, use `--only p00_france` on candidate, feature, score and assembly modules. The candidate policy has 16 logical hash buckets, each split into two execution chunks, for 96 country/hash work units. Countries are discovered from input keys; France uses the same frozen policy. Candidate DuckDB processing used a 500 MB internal limit after a planned restart; feature materialization used 1,200 MB. Each runs with one thread. Model scoring reads 200,000 candidates per batch as float32; TSV assembly streams sorted score rows with bounded memory. Measured successful part runtimes were 3.745 hours for candidates, 6.236 hours for features, 12.5 minutes for scores, and 4.3 minutes for assembly. Allow additional time for ingestion, rank building, restarts, global output checks, and archive creation.
 
 Do not edit `work/final_candidate_policy.json`, `work/feature_spec_v1_1.json`, `work/final_matcher_model.txt`, or `work/final_matcher_policy.json`. Their hashes are verified by the stage code.
 
@@ -60,4 +60,4 @@ The matching file has the exact header `source1_entity_id<TAB>matched_entity_ids
 
 ## Troubleshooting
 
-If a partition stops, keep completed receipts and restart the same command. Remove only an incomplete `.partial.parquet` or `.partial.tsv` after confirming no process writes it. If DuckDB reports out-of-memory, lower concurrent load, ensure scratch space, and retry a smaller physical partition while preserving the 50/50 quotas, DF threshold 2,000, heavy-block cap 100, feature definitions, model, and threshold. A checksum mismatch requires investigating source/config changes before proceeding. The output validator must report PASS before submission.
+If a partition stops, keep completed receipts and restart the same command; the worker replaces its own incomplete partial output. If DuckDB reports out-of-memory, lower concurrent load, ensure scratch space, and retry a smaller physical partition while preserving the 50/50 quotas, DF threshold 2,000, heavy-block cap 100, feature definitions, model, and threshold. A checksum mismatch requires investigating source/config changes before proceeding. The output validator must report PASS before submission.

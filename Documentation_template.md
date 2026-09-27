@@ -32,15 +32,35 @@ All recovered positive training pairs were retained. The selected negative-sampl
 
 One coarse and one fine threshold grid on the protected threshold split selected 0.61 for macro F0.5. Inference accepts every candidate scoring at least 0.61, allows empty and multiple match sets, and applies no top-1, source-specific threshold, or numeric-conflict post-filter.
 
+Full test scoring produced exactly 273,502,145 score rows in 96 checksummed parts; 5,715,482 pairs met the frozen threshold. These are label-free decision counts, not test performance estimates. Assembly included all 273,502,145 scored pairs in `candidate_pairs.tsv` and exactly the 5,715,482 accepted pairs in `matching_results.tsv`, with one row per 1,732,544 raw S1 records.
+
+The independent output audit passed: 1,346 S1 rows have empty candidate lists, 127,684 have empty match lists, and no output target ID was unknown. Candidate lists have mean 157.862, median 175, p95 201, p99 217 and maximum 296 IDs; match lists have mean 3.299, median 3, p95 6, p99 14 and maximum 86. Every match was present in its final candidate list, and every listed candidate was in the scored identity set.
+
 ## 5. Validation and error analysis
 
 An entity-level split separated model fit, tuning, threshold selection, and one-time final evaluation. Frozen model, candidate policy, feature specification and threshold checksums were verified before final labels were opened. The held-out release gate passed: macro F0.5 **0.896256**, pair precision **0.970847**, pair recall **0.803379**, singleton accuracy **0.893872**. The macro 95% S1 bootstrap interval was [0.895048, 0.897387]. India and US macro F0.5 were 0.877142 and 0.909125; S2 and S3 pair recall were 0.807622 and 0.799397.
 
 Address availability is a major weakness. Pair recall was 0.828173 when both addresses were present and 0.269730 when either was missing. The held-out analysis counted 46,199 candidate misses, 28,882 matcher false negatives, and 9,212 matcher false positives. France is a zero-shot test country; only structural, label-free diagnostics are appropriate. No test accuracy or leaderboard estimate is asserted.
 
+Full test diagnostics were label-free and passed the finite-score check in every country. The accepted counts and empty-set rates were:
+
+| Country | Test S1 | Mean candidates/S1 | Accepted S2 | Accepted S3 | Mean accepted/S1 | Empty match rate | Candidate pairs with a missing address |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| France | 259,452 | 156.943 | 678,226 | 752,520 | 5.514 | 3.732% | 573,811 |
+| India | 809,986 | 153.235 | 1,123,828 | 1,176,098 | 2.839 | 8.872% | 2,006,000 |
+| US | 663,106 | 163.873 | 960,460 | 1,024,350 | 2.993 | 6.958% | 1,686,109 |
+
+These distributions describe the unlabelled test output and did not alter the frozen policy. Full country score quantiles and provenance counts are in `work/test_structural_diagnostics.json` when the release is reproduced.
+
 ## 6. Resources and reproducibility
 
 The measured held-out run used 1,086.96 seconds for candidates, 1,253.25 seconds for physical features, and 86.28 seconds for scoring. Measured peak process RSS was approximately 1.04 GB, 1.20 GB, and 1.49 GB respectively. Full test candidate generation took 3.745 hours of part runtime, with sampled peak process RSS 0.974 GB, sampled peak DuckDB temporary disk 1.397 GB, and minimum sampled free RAM 0.528 GB. One planned restart lowered DuckDB's internal limit from 700 to 500 MB after RAM approached the 0.5 GB stop guard; all completed receipts were reused and the frozen candidate semantics were unchanged. The test plan reserves at least 48 GB free scratch disk and 1.35 GB free RAM before each stage, uses 96 restartable country/hash work units, one large data process, atomic Parquet writes, and SHA-256 receipts. The original 9.6-hour projection excluded key ingestion, rank construction and retries; actual test run measurements are recorded in release manifests.
+
+Full test physical features completed all 96 parts and exactly 273,502,145 rows. Their receipts total 6.236 hours of successful part runtime, 9.440 GB of compressed Parquet, 1.650 GB peak process RSS, and 1.422 GB peak DuckDB temporary disk. Completed checksummed parts were reused after interrupted attempts. The 1,200 MB feature DuckDB setting was an execution memory setting; the physical feature definitions and frozen 61-column model input stayed unchanged.
+
+Full test scoring took 749.6 seconds of part runtime, persisted 3.238 GB of compressed scores, and peaked at 0.867 GB process RSS. The bounded TSV fragment assembly took 258.83 seconds of part runtime. Its final candidate and matching TSVs are 3,547,454,398 and 96,123,635 bytes respectively; the independent integrity and validator results are recorded in their separate release reports.
+
+The independent full-output audit and both validator CLI runs passed, including the S2/S3 ID-existence option. The full-file validator retains the challenge helper's checks and CLI but streams the 3.55 GB candidate TSV; the byte-identical original helper was verified on the fixture because it stores the full candidate lists in memory. The final test suite ran 132 tests with zero failures. These checks establish file integrity and rule compliance, not prediction accuracy.
 
 `code/business_entity_resolution/README.md` provides the environment, stage, resume and validator commands. `code/business_entity_resolution/requirements.txt` pins release dependencies. Reproduction requires only the supplied train/test TSVs and packaged code/model/configuration. The two output TSVs contain every raw test S1 exactly once; empty lists retain the explicit second TSV field. Independent audit and the challenge validator are release gates.
 

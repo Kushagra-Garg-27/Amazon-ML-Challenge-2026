@@ -38,7 +38,17 @@ def allowed() -> list[Path]:
              Path("code/business_entity_resolution/README.md"),
              Path("code/business_entity_resolution/requirements.txt"),
              Path("code/business_entity_resolution/constraints.txt")]
-    src = sorted(Path("code/business_entity_resolution/src/er").rglob("*.py"))
+    base = Path("code/business_entity_resolution/src/er")
+    production_modules = (
+        "__init__.py", "io.py", "normalize.py",
+        "resources/__init__.py", "resources/suffixes.py",
+        "candidates/__init__.py", "candidates/pilot.py", "candidates/policies.py",
+        "candidates/ranking.py", "features/__init__.py", "features/exact.py",
+        "features/fuzzy.py", "features/materialize.py", "features/schema.py",
+        "features/token.py", "matcher/__init__.py", "matcher/controlled.py",
+    )
+    src = sorted([base / name for name in production_modules]
+                 + list((base / "test_pipeline").glob("*.py")))
     release = sorted(Path("code/business_entity_resolution/release").glob("*"))
     return fixed + src + release
 

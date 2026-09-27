@@ -2,7 +2,10 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
+import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -16,7 +19,7 @@ sys.path.insert(0, str(ROOT / "code" / "business_entity_resolution" / "src"))
 from er.test_pipeline import assemble, audit
 from er.test_pipeline.common import record_part, valid_part, sha256
 from er.test_pipeline.score import MODEL_SHA, POLICY_SHA
-from scripts.build_submission import scan
+from scripts.build_submission import allowed, scan
 from er.test_pipeline.official_validator import validate_large_streaming
 from er.io import ingest_source, _COLS
 
@@ -45,13 +48,52 @@ class TestReleasePipeline(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "Duplicate"):
                 audit.parquet_identity(path)
 
+    def test_single_pass_score_audit_checks_threshold_and_identity(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "scores.parquet"
+            data = {"source1_entity_id": ["S1-1", "S1-1"],
+                    "target_entity_id": ["S2-1", "S2-2"],
+                    "predicted": [True, False], "score": [0.75, 0.2]}
+            pq.write_table(pa.table(data), path)
+            all_hash, all_n, accepted_hash, accepted_n = audit.score_identities(path)
+            self.assertEqual((all_hash, all_n), audit.parquet_identity(path))
+            self.assertEqual(accepted_n, 1)
+            self.assertNotEqual(all_hash, accepted_hash)
+            data["predicted"] = [False, False]
+            pq.write_table(pa.table(data), path)
+            with self.assertRaisesRegex(RuntimeError, "wrong decision"):
+                audit.score_identities(path)
+
     def test_release_stage_excludes_data_and_intermediates(self):
         scan(Path("code/business_entity_resolution/src/er/test_pipeline/score.py"))
         scan(Path("Documentation_template.md"))
+        release_files = {p.as_posix() for p in allowed()}
+        self.assertIn("code/business_entity_resolution/src/er/candidates/pilot.py", release_files)
+        self.assertNotIn("code/business_entity_resolution/src/er/matcher/experiments.py", release_files)
+        self.assertNotIn("code/business_entity_resolution/src/er/candidates/experiments.py", release_files)
         for bad in ("dataset/test/test_source1.tsv", "work/test_scores/p00_france.parquet",
                     "code/business_entity_resolution/src/er/__pycache__/cache.pyc"):
             with self.assertRaises(RuntimeError):
                 scan(Path(bad))
+
+    def test_release_source_imports_from_clean_tree(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            for relative in allowed():
+                if not relative.as_posix().startswith("code/business_entity_resolution/src/er/"):
+                    continue
+                target = root / relative
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(ROOT / relative, target)
+            env = os.environ.copy()
+            env["PYTHONPATH"] = str(root / "code/business_entity_resolution/src")
+            code = ("import er.test_pipeline.ingest, er.test_pipeline.candidates, "
+                    "er.test_pipeline.features, er.test_pipeline.score, "
+                    "er.test_pipeline.assemble, er.test_pipeline.audit, "
+                    "er.test_pipeline.release_smoke, er.test_pipeline.diagnostics")
+            result = subprocess.run([sys.executable, "-c", code], cwd=root, env=env,
+                                    capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_frozen_model_and_feature_order(self):
         policy = json.loads((ROOT / "work/final_matcher_policy.json").read_text())
@@ -82,6 +124,26 @@ class TestReleasePipeline(unittest.TestCase):
             self.assertEqual(result["rows"], 2)
             self.assertEqual((root / "candidate_pairs.tsv").read_bytes(),
                 b"source1_entity_id\tcandidate_entity_ids\nS1-001\tS2-1,S3-2\nS1-002\t\n")
+
+    def test_fragment_streams_scores_and_empty_s1_rows(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            selection = root / "selection.parquet"
+            score = root / "p00_france.parquet"
+            pq.write_table(pa.table({"entity_id": ["S1-001", "S1-002"],
+                                     "split": ["p00", "p00"],
+                                     "country_norm": ["france", "france"]}), selection)
+            pq.write_table(pa.table({"source1_entity_id": ["S1-002", "S1-002"],
+                                     "target_entity_id": ["S2-1", "S3-2"],
+                                     "predicted": [False, True]}), score)
+            result = assemble.fragment(score, selection, root / "parts")
+            self.assertEqual((result["rows"], result["candidate_ids"], result["matched_ids"]),
+                             (2, 2, 1))
+            self.assertEqual((root / "parts/p00_france.candidate.tsv").read_bytes(),
+                             b"S1-001\t\nS1-002\tS2-1,S3-2\n")
+            self.assertEqual((root / "parts/p00_france.matching.tsv").read_bytes(),
+                             b"S1-001\t\nS1-002\tS3-2\n")
+            self.assertEqual(assemble.fragment(score, selection, root / "parts"), result)
 
     def test_independent_tsv_audit_detects_invalid_subset(self):
         with tempfile.TemporaryDirectory() as d:

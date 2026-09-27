@@ -3,21 +3,40 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.so
+*.pyd
 
-# Distribution / packaging
+# Distribution / packaging / builds
 build/
 dist/
 *.egg-info/
+*.egg
+eggs/
+develop-eggs/
+parts/
+sdist/
+wheels/
 
 # Unit test / coverage / cache
 .coverage
+.coverage.*
 .pytest_cache/
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
 
 # Virtual Environments
 .venv/
 venv/
 ENV/
 env/
+*.venv/
+
+# Environment variables & secrets (never commit secrets)
+.env
+.env.*
+*.env
+!.env.example
 
 # IDE and OS files
 .idea/
@@ -27,16 +46,41 @@ env/
 *~
 .DS_Store
 Thumbs.db
+desktop.ini
+*.sublime-project
+*.sublime-workspace
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Local databases and locks
+*.duckdb
+*.duckdb.wal
+*.duckdb.tmp
+*.db
+*.sqlite
+*.sqlite3
 
 # Project-specific: Raw datasets (large TSVs)
 dataset/
 *.tsv
 !code/business_entity_resolution/tests/fixtures/**/*.tsv
 
-# Project-specific: Temporary directories and output submissions
-.tmp/
+# Project-specific: Submission outputs, packages, and temporary directories
 output/
+.tmp/
 *.tmp
+*.temp
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.rar
+
+# Profiling, execution telemetry, and debug outputs
+*.prof
+work/*_exit_code.txt
 
 # Project-specific: Large binary artifacts, parquet files, logs, csv samples, and execution shard dumps
 *.parquet
@@ -57,6 +101,11 @@ work/keys/
 work/test_keys/
 work/test_candidates/
 work/test_features/
+work/test_scores/
+work/test_assembly/
+work/test_audit_tmp/
+work/test_diagnostics_tmp/
+work/release_stage/
 work/test_rank/
 work/test_smoke/
 code/business_entity_resolution/release/
