@@ -1,0 +1,19 @@
+{
+  "python": "3.12.10",
+  "direct_release_dependencies": [
+    {"name": "numpy", "version": "2.5.3", "license": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0", "purpose": "float32 model input batches and score checks", "packaged": "pinned requirement, wheel not bundled"},
+    {"name": "duckdb", "version": "1.5.5", "license": "MIT (installed package classifier)", "purpose": "bounded joins, ranking, partitioning, and audits", "packaged": "pinned requirement, wheel not bundled"},
+    {"name": "pyarrow", "version": "25.0.1", "license": "Apache-2.0", "purpose": "streamed Parquet ingestion, features, and scores", "packaged": "pinned requirement, wheel not bundled"},
+    {"name": "RapidFuzz", "version": "3.14.6", "license": "MIT", "purpose": "frozen fuzzy string features", "packaged": "pinned requirement, wheel not bundled"},
+    {"name": "lightgbm", "version": "4.7.0", "license": "MIT", "purpose": "frozen native-text matcher scoring", "packaged": "pinned requirement, wheel not bundled"}
+  ],
+  "transitive_constraints": [
+    {"name": "scipy", "version": "1.18.1", "license": "BSD-3-Clause", "why": "Required by LightGBM, not imported by release code"},
+    {"name": "narwhals", "version": "2.26.0", "license": "MIT", "why": "Required by LightGBM, not imported by release code"}
+  ],
+  "removed_from_required_installation": ["pandas", "scikit-learn", "polars", "xgboost"],
+  "not_imported_or_required": ["FAISS", "sentence-transformers", "cross-encoder frameworks", "MLflow", "Jellyfish"],
+  "model": {"type": "LightGBM native text", "license": "MIT", "parameter_limit": "not applicable; small tree ensemble below 8B-parameter cap"},
+  "requirement_file": "code/business_entity_resolution/requirements.txt",
+  "constraints_file": "code/business_entity_resolution/constraints.txt"
+}

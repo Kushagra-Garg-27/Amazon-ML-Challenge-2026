@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "release_gate_config_sha256": "17165a4c083e73c747d5b57ca9e758959b0a8609d7306d738ad7ecb97326c6e9",
+  "feature_manifest_sha256": "fea1a7074ff3986420a556a441b4016ebe8c3525db5568d8496cede43ecaca28",
+  "model_sha256": "76ff78a7cc97e40174b6d631a6eaa062c786f0480c6693fd6387e90be6761d21",
+  "policy_sha256": "ced4ee4133110f5f55c184c3d4020b5087ecac5398bdf9ebfd03f76b3662aba3",
+  "batch_candidates": 200000,
+  "threshold": 0.61,
+  "parts": [
+    {
+      "path": "work/final_eval_scores/model_final_eval_00_india.parquet",
+      "bytes": 10108065,
+      "sha256": "e5470274b80d11e6c13bc7ec976d49421a6dcfc4f6b8c53411db879fcee5c90b",
+      "rows": 839918,
+      "resumed": false
+    },
+    {
+      "path": "work/final_eval_scores/model_final_eval_00_us.parquet",
+      "bytes": 15085404,
+      "sha256": "1c4ac936915c794992ca9d650851e56df5f921bc8c599d12496715801945b15f",
+      "rows": 1293994,
+      "resumed": false
+    },
+    {
+      "path": "work/final_eval_scores/model_final_eval_01_india.parquet",
+      "bytes": 10097302,
+      "sha256": "98e00f589cd590e234544fd7a7a7e2428546053e1f35f4c25a9baf99fdec197e",
+      "rows": 838887,
+      "resumed": false
+    },
+    {
+      "path": "work/final_eval_scores/model_final_eval_01_us.parquet",
+      "bytes": 15179198,
+      "sha256": "e07980e66eebbebe45ed9bac66fb6e6b3955d311ec4e921246cfbe6519bcd196",
+      "rows": 1302661,
+      "resumed": false
+    },
+    {
+      "path": "work/final_eval_scores/model_final_eval_02_india.parquet",
+      "bytes": 10277487,
+      "sha256": "9796e4cf9b908df89956595fbbfddb3ba3219849168277e83f90937600b60984",
+      "rows": 852588,
+      "resumed": false
+    },
+    {
+      "path": "work/final_eval_scores/model_final_eval_02_us.parquet",
+      "bytes": 15398539,
+      "sha256": "ec287aecb7547a94f1c4a1fd1df08a73d0fecbf08521405c984d3b33af470b95",
+      "rows": 1320576,
+      "resumed": false
+    },
+    {
+      "path": "work/final_eval_scores/model_final_eval_03_india.parquet",
+      "bytes": 10316082,
+      "sha256": "ba75d4259dfa754abdcd401f32b33caa62d2be884b77cf6b92107168b8cea28a",
+      "rows": 855774,
+      "resumed": false
+    },
+    {
+      "path": "work/final_eval_scores/model_final_eval_03_us.parquet",
+      "bytes": 15524091,
+      "sha256": "9330a3e576bc04ca8f0a0d26ed1116d5360581a4cce13eed479af5e08369ee31",
+      "rows": 1332851,
+      "resumed": false
+    },
+    {
+      "path": "work/final_eval_scores/model_final_eval_04_india.parquet",
+      "bytes": 10189724,
+      "sha256": "90eecaeb13f0a486177b1a31b9ef4a6e9c45f8c53ec3c30b3b4c4f0e661fa9f4",
+      "rows": 845690,
+      "resumed": false
+    },
+    {
+      "path": "work/final_eval_scores/model_final_eval_04_us.parquet",
+      "bytes": 15273949,
+      "sha256": "c143bd5b92c627c36c4aa4117be2c0894d225e21b55cd23cdceebc6b5739bd3f",
+      "rows": 1310252,
+      "resumed": false
+    },
+    {
+      "path": "work/final_eval_scores/model_final_eval_05_india.parquet",
+      "bytes": 10553622,
+      "sha256": "2d371c94bc717e06715dc6e95f8e771b77d09ded4ee247473de241da1fc8df80",
+      "rows": 874426,
+      "resumed": false
+    },
+    {
+      "path": "work/final_eval_scores/model_final_eval_05_us.parquet",
+      "bytes": 15436526,
+      "sha256": "33d195d48f0b16b72fd2644fdbab488cfb0b546342dba935d12c5aa906606957",
+      "rows": 1325134,
+      "resumed": false
+    },
+    {
+      "path": "work/final_eval_scores/model_final_eval_06_india.parquet",
+      "bytes": 10273292,
+      "sha256": "af481d87066494d410f7912a0ba8db527028e675928b7af6f67982df25dcb376",
+      "rows": 852404,
+      "resumed": false
+    },
+    {
+      "path": "work/final_eval_scores/model_final_eval_06_us.parquet",
+      "bytes": 15219048,
+      "sha256": "fc506ba9272c172ebf96f54f021534e9ec8eadb9ee9ea7136f39d5e4629bcb38",
+      "rows": 1305410,
+      "resumed": false
+    },
+    {
+      "path": "work/final_eval_scores/model_final_eval_07_india.parquet",
+      "bytes": 10170558,
+      "sha256": "647d8e96067160732a833127c167a9796a9931d8f91e64cd861d2e5b5423eb25",
+      "rows": 844833,
+      "resumed": false
+    },
+    {
+      "path": "work/final_eval_scores/model_final_eval_07_us.parquet",
+      "bytes": 15163115,
+      "sha256": "7703d941aec1ce97703c83ae31eeb24a02652eac168297c9d4ba9f7e04a06d53",
+      "rows": 1300386,
+      "resumed": false
+    }
+  ],
+  "audit": {
+    "score_rows": 17295784,
+    "feature_rows": 17295784,
+    "duplicates": 0,
+    "nonfinite": 0,
+    "threshold_decision_errors": 0,
+    "score_feature_added": 0,
+    "score_feature_removed": 0,
+    "predictions_outside_candidates": 0,
+    "accepted_pairs": 315987,
+    "two_model_loads_identical": true,
+    "representative_batch_rows": 10000,
+    "representative_partition_replay_rows": 839918,
+    "representative_partition_reproducible": true
+  },
+  "resource": {
+    "wall_seconds": 86.27948069572449,
+    "bytes": 204266002,
+    "peak_process_rss_bytes": 1492795392
+  }
+}

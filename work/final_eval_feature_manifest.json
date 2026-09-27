@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "release_gate_config_sha256": "17165a4c083e73c747d5b57ca9e758959b0a8609d7306d738ad7ecb97326c6e9",
+  "candidate_manifest_sha256": "360da76c6415d3a4a54ff02b5ccffd14daf9ecb562a5a3d5dc7b9980574f16c8",
+  "feature_spec_sha256": "37982fd6377aa2e36fe1c5dec0484a35c02ba4bcc4e3b67b3a337b33597f6e1f",
+  "parts": [
+    {
+      "path": "work/final_eval_features/model_final_eval_00_india.parquet",
+      "bytes": 31391638,
+      "sha256": "8ba9e89e6d34ed2b63d994c688bb148f106ebc56abb75d3ecf5dcf4cc0ee6555",
+      "rows": 839918
+    },
+    {
+      "path": "work/final_eval_features/model_final_eval_00_us.parquet",
+      "bytes": 40446149,
+      "sha256": "ea191f59645e92208cc865bb10153e09aaf20002badb1e2d42b67023b4f67d71",
+      "rows": 1293994
+    },
+    {
+      "path": "work/final_eval_features/model_final_eval_01_india.parquet",
+      "bytes": 31399476,
+      "sha256": "372a05bc7f385f026607f87bb979994c4a2e47677b3ab80adffac38e656e29d9",
+      "rows": 838887
+    },
+    {
+      "path": "work/final_eval_features/model_final_eval_01_us.parquet",
+      "bytes": 40712903,
+      "sha256": "eb27cf6fa02fade0f32fa0c25865a2868e2119eeffd4de75c9bcc433137e023e",
+      "rows": 1302661
+    },
+    {
+      "path": "work/final_eval_features/model_final_eval_02_india.parquet",
+      "bytes": 31940099,
+      "sha256": "4b4a060f2386222950ac738fbce6bc026ef0d0c88e9b45485f9b2c3e5ce44882",
+      "rows": 852588
+    },
+    {
+      "path": "work/final_eval_features/model_final_eval_02_us.parquet",
+      "bytes": 41339963,
+      "sha256": "77dc77e489eaf73e4460968fd4c851f8dc8c57da0bfc60e6037c861860130759",
+      "rows": 1320576
+    },
+    {
+      "path": "work/final_eval_features/model_final_eval_03_india.parquet",
+      "bytes": 31977611,
+      "sha256": "16c1dea9ff587deab33cd4c1602ef593fa603a4c85e25a130f89894e04fd6e18",
+      "rows": 855774
+    },
+    {
+      "path": "work/final_eval_features/model_final_eval_03_us.parquet",
+      "bytes": 41675762,
+      "sha256": "5626ef596b0300c3348e88d18c017abb77e20c560e50f9031839e28811e8d71b",
+      "rows": 1332851
+    },
+    {
+      "path": "work/final_eval_features/model_final_eval_04_india.parquet",
+      "bytes": 31704539,
+      "sha256": "f96e335c010cd2a81493f1e1c71dc8e33d7be15f4cb8dcf189aaddebaa4da984",
+      "rows": 845690
+    },
+    {
+      "path": "work/final_eval_features/model_final_eval_04_us.parquet",
+      "bytes": 40973289,
+      "sha256": "549640c6a96c54a2dda778d1498ca70d3de5f76ffbc0627ef9c0d833d88e3cf6",
+      "rows": 1310252
+    },
+    {
+      "path": "work/final_eval_features/model_final_eval_05_india.parquet",
+      "bytes": 32714933,
+      "sha256": "bb04c2ff87de88abd4f2b2a852716e281e1353d814620e907948ca7753b498c1",
+      "rows": 874426
+    },
+    {
+      "path": "work/final_eval_features/model_final_eval_05_us.parquet",
+      "bytes": 41434258,
+      "sha256": "bf648a9ed66035be29fe9e2fcf77cb33bbdd1c46d8001c5a7e8a1b22ff2fb0c7",
+      "rows": 1325134
+    },
+    {
+      "path": "work/final_eval_features/model_final_eval_06_india.parquet",
+      "bytes": 31905776,
+      "sha256": "4ddb341457a04738326554079534174dfc05e97ca2d8fcb7c1c161b2d6178679",
+      "rows": 852404
+    },
+    {
+      "path": "work/final_eval_features/model_final_eval_06_us.parquet",
+      "bytes": 40762471,
+      "sha256": "0bc0d7fba11708b8b76ed2a1f589b4f6b24faa6587518a9f33b8a77301ce6237",
+      "rows": 1305410
+    },
+    {
+      "path": "work/final_eval_features/model_final_eval_07_india.parquet",
+      "bytes": 31629282,
+      "sha256": "2c455499d244e6004d30daba0c3ec154441424482f6689f022a2d7bd47aa71ab",
+      "rows": 844833
+    },
+    {
+      "path": "work/final_eval_features/model_final_eval_07_us.parquet",
+      "bytes": 40634747,
+      "sha256": "34135f917bb3689c10ce93f23da6e5701ca5ca2ea7778f2e4c4a5f42d6f501ba",
+      "rows": 1300386
+    }
+  ],
+  "audit": {
+    "candidate_rows": 17295784,
+    "feature_rows": 17295784,
+    "added": 0,
+    "removed": 0,
+    "duplicates": 0,
+    "nonfinite_or_null": 0,
+    "physical_feature_count": 65,
+    "ordered_model_feature_count": 61,
+    "exact_feature_order": true,
+    "country_filter_byte_reproduction": true
+  },
+  "resource": {
+    "wall_seconds": 1253.2509050369263,
+    "bytes": 582642896,
+    "bytes_per_candidate": 33.68698961550399,
+    "peak_process_rss_bytes": 1195008000,
+    "peak_temp_bytes": 282624000,
+    "restart_events": 2,
+    "failed_retried_partitions": [
+      {
+        "part": "model_final_eval_02_india",
+        "failure": "DuckDB OOM at 700MB unfiltered join",
+        "retry": "900MB filtered join succeeded"
+      },
+      {
+        "part": "model_final_eval_00_us",
+        "failure": "DuckDB OOM at 900MB unfiltered and 700MB filtered joins",
+        "retry": "900MB filtered join succeeded"
+      }
+    ],
+    "workspace_interruption": "Feature output directory disappeared during concurrent Git initialization; regenerated from immutable candidates",
+    "wall_seconds_scope": "successful full retry, including resume and structural audit; earlier failed attempt logs were removed by workspace change"
+  }
+}

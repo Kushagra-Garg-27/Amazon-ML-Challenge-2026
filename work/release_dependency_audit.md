@@ -1,0 +1,8 @@
+# Release dependency and license audit
+
+The release pipeline imports five direct third-party packages: NumPy 2.5.3 (BSD-3-Clause and bundled permissive notices) for float32 matrices, DuckDB 1.5.5 (MIT package classifier) for bounded SQL, PyArrow 25.0.1 (Apache-2.0) for Parquet streaming, RapidFuzz 3.14.6 (MIT) for frozen fuzzy features, and LightGBM 4.7.0 (MIT) for frozen model scoring. The ZIP pins these in `code/business_entity_resolution/requirements.txt`; it does not bundle wheels.
+
+The installed pandas, scikit-learn, Polars, and XGBoost packages are not imported by the release source pipeline and have been removed from the required install. LightGBM declares SciPy and Narwhals as transitive requirements; their verified versions (SciPy 1.18.1 and Narwhals 2.26.0) are pinned in `constraints.txt`, even though release source code does not import them directly. FAISS, sentence-transformers, cross-encoder frameworks, MLflow, and Jellyfish are neither imported nor required. The final model is a small native-text LightGBM tree ensemble under MIT, satisfying the challenge's model-license and size rule. No external identity source is used.
+
+License identities were cross-checked against the official [LightGBM repository](https://github.com/lightgbm-org/LightGBM), [DuckDB FAQ](https://duckdb.org/faq), and [RapidFuzz license documentation](https://rapidfuzz.github.io/RapidFuzz/License.html), in addition to the installed package metadata. PyArrow's installed package metadata declares Apache-2.0.
+SciPy's project site identifies its [BSD license](https://scipy.org/faq/); the installed Narwhals metadata declares MIT.

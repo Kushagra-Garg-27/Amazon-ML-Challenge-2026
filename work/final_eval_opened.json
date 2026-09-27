@@ -1,0 +1,37 @@
+{
+  "opened_utc": "2026-09-26T14:26:01.186600+00:00",
+  "purpose": "single frozen final evaluation",
+  "release_gate_config_sha256": "17165a4c083e73c747d5b57ca9e758959b0a8609d7306d738ad7ecb97326c6e9",
+  "immutable_inputs": {
+    "candidate_manifest": {
+      "path": "work/final_eval_candidate_manifest.json",
+      "bytes": 5083,
+      "sha256": "360da76c6415d3a4a54ff02b5ccffd14daf9ecb562a5a3d5dc7b9980574f16c8"
+    },
+    "feature_manifest": {
+      "path": "work/final_eval_feature_manifest.json",
+      "bytes": 5200,
+      "sha256": "fea1a7074ff3986420a556a441b4016ebe8c3525db5568d8496cede43ecaca28"
+    },
+    "score_manifest": {
+      "path": "work/final_eval_score_manifest.json",
+      "bytes": 5039,
+      "sha256": "0b78550e28b675b46a44889fe011e8a747aa27585e9b5fd5fc6e02ac8cc54c95"
+    },
+    "prediction_manifest": {
+      "path": "work/final_eval_prediction_manifest.json",
+      "bytes": 1164,
+      "sha256": "a8d633cd9458e51fe5c26fd2e80211666f1cf1df92bbc5b743d8eec1d13a495c"
+    },
+    "prediction_sets": {
+      "path": "work/final_eval_prediction_sets.parquet",
+      "bytes": 2469268,
+      "sha256": "8e1bc974ea81c38e781bed601c6c0ba9ea1ebf9d284a3f2b1c0d89a98794db44"
+    },
+    "unseen_keys": {
+      "path": "work/final_eval_unseen_keys.parquet",
+      "bytes": 569841,
+      "sha256": "9d899247e2cb0db0b8f0b29a9ad09af2c083fc14f30bd80a50f7c23e5d03158c"
+    }
+  }
+}

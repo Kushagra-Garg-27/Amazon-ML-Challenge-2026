@@ -85,11 +85,15 @@ class TestThresholdAndAssembly(unittest.TestCase):
 
 class TestFirewall(unittest.TestCase):
     def test_development_artifacts_exclude_final_eval(self):
-        forbidden=[]
-        for p in (ROOT/'work').rglob('*'):
-            if p.is_file() and 'final_eval' in p.name.lower() and any(x in p.name.lower() for x in ('feature','label','score','prediction')):
-                forbidden.append(p.name)
-        self.assertEqual(forbidden,[])
+        opened=ROOT/'work/final_eval_opened.json'
+        if opened.exists():
+            state=json.loads(opened.read_text())
+            self.assertEqual(state['purpose'],'single frozen final evaluation')
+            self.assertTrue((ROOT/'work/final_eval_preopen_audit.json').exists())
+            self.assertTrue(json.loads((ROOT/'work/final_eval_preopen_audit.json').read_text())['pass'])
+        else:
+            self.assertFalse((ROOT/'work/final_eval_gt.parquet').exists())
+            self.assertFalse((ROOT/'work/final_eval_metrics.json').exists())
         checks=json.loads((ROOT/'work/model_development_split_checksums.json').read_text())
         self.assertEqual(checks['s1_overlap'],0); self.assertEqual(checks['target_id_overlap'],0)
         self.assertEqual(checks['prior_pilot_not_fit'],0)

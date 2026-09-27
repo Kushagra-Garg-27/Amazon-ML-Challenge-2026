@@ -22,34 +22,48 @@ ARROW_SCHEMA=pa.schema([pa.field('source1_entity_id',pa.string(),False),pa.field
 
 class TempMonitor:
     def __init__(self,path: Path): self.path=path; self.peak=0; self.stop=threading.Event(); self.thread=threading.Thread(target=self.poll,daemon=True)
+    def size(self):
+      total=0
+      for p in self.path.rglob('*'):
+       try:
+        if p.is_file(): total+=p.stat().st_size
+       except FileNotFoundError:
+        continue  # DuckDB may remove a spill file between is_file and stat.
+      return total
     def poll(self):
       while not self.stop.wait(.1):
-       self.peak=max(self.peak,sum(p.stat().st_size for p in self.path.rglob('*') if p.is_file()))
+       self.peak=max(self.peak,self.size())
     def __enter__(self): self.thread.start(); return self
     def __exit__(self,*_): self.stop.set(); self.thread.join(); self.poll_once()
-    def poll_once(self): self.peak=max(self.peak,sum(p.stat().st_size for p in self.path.rglob('*') if p.is_file()))
+    def poll_once(self): self.peak=max(self.peak,self.size())
 
-def _target_sql():
+def _target_sql(country: str | None = None, keys_prefix: str = 'train'):
     cols='entity_id,country_norm,name_norm,name_nosuffix,name_sorted,addr_norm'
-    return f"SELECT {cols} FROM read_parquet('work/keys/train_s2.parquet') UNION ALL SELECT {cols} FROM read_parquet('work/keys/train_s3.parquet')"
+    if country is not None and not country.isalnum(): raise ValueError('Unsafe country')
+    if not keys_prefix.isalnum(): raise ValueError('Unsafe key prefix')
+    predicate=f" WHERE country_norm='{country}'" if country else ''
+    return f"SELECT {cols} FROM read_parquet('work/keys/{keys_prefix}_s2.parquet'){predicate} UNION ALL SELECT {cols} FROM read_parquet('work/keys/{keys_prefix}_s3.parquet'){predicate}"
 
 def _record(row,cols): return dict(zip(cols,row))
 
-def materialize_part(candidate: Path,output: Path) -> dict:
+def materialize_part(candidate: Path,output: Path,keys_prefix: str='train',temp_dir: Path=Path('work/feature_pilot_tmp')) -> dict:
     memory_mb=int(os.environ.get('ER_FEATURE_DUCKDB_MEMORY_MB','700'))
     if not 500 <= memory_mb <= 1200: raise ValueError('ER_FEATURE_DUCKDB_MEMORY_MB must be 500..1200')
     c=duckdb.connect(); c.execute(f"SET memory_limit='{memory_mb}MB'; SET threads=1; SET preserve_insertion_order=false")
-    c.execute("SET temp_directory='work/feature_pilot_tmp'"); t0=time.time()
+    temp_dir.mkdir(parents=True,exist_ok=True)
+    c.execute(f"SET temp_directory='{temp_dir.as_posix()}'"); t0=time.time()
+    country=candidate.stem.rsplit('_',1)[-1]
+    if not country.isalnum(): country=None
     query=f"""SELECT p.source1_entity_id,p.target_entity_id,p.provenance,p.name_token_rank,p.address_token_rank,
       p.source_balanced_rank,p.heavy_sorted_block,p.name_shared_idf,p.address_shared_idf,
       s.country_norm s_country,s.name_norm s_name_norm,s.name_nosuffix s_name_nosuffix,s.name_sorted s_name_sorted,s.addr_norm s_addr_norm,
       t.country_norm t_country,t.name_norm t_name_norm,t.name_nosuffix t_name_nosuffix,t.name_sorted t_name_sorted,t.addr_norm t_addr_norm
       FROM read_parquet('{candidate.as_posix()}') p
-      JOIN read_parquet('work/keys/train_s1.parquet') s ON p.source1_entity_id=s.entity_id
-      JOIN ({_target_sql()}) t ON p.target_entity_id=t.entity_id ORDER BY 1,2"""
+      JOIN read_parquet('work/keys/{keys_prefix}_s1.parquet') s ON p.source1_entity_id=s.entity_id
+      JOIN ({_target_sql(country,keys_prefix)}) t ON p.target_entity_id=t.entity_id ORDER BY 1,2"""
     cur=c.execute(query); desc=[x[0] for x in cur.description]
     partial=output.with_suffix('.partial.parquet'); partial.unlink(missing_ok=True); writer=pq.ParquetWriter(partial,ARROW_SCHEMA,compression='zstd')
-    rows=0; timing={'exact':0.0,'token':0.0,'fuzzy':0.0}; monitor=TempMonitor(Path('work/feature_pilot_tmp')); monitor.__enter__()
+    rows=0; timing={'exact':0.0,'token':0.0,'fuzzy':0.0}; monitor=TempMonitor(temp_dir); monitor.__enter__()
     try:
       while True:
         batch=cur.fetchmany(20000)

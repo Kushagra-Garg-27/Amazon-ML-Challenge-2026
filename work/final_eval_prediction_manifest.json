@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "release_gate_config_sha256": "17165a4c083e73c747d5b57ca9e758959b0a8609d7306d738ad7ecb97326c6e9",
+  "score_manifest_sha256": "0b78550e28b675b46a44889fe011e8a747aa27585e9b5fd5fc6e02ac8cc54c95",
+  "prediction_sets": {
+    "path": "work/final_eval_prediction_sets.parquet",
+    "bytes": 2469268,
+    "sha256": "8e1bc974ea81c38e781bed601c6c0ba9ea1ebf9d284a3f2b1c0d89a98794db44",
+    "rows": 110341
+  },
+  "unseen_key_slice": {
+    "path": "work/final_eval_unseen_keys.parquet",
+    "bytes": 569841,
+    "sha256": "9d899247e2cb0db0b8f0b29a9ad09af2c083fc14f30bd80a50f7c23e5d03158c"
+  },
+  "grouped_holdout_overlap": {
+    "model_fit": 167878,
+    "model_tune": 5554,
+    "model_threshold": 5701,
+    "baseline_dev": 0,
+    "independent_matcher_evaluation": false
+  },
+  "audit": {
+    "rows": 110341,
+    "unique_s1": 110341,
+    "expected_s1": 110341,
+    "empty_sets": 8895,
+    "invalid_serialization": 0,
+    "prediction_pairs_missing_from_score": 0,
+    "score_predictions_missing_from_sets": 0,
+    "count_mismatch": 0,
+    "duplicate_predictions": 0,
+    "prediction_subset_of_candidates": true
+  }
+}

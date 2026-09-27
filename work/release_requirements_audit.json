@@ -1,0 +1,19 @@
+{
+  "source_documents": ["ProblemStatement.txt", "CHALLENGE.md", "Documentation_template.md", "utils/validate_submission.py", "code/business_entity_resolution/README.md", "work/test_inference_runbook.md", "work/test_inference_resource_plan.json"],
+  "output_files": {
+    "output/matching_results.tsv": ["source1_entity_id", "matched_entity_ids"],
+    "output/candidate_pairs.tsv": ["source1_entity_id", "candidate_entity_ids"]
+  },
+  "row_semantics": "Exactly one row for every raw test S1; ID preserved verbatim; only existing test S2/S3 targets; lists comma-separated without spaces or duplicates; no-match list is an empty second field after an explicit tab.",
+  "candidate_definition": "Final post-pruning set passed to the matching model for scoring, including candidates below the decision threshold.",
+  "matching_definition": "All scored candidates at or above the frozen global threshold 0.61; zero and multiple matches allowed; each matching list is a subset of its candidate list.",
+  "archive_name_rule": "<team_name>_submission.zip",
+  "team_name": "broCode",
+  "archive_paths": ["output/matching_results.tsv", "output/candidate_pairs.tsv", "code/business_entity_resolution/src/", "code/business_entity_resolution/release/", "code/business_entity_resolution/README.md", "code/business_entity_resolution/requirements.txt", "code/business_entity_resolution/constraints.txt", "Documentation_template.md"],
+  "documentation": "Complete the methodology template with approach, blocking, model, validation and reproduction details.",
+  "package_exclusions": ["raw datasets", "virtual environment", "temporary files", "caches", "large intermediate Parquet data", "scores", "secrets", "unrelated exploratory artifacts"],
+  "validator_command": "python utils/validate_submission.py --matching output/matching_results.tsv --candidate output/candidate_pairs.tsv --test-dir dataset/test",
+  "id_check_option": "--check-ids",
+  "model_license_rule": "Final model MIT or Apache 2.0, at most 8 billion parameters.",
+  "fair_play": "No external identity data, lookup API, geocoding service, or test labels."
+}

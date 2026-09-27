@@ -1,0 +1,18 @@
+{
+  "stage": "features",
+  "command": [
+    "C:\\Projects\\amazon-challenge\\.venv\\Scripts\\python.exe",
+    "-m",
+    "er.test_pipeline.features"
+  ],
+  "started_utc": "2026-09-26T19:29:40.320372+00:00",
+  "finished_utc": "2026-09-26T19:33:58.607580+00:00",
+  "wall_seconds": 258.287208,
+  "exit_code": 1,
+  "resource_preflight": {
+    "free_ram_bytes": 2627010560,
+    "free_disk_bytes": 210616569856
+  },
+  "log": "work/test_release_features.log",
+  "log_sha256": "060aa80901d9fe19004f4d5af247504746dacc3fc89950eb56bef2e51f7f06e0"
+}

@@ -40,7 +40,13 @@ class TestSplitsSamplingAndEvaluation(unittest.TestCase):
  def test_split_counts_overlap_and_checksums(self):
   p=ROOT/'work/matcher_split_checksums.json'; self.assertTrue(p.exists()); d=json.loads(p.read_text()); self.assertEqual(d['s1_overlap'],0); self.assertEqual(d['labelled_target_overlap'],0); self.assertEqual(sum(d['counts'].values()),2_206_821); self.assertEqual(len({x['entity_id_sha256'] for x in d['splits'].values()}),4)
  def test_final_eval_firewall(self):
-  self.assertFalse(any((ROOT/'work').glob('*final_eval*feature*'))); self.assertFalse(any((ROOT/'work').glob('*final_eval*score*')))
+  opened=ROOT/'work/final_eval_opened.json'
+  if opened.exists():
+   marker=json.loads(opened.read_text())
+   self.assertIn('prediction_sets',marker['immutable_inputs'])
+   self.assertEqual(marker['purpose'],'single frozen final evaluation')
+  else:
+   self.assertFalse((ROOT/'work/final_eval_gt.parquet').exists())
  def test_sampling_key_deterministic(self): self.assertEqual(deterministic_key('S2-1'),deterministic_key('S2-1')); self.assertNotEqual(deterministic_key('S2-1'),deterministic_key('S3-1'))
  def test_all_positive_retention_and_source_balance(self):
   c=duckdb.connect(); full=c.sql("select sum(y) from read_parquet('work/feature_pilot_labels.parquet') l join read_parquet('work/feature_pilot_s1.parquet') p on l.source1_entity_id=p.entity_id where p.split='model_train'").fetchone()[0]

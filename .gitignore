@@ -38,15 +38,23 @@ dataset/
 output/
 *.tmp
 
-# Project-specific: Large binary artifacts, parquet files, and logs
+# Project-specific: Large binary artifacts, parquet files, logs, and execution shard dumps
 *.parquet
 *.log
 work/**/*.parquet
 work/**/*.log
 work/final_eval_features/
 work/final_eval_candidates/
+work/final_eval_scores/
 work/final_eval_tmp/
 work/negative_samples/
 work/feature_pilot_candidates/
 work/feature_pilot_v1_final/
 work/scores_mining_fit/
+work/keys/
+work/test_keys/
+work/test_candidates/
+work/test_features/
+work/test_rank/
+work/test_smoke/
+code/business_entity_resolution/release/

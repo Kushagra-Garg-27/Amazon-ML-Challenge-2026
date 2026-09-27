@@ -42,7 +42,6 @@ cross-check is the biggest memory user, and the matching file is the only one sc
 import argparse
 import os
 import sys
-from itertools import zip_longest
 
 DELIM = "\t"
 MAX_EXAMPLES = 5  # how many offending IDs to show per issue
@@ -273,90 +272,6 @@ def validate(matching_path, candidate_path, test_dir, check_ids=False):
     return errors, warnings
 
 
-def validate_large_streaming(matching_path, candidate_path, test_dir, check_ids=False):
-    """Memory-bounded equivalent of the challenge checks for very large outputs.
-
-    The release files are sorted by raw S1 ID. Holding 271M candidate IDs in the
-    original in-memory mapping would exceed the guarded machine's RAM. This path
-    keeps only one S1 pair of lists at a time. It also enforces exact TSV syntax.
-    """
-    errors, warnings = [], []
-    source1 = os.path.join(test_dir, "test_source1.tsv")
-    if not os.path.isfile(source1):
-        return [f"Test source1 file not found: {source1}"], warnings
-    if not os.path.isfile(matching_path) or not os.path.isfile(candidate_path):
-        return ["Matching and candidate files are both required for large-output validation."], warnings
-    remaining = read_ids(source1)
-    expected_count = len(remaining)
-    print(f"  required S1 entities: {expected_count}")
-    if check_ids:
-        valid_ids = load_match_targets(test_dir, warnings)
-        if valid_ids is not None:
-            print(f"  valid S2/S3 match IDs: {len(valid_ids)}")
-    else:
-        valid_ids = None
-        warnings.append("ID-existence check is OFF (the default) — re-run with --check-ids to enable it.")
-    matching_rows = candidate_rows = matching_empty = candidate_empty = 0
-    previous = None
-    with open(matching_path, encoding="utf-8", newline="") as mf, open(candidate_path, encoding="utf-8", newline="") as cf:
-        if mf.readline() != "source1_entity_id\tmatched_entity_ids\n":
-            return ["matching_results.tsv: unexpected header; expected exact lowercase tab-separated header."], warnings
-        if cf.readline() != "source1_entity_id\tcandidate_entity_ids\n":
-            return ["candidate_pairs.tsv: unexpected header; expected exact lowercase tab-separated header."], warnings
-        for line_number, (mline, cline) in enumerate(zip_longest(mf, cf), start=2):
-            if mline is None or cline is None:
-                errors.append(f"Output row count differs between matching and candidate at line {line_number}.")
-                break
-            if not mline.endswith("\n") or not cline.endswith("\n") or mline.count("\t") != 1 or cline.count("\t") != 1:
-                errors.append(f"Malformed row at line {line_number}: expected exactly two tab-separated fields.")
-                break
-            ms1, mvalues = mline[:-1].split("\t")
-            cs1, cvalues = cline[:-1].split("\t")
-            if ms1 != cs1:
-                errors.append(f"S1 identity differs between files at line {line_number}.")
-                break
-            if previous is not None and ms1 <= previous:
-                errors.append(f"S1 rows are duplicate or unordered at line {line_number}.")
-                break
-            previous = ms1
-            if ms1 not in remaining:
-                errors.append(f"Unknown or duplicate S1 entity {ms1!r} at line {line_number}.")
-                break
-            remaining.remove(ms1)
-            mids = mvalues.split(",") if mvalues else []
-            cids = cvalues.split(",") if cvalues else []
-            for label, values in (("matched", mids), ("candidate", cids)):
-                if len(values) != len(set(values)):
-                    errors.append(f"Repeated ID inside {label} list at line {line_number}.")
-                    break
-                for target in values:
-                    if not target.startswith(("S2-", "S3-")) or target.startswith("S1-") or " " in target or "\r" in target:
-                        errors.append(f"Invalid {label} target ID {target!r} at line {line_number}.")
-                        break
-                    if valid_ids is not None and target not in valid_ids:
-                        errors.append(f"Unknown test S2/S3 target {target!r} at line {line_number}.")
-                        break
-                if errors:
-                    break
-            if errors:
-                break
-            if not set(mids).issubset(cids):
-                warnings.append(f"Matches outside candidates at line {line_number}.")
-                errors.append("Matches must be a subset of final candidates.")
-                break
-            matching_rows += 1
-            candidate_rows += 1
-            matching_empty += not mids
-            candidate_empty += not cids
-    if not errors and remaining:
-        errors.append(f"{len(remaining)} required S1 entities missing from both output files, e.g. {examples(remaining)}")
-    if not errors and matching_rows != expected_count:
-        errors.append(f"Expected {expected_count} output rows, found {matching_rows}.")
-    print(f"  matching_results.tsv: {matching_rows} rows ({matching_empty} empty, {matching_rows-matching_empty} non-empty).")
-    print(f"  candidate_pairs.tsv: {candidate_rows} rows ({candidate_empty} empty, {candidate_rows-candidate_empty} non-empty).")
-    return errors, warnings
-
-
 def main():
     parser = argparse.ArgumentParser(
         description="Validate ML Challenge 2026 submission output files before submitting."
@@ -398,13 +313,9 @@ def main():
     print("ML Challenge 2026 — submission validator")
     print(f"  test dir: {args.test_dir}")
     try:
-        # The challenge's original dictionary implementation holds every target
-        # list in RAM. Full release candidates are too large for that machine.
-        # Preserve the original path for bounded fixtures; stream full outputs.
-        validator = (validate_large_streaming if candidate_path and os.path.isfile(candidate_path)
-                     and os.path.getsize(candidate_path) > 256_000_000 else validate)
-        errors, warnings = validator(args.matching, candidate_path, args.test_dir,
-                                     check_ids=args.check_ids)
+        errors, warnings = validate(
+            args.matching, candidate_path, args.test_dir, check_ids=args.check_ids
+        )
     except UnicodeDecodeError:
         print()
         print("FAIL — 1 issue(s) to fix before submitting:")

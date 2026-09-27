@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "release_gate_config_sha256": "17165a4c083e73c747d5b57ca9e758959b0a8609d7306d738ad7ecb97326c6e9",
+  "release_decision_sha256": "aa52c1dabdee3fd5237720a7c1915368c79cc39edbbdf6a48faf5cb12fce04be",
+  "test_s1": 1732544,
+  "expected_candidates": 271582123,
+  "partitions": {
+    "logical_hash_buckets_per_country": 16,
+    "countries": ["india", "us", "france"],
+    "country_hash_groups": 48,
+    "restartable_execution_chunks": 96,
+    "hash_key": "source1_entity_id",
+    "policy_hash_partition_count_unchanged": true
+  },
+  "disk_preflight_free_bytes": 48000000000,
+  "ram_guard_min_free_bytes": 1350000000,
+  "expected_candidate_bytes": 2399309219,
+  "expected_feature_bytes": 9134447273,
+  "expected_score_bytes": 3215699820,
+  "expected_wall_seconds": 34614,
+  "wall_time_scope": "candidate, feature, scoring and assembly projection; excludes test-key ingestion, rank-shard construction and retries",
+  "implementation_prerequisites": ["test rank builder", "test-key option in feature materialization", "test scoring and output assembler"],
+  "frozen_model_sha256": "76ff78a7cc97e40174b6d631a6eaa062c786f0480c6693fd6387e90be6761d21",
+  "frozen_policy_sha256": "ced4ee4133110f5f55c184c3d4020b5087ecac5398bdf9ebfd03f76b3662aba3"
+}

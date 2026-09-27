@@ -1,0 +1,40 @@
+{
+  "release_gate_config_sha256": "17165a4c083e73c747d5b57ca9e758959b0a8609d7306d738ad7ecb97326c6e9",
+  "candidate": {
+    "wall_seconds": 1086.9553117752075,
+    "bytes": 152720150,
+    "failed_retried_partitions": [],
+    "exit_code": 0,
+    "peak_process_rss_bytes": 1037881344,
+    "peak_temp_bytes": 346816512
+  },
+  "feature": {
+    "wall_seconds": 1253.2509050369263,
+    "bytes": 582642896,
+    "bytes_per_candidate": 33.68698961550399,
+    "peak_process_rss_bytes": 1195008000,
+    "peak_temp_bytes": 282624000,
+    "restart_events": 2,
+    "failed_retried_partitions": [
+      {
+        "part": "model_final_eval_02_india",
+        "failure": "DuckDB OOM at 700MB unfiltered join",
+        "retry": "900MB filtered join succeeded"
+      },
+      {
+        "part": "model_final_eval_00_us",
+        "failure": "DuckDB OOM at 900MB unfiltered and 700MB filtered joins",
+        "retry": "900MB filtered join succeeded"
+      }
+    ],
+    "workspace_interruption": "Feature output directory disappeared during concurrent Git initialization; regenerated from immutable candidates",
+    "wall_seconds_scope": "successful full retry, including resume and structural audit; earlier failed attempt logs were removed by workspace change"
+  },
+  "score": {
+    "wall_seconds": 86.27948069572449,
+    "bytes": 204266002,
+    "peak_process_rss_bytes": 1492795392
+  },
+  "evaluation_wall_seconds": 90.07389736175537,
+  "evaluation_peak_process_rss_bytes": 1123590144
+}

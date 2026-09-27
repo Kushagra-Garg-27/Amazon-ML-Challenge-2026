@@ -749,7 +749,10 @@ def release_stage() -> dict:
     frozen_ok = all(x.get("pass", True) for x in current_frozen.values())
     chain = (all(read_json(W / f"final_eval_{name}_manifest.json")["release_gate_config_sha256"] == gate
                  for name in ("candidate","feature","score","prediction"))
-             and metrics["release_gate_config_sha256"] == gate)
+             and metrics["release_gate_config_sha256"] == gate
+             and feat["candidate_manifest_sha256"] == digest(W / "final_eval_candidate_manifest.json")
+             and score["feature_manifest_sha256"] == digest(W / "final_eval_feature_manifest.json")
+             and prediction["score_manifest_sha256"] == digest(W / "final_eval_score_manifest.json"))
     integrity = (frozen_ok and chain and cand["audit"]["duplicates"] == 0 and
                  feat["audit"]["added"] == feat["audit"]["removed"] == feat["audit"]["nonfinite_or_null"] == 0 and
                  score["audit"]["nonfinite"] == score["audit"]["threshold_decision_errors"] == 0 and

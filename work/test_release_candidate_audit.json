@@ -1,0 +1,18 @@
+{
+  "stage": "candidate_audit",
+  "command": [
+    "C:\\Projects\\amazon-challenge\\.venv\\Scripts\\python.exe",
+    "-m",
+    "er.test_pipeline.candidate_report"
+  ],
+  "started_utc": "2026-09-26T19:11:57.917495+00:00",
+  "finished_utc": "2026-09-26T19:13:48.514513+00:00",
+  "wall_seconds": 110.597018,
+  "exit_code": 0,
+  "resource_preflight": {
+    "free_ram_bytes": 4096053248,
+    "free_disk_bytes": 211917262848
+  },
+  "log": "work/test_release_candidate_audit.log",
+  "log_sha256": "f8d1de86e3c0bcff305eccccae2cba2ed1be82dec07fb0a9860fdf788bf09d69"
+}

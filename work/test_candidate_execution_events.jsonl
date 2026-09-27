@@ -1,0 +1,1 @@
+{"after_sample_utc":"2026-09-26T18:19:10.1576262Z","part":"p25_france","event":"operator_resource_restart","previous_duckdb_memory_mb":700,"new_duckdb_memory_mb":500,"reason":"free RAM sampled at 527781888 bytes during p24_us, close to 500000000-byte stop guard","completed_parts_preserved":75,"frozen_policy_changed":false}

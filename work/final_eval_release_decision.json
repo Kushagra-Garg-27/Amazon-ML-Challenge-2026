@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "release_gate_config_sha256": "17165a4c083e73c747d5b57ca9e758959b0a8609d7306d738ad7ecb97326c6e9",
+  "criteria": {
+    "all_integrity_invariants": true,
+    "macro_f0_5_at_least_0_88": true,
+    "macro_drop_at_most_0_02": true,
+    "pair_precision_at_least_0_95": true,
+    "country_drop_at_most_0_04": true,
+    "predictions_subset_of_candidates": true,
+    "zero_duplicate_predictions": true,
+    "one_prediction_set_per_s1": true
+  },
+  "country_macro_drops": {
+    "india": 0.0008754428188839647,
+    "us": -0.00019777443693280716
+  },
+  "frozen_model_sha256": "76ff78a7cc97e40174b6d631a6eaa062c786f0480c6693fd6387e90be6761d21",
+  "frozen_policy_sha256": "ced4ee4133110f5f55c184c3d4020b5087ecac5398bdf9ebfd03f76b3662aba3",
+  "candidate_policy_sha256": "46fd324b3d4db7dbdf5fa4b8ce528f681335ce16f759fb93a39ba5b98a040fea",
+  "feature_spec_sha256": "37982fd6377aa2e36fe1c5dec0484a35c02ba4bcc4e3b67b3a337b33597f6e1f",
+  "threshold": 0.61,
+  "test_inference_permitted": true
+}

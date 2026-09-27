@@ -41,16 +41,19 @@ def select_s1(output: Path, train_n=5000, calibration_n=2000):
     c.execute(f"COPY ({sql}) TO '{partial.as_posix()}' (FORMAT PARQUET,COMPRESSION ZSTD)"); os.replace(partial,output)
     out=dict(c.sql(f"SELECT split,count(*) FROM read_parquet('{output.as_posix()}') GROUP BY 1").fetchall()); c.close(); return out
 
-def _target_sql(country: str) -> str:
+def _target_sql(country: str, keys_prefix: str = 'train') -> str:
     return " UNION ALL ".join(
-      f"SELECT entity_id,country_norm,name_norm,name_nosuffix,name_sorted,addr_norm,num_tokens FROM read_parquet('work/keys/train_{s}.parquet') WHERE country_norm='{country}'"
+      f"SELECT entity_id,country_norm,name_norm,name_nosuffix,name_sorted,addr_norm,num_tokens FROM read_parquet('work/keys/{keys_prefix}_{s}.parquet') WHERE country_norm='{country}'"
       for s in ('s2','s3'))
 
-def materialize_group(selection: Path, split: str, country: str, output: Path) -> dict:
-    c=connect(output.parent/'tmp'); t0=time.time(); target=_target_sql(country)
+def materialize_group(selection: Path, split: str, country: str, output: Path,
+                      keys_prefix: str = 'train', df_root: Path = Path('work/freeze_gate'),
+                      rank_output: Path | None = None) -> dict:
+    if not country.isalnum() or not keys_prefix.isalnum(): raise ValueError('Unsafe key')
+    c=connect(output.parent/'tmp'); t0=time.time(); target=_target_sql(country,keys_prefix)
     c.execute(f"""CREATE TEMP TABLE s1 AS SELECT k.entity_id s1,k.country_norm cc,k.name_norm,
       k.name_nosuffix,k.name_sorted,k.addr_norm,k.num_tokens
-      FROM read_parquet('work/keys/train_s1.parquet') k JOIN read_parquet('{selection.as_posix()}') p
+      FROM read_parquet('work/keys/{keys_prefix}_s1.parquet') k JOIN read_parquet('{selection.as_posix()}') p
       ON k.entity_id=p.entity_id WHERE p.split=? AND p.country_norm=?""",[split,country])
     n_s1=c.sql("SELECT count(*) FROM s1").fetchone()[0]
     if not n_s1: raise RuntimeError(f"Empty pilot group {split}/{country}")
@@ -64,12 +67,12 @@ def materialize_group(selection: Path, split: str, country: str, output: Path) -
         c.execute(f"""CREATE TEMP TABLE tgtok_{field} AS SELECT x.mid,x.cc,x.tok FROM (
           SELECT entity_id mid,country_norm cc,unnest(list_distinct(str_split({tcol},' '))) tok
           FROM ({target})) x
-          JOIN read_parquet('work/freeze_gate/df_{field}.parquet') d
+          JOIN read_parquet('{(df_root / f'df_{field}.parquet').as_posix()}') d
             ON x.cc=d.cc AND x.tok=d.tok AND d.df<=2000
           JOIN (SELECT DISTINCT tok FROM s1tok_{field} WHERE length(tok)>0) st ON x.tok=st.tok""")
         c.execute(f"""CREATE TEMP TABLE score_{field} AS SELECT s.s1,t.mid,count(*)::INT sh,
           sum(1.0/d.df) score FROM s1tok_{field} s JOIN tgtok_{field} t ON s.cc=t.cc AND s.tok=t.tok
-          JOIN read_parquet('work/freeze_gate/df_{field}.parquet') d ON s.cc=d.cc AND s.tok=d.tok
+          JOIN read_parquet('{(df_root / f'df_{field}.parquet').as_posix()}') d ON s.cc=d.cc AND s.tok=d.tok
           WHERE length(s.tok)>0 GROUP BY 1,2""")
         c.execute(f"""CREATE TEMP TABLE short_{field} AS SELECT s1,mid,sh,score FROM (
           SELECT *,row_number() OVER(PARTITION BY s1,substr(mid,1,2)
@@ -103,6 +106,13 @@ def materialize_group(selection: Path, split: str, country: str, output: Path) -
        len(list_intersect(list_distinct(str_split(s.addr_norm,' ')),list_distinct(str_split(t.addr_norm,' '))))::DOUBLE /
          nullif(len(list_distinct(list_concat(str_split(s.addr_norm,' '),str_split(t.addr_norm,' ')))),0) addr_jaccard
        FROM sorted z JOIN heavy_s1 h USING(s1) JOIN s1 s USING(s1) JOIN ({target}) t ON z.mid=t.entity_id)""")
+    if rank_output is not None:
+        rank_output.mkdir(parents=True, exist_ok=True)
+        for name in ('rank_name','rank_addr','heavy_rank'):
+            rank_path=rank_output/f'{output.stem}_{name}.parquet'
+            partial_rank=rank_path.with_suffix('.partial.parquet'); partial_rank.unlink(missing_ok=True)
+            c.execute(f"COPY (SELECT * FROM {name} ORDER BY s1,mid) TO '{partial_rank.as_posix()}' (FORMAT PARQUET,COMPRESSION ZSTD)")
+            os.replace(partial_rank,rank_path)
     union=" UNION ALL ".join([
       "SELECT s1,mid,1 b,0::INT nr,0::INT ar,0.0::DOUBLE ns,0.0::DOUBLE ads FROM sorted",
       "SELECT s1,mid,2 b,0,0,0.0,0.0 FROM exact_addr",
